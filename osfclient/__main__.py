@@ -3,7 +3,6 @@ import argparse
 from . import fetch, list_
 
 
-
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -12,6 +11,7 @@ def main():
                                                       ' storages for project.')
                                          )
     fetch_parser.set_defaults(func=fetch)
+    fetch_parser.add_argument('output', help='Write files to this directory')
 
     list_parser = subparsers.add_parser('list', aliases=['ls'],
                                         description=('List all files from all'
@@ -23,7 +23,8 @@ def main():
         sub_parser.add_argument('project', help='OSF project ID')
 
     args = parser.parse_args()
-    args.func(args)
+    if 'func' in args:
+        args.func(args)
 
 if __name__ == "__main__":
     main()
