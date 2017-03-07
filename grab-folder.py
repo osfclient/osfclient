@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 from osfclient.utils.authentication import AuthClient
 from osfclient.client import osf
+from osfclient import filetree
 import argparse
+import os
 
 CHUNK_SIZE=int(5e6)
 do_login = False
@@ -21,28 +23,28 @@ def main():
                               otp=None)
 
     oo = osf.OSFClient()
-    u = oo.get_node('7g6vu')
 
-    print('looking at: {}'.format(u.title))
-    
-    s = u.get_storage()
+    for obj in filetree.get_project_files(args.project_id):
+        if obj.is_file:
+            size = obj.size
+            path = obj.path
 
-    chillun = s.get_children()
-    for c in chillun:
-        attr = c.raw['attributes']
+            print('Downloading {}kb file: {}...'.format(int(size / 1000),
+                                                        path))
 
-        name = attr['name']
-        size = int(attr['size'])
+            # download the file contents
+            response = obj.get_download()
 
-        print('Downloading {}kb file: {}...'.format(int(size / 1000), name))
-
-        # download the file contents
-        response = oo.request_session.get(c.raw['links']['download'])
-
-        with open(name, 'wb') as fp:
-            for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-                fp.write(response.content)
-        print('...done. writing!')
+            with open(path, 'wb') as fp:
+                for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+                    fp.write(response.content)
+            print('...done. writing!')
+        else:
+            path = obj.path
+            try:
+                os.mkdir(path)
+            except FileExistsError:
+                continue
 
 
 if __name__ == '__main__':
