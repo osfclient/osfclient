@@ -4,8 +4,8 @@ from appdirs import user_data_dir
 from appdirs import user_log_dir
 
 # General settings
-PROJECT_NAME = 'osf-sync'
-PROJECT_AUTHOR = 'cos'
+PROJECT_NAME = 'osfcli'
+PROJECT_AUTHOR = 'dib-lab'
 APPLICATION_SCOPES = 'osf.full_write'
 
 DEBUG = True

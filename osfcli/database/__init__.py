@@ -5,8 +5,8 @@ import threading
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from osfsync.database.models import Base, User, Node, File
-from osfsync.settings import PROJECT_DB_FILE
+from .models import Base, User, Node, File
+from ..settings import PROJECT_DB_FILE
 
 CORE_OSFO_MODELS = [User, Node, File]
 URL = 'sqlite:///{}'.format(PROJECT_DB_FILE)

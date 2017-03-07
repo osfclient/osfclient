@@ -4,12 +4,12 @@ import logging
 #import raven
 #from raven.handlers.logging import SentryHandler
 
-from osfsync.settings.defaults import *  # noqa
+from .defaults import *  # noqa
 
 logger = logging.getLogger(__name__)
 
 try:
-    from osfsync.settings.local import *  # noqa
+    from .local import *  # noqa
 except ImportError:
     logger.debug('No local.py found. Using default settings.')
 

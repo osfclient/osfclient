@@ -1,6 +1,6 @@
 import shutil
 
-from osfsync import settings
+from .. import settings
 
 
 def save(session, *items_to_save):

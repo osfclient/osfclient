@@ -6,9 +6,9 @@ import threading
 
 import requests
 
-from osfsync import settings
-from osfsync.utils import Singleton
-from osfsync.utils.authentication import get_current_user
+from .. import settings
+from ..utils import Singleton
+from ..utils.authentication import get_current_user
 
 
 class ClientLoadError(Exception):

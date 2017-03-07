@@ -5,11 +5,11 @@ import os
 from enum import Enum
 from sqlalchemy.orm.exc import NoResultFound
 
-from osfsync import settings
-from osfsync.database import Session
-from osfsync.database import models
-from osfsync.exceptions import NodeNotFound
-from osfsync.utils.authentication import get_current_user
+from .. import settings
+from ..database import Session
+from ..database import models
+from ..exceptions import NodeNotFound
+from ..utils.authentication import get_current_user
 
 
 IGNORE_RE = re.compile(r'.*{}({})'.format(re.escape(os.path.sep), '|'.join(settings.IGNORED_PATTERNS)))

@@ -7,10 +7,10 @@ import requests
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.exc import NoResultFound
 
-from osfsync import settings
-from osfsync.database import clear_models, Session
-from osfsync.database import models
-from osfsync.exceptions import AuthError, TwoFactorRequiredError
+from .. import settings
+from ..database import clear_models, Session
+from ..database import models
+from ..exceptions import AuthError, TwoFactorRequiredError
 
 logger = logging.getLogger(__name__)
 

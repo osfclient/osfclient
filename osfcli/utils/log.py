@@ -1,8 +1,8 @@
 """Utilities related to error logging"""
 import logging.config
 
-from osfsync import settings
-from osfsync.utils.authentication import get_current_user
+from .. import settings
+from ..utils.authentication import get_current_user
 
 
 def add_user_to_sentry_logs():
