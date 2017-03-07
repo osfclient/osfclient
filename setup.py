@@ -35,7 +35,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=['osfsync'],
+    packages=['osfclient'],
 
     # Alternatively, if you want to distribute just a my_module.py, uncomment
     # this:
@@ -52,7 +52,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'osf=osfsync.__main__:main',
+            'osf=osfclient.__main__:main',
         ],
     },
 )
