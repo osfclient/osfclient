@@ -9,14 +9,17 @@ CHUNK_SIZE = int(5e6)
 
 
 def fetch(args):
-    auth_client = AuthClient()
-    username = 'betatim@gmail.com'
-    password = open('pw.txt').read()
-
     out_path = os.path.realpath(args.output)
 
-    auth_client.login(username=username, password=password, otp=None)
+    auth_client = AuthClient()
+    username = args.username
+    if username:
+        password = open('pw.txt').read()
 
+        # this sets a global/singleton object => OSFClient.
+        auth_client.login(username=username, password=password, otp=None)
+
+    # see auth_client, above, for authentication foo.
     oo = osf.OSFClient()
     project = oo.get_node(args.project)
 
@@ -31,15 +34,40 @@ def fetch(args):
 
             name = attr['name']
 
-            print('Downloading: {}...'.format(name))
+            output_filename = os.path.join(out_path, storage.name, name)
+
+            print('Downloading: {} to {}...'.format(name, output_filename))
 
             # download the file contents
             response = oo.request_session.get(c.raw['links']['download'])
 
-            with open(os.path.join(out_path, storage.name, name), 'wb') as fp:
+            with open(output_filename, 'wb') as fp:
                 for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
                     fp.write(response.content)
 
 
 def list_(args):
-    print('listing', args)
+    auth_client = AuthClient()
+    username = args.username
+    if username:
+        password = open('pw.txt').read()
+
+        # this sets a global/singleton object => OSFClient.
+        auth_client.login(username=username, password=password, otp=None)
+
+    # see auth_client, above, for authentication foo.
+    oo = osf.OSFClient()
+    project = oo.get_node(args.project)
+
+    print('looking at id={}, title={}'.format(project.id, project.title))
+
+    storages = osf.NodeStorage.load(oo.request_session, args.project)
+
+    filenames = []
+    for storage in storages:
+        for c in storage.get_children():
+            attr = c.raw['attributes']
+            name = attr['name']
+            filenames.append(attr['materialized_path'])
+
+    print("\n".join(filenames))

@@ -5,6 +5,7 @@ from . import fetch, list_
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-u', '--username', default=None)
     subparsers = parser.add_subparsers()
     fetch_parser = subparsers.add_parser('fetch',
                                          description=('Fetch all files from all'
