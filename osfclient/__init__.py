@@ -4,6 +4,7 @@ import os
 
 from osfclient.utils.authentication import AuthClient
 from osfclient.client import osf
+from osfclient import filetree
 
 CHUNK_SIZE = int(5e6)
 
@@ -56,18 +57,9 @@ def list_(args):
         auth_client.login(username=username, password=password, otp=None)
 
     # see auth_client, above, for authentication foo.
-    oo = osf.OSFClient()
-    project = oo.get_node(args.project)
-
-    print('looking at id={}, title={}'.format(project.id, project.title))
-
-    storages = osf.NodeStorage.load(oo.request_session, args.project)
 
     filenames = []
-    for storage in storages:
-        for c in storage.get_children():
-            attr = c.raw['attributes']
-            name = attr['name']
-            filenames.append(attr['materialized_path'])
+    for obj in filetree.get_project_files(args.project):
+        filenames.append(obj.path)
 
     print("\n".join(filenames))

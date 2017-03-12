@@ -1,15 +1,21 @@
-from .client.osf import OSFClient
+from .client.osf import OSFClient, NodeStorage
 
 
 class FileOrFolder(object):
-    def __init__(self, obj, oo):
+    def __init__(self, obj, storage, oo):
         attr = obj.raw['attributes']
-        self.path = attr['materialized_path'].lstrip('/')
+        self.storage = storage
+        self.path = storage.name + attr['materialized_path']
 
         self.is_file = False
         if attr['kind'] == 'file':
             self.is_file = True
-            self.size = int(attr['size'])
+            size = attr['size']
+            if size is None:
+                self.size = 0             # some 3rd party storage sol'ns?
+            else:
+                self.size = int(attr['size'])
+
         else:
             assert attr['kind'] == 'folder'
             self.size = None
@@ -31,19 +37,23 @@ def get_project_files(project_id, oo=None):
     if oo is None:
         oo = OSFClient()
 
+    # do we need this now? @CTB
     project_top = oo.get_node(project_id)
 
     print('looking at: {}'.format(project_top.title))
 
-    storage = project_top.get_storage()
-    return get_files(storage.get_children(), oo)
+    storages = NodeStorage.load(oo.request_session, project_id)
 
-    
-def get_files(children, oo):
+    for storage in storages:
+        for o in get_files(storage.get_children(), storage, oo):
+            yield o
+
+
+def get_files(children, storage, oo):
     for c in children:
-        o = FileOrFolder(c, oo)
+        o = FileOrFolder(c, storage, oo)
         yield o
 
         if not o.is_file:
-            for x in get_files(c.get_children(), oo):
+            for x in get_files(c.get_children(), storage, oo):
                 yield x
