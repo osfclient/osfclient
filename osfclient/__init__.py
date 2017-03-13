@@ -26,25 +26,24 @@ def fetch(args):
 
     print('looking at: {}'.format(project.title))
 
-    storages = osf.NodeStorage.load(oo.request_session, args.project)
+    for obj in filetree.get_project_files(args.project):
+        output_filename = os.path.join(out_path, obj.path)
+        output_dir = os.path.dirname(output_filename)
+        os.makedirs(output_dir, exist_ok=True)
 
-    for storage in storages:
-        os.makedirs(os.path.join(out_path, storage.name), exist_ok=True)
-        for c in storage.get_children():
-            attr = c.raw['attributes']
-
-            name = attr['name']
-
-            output_filename = os.path.join(out_path, storage.name, name)
-
-            print('Downloading: {} to {}...'.format(name, output_filename))
+        if obj.is_file:
+            output_filename = os.path.join(out_path, obj.path)
+            
+            print('Downloading: {} to {}...'.format(obj.path, out_path))
 
             # download the file contents
-            response = oo.request_session.get(c.raw['links']['download'])
+            response = obj.get_download()
 
             with open(output_filename, 'wb') as fp:
                 for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
                     fp.write(response.content)
+        else:
+            continue
 
 
 def list_(args):

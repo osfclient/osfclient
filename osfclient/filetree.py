@@ -37,11 +37,6 @@ def get_project_files(project_id, oo=None):
     if oo is None:
         oo = OSFClient()
 
-    # do we need this now? @CTB
-    project_top = oo.get_node(project_id)
-
-    print('looking at: {}'.format(project_top.title))
-
     storages = NodeStorage.load(oo.request_session, project_id)
 
     for storage in storages:
