@@ -1,17 +1,9 @@
-#appdirs==1.4.0
 fake-factory==0.5.3
 flake8==2.5.0
 pep8==1.6
 furl==0.4.8
 invoke==0.13.0
 iso8601==0.1.11
-#pyqt5==5.7
-# PyInstaller 3.3 - https://github.com/pyinstaller/pyinstaller/issues/2022
-git+git://github.com/pyinstaller/pyinstaller.git@develop
 pytest==2.8.5
-raven==5.10.2
 requests==2.8.1
 SQLAlchemy==1.0.9
-# watchdog==0.8.3
-# Fixes for odd windows and linux cases seee https://github.com/sixfeetup/watchdog/commit/0a4b21ebaf126e418e508c839cd80d1d72b259c9
-git+git://github.com/CenterForOpenScience/watchdog.git@synthetic
