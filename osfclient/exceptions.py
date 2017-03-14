@@ -17,7 +17,9 @@ class AuthError(OSFSyncException):
 
 
 class TwoFactorRequiredError(AuthError):
-    """Headers on request indicate that a two-factor authentication code must be provided to authenticate"""
+    """Headers on request indicate that a two-factor authentication code must
+    be provided to authenticate
+    """
     pass
 
 

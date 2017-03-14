@@ -33,7 +33,6 @@ def get_project_files(project_id, oo=None):
     project_id -- OSF project ID, e.g. '7g6vu'.
     oo -- OSFClient object (optional). If 'None', can work with public projs.
     """
-
     if oo is None:
         oo = OSFClient()
 

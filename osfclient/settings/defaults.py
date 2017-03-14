@@ -1,8 +1,5 @@
 import os
 
-from appdirs import user_data_dir
-from appdirs import user_log_dir
-
 # General settings
 PROJECT_NAME = 'osfcli'
 PROJECT_AUTHOR = 'dib-lab'
@@ -52,12 +49,7 @@ IGNORED_PATTERNS = [
 OSF_STORAGE_FOLDER = 'OSF Storage'
 COMPONENTS_FOLDER = 'Components'
 
-# Variables used to control where application config data is stored
-PROJECT_DB_DIR = user_data_dir(appname=PROJECT_NAME, appauthor=PROJECT_AUTHOR)
-PROJECT_DB_FILE = os.path.join(PROJECT_DB_DIR, 'osf.db')
-
-PROJECT_LOG_DIR = user_log_dir(appname=PROJECT_NAME, appauthor=PROJECT_AUTHOR)
-PROJECT_LOG_FILE = os.path.join(PROJECT_LOG_DIR, 'osfsync.log')
+PROJECT_LOG_FILE = 'osfsync.log'
 
 EVENT_DEBOUNCE = 3
 

@@ -4,26 +4,20 @@ import logging
 
 import furl
 import requests
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm.exc import NoResultFound
 
 from .. import settings
-from ..database import clear_models, Session
-from ..database import models
 from ..exceptions import AuthError, TwoFactorRequiredError
 
 logger = logging.getLogger(__name__)
 
 
-def get_current_user():
-    """
-    Fetch the database object representing the currently active user
-    :return: A user object (raises exception if none found)
-    :rtype: models.User
-    :raises SQLAlchemyError
-    """
-    with Session() as session:
-        return session.query(models.User).one()
+class User:
+    def __init__(self, username, oauth_token):
+        self.username = username
+        self.oauth_token = oauth_token
+
+    def __repr__(self):
+        return "<User(username={})>".format(self.username)
 
 
 class AuthClient(object):
@@ -82,19 +76,12 @@ class AuthClient(object):
                 return json_resp['data']['attributes']['token_id']
 
     def _create_user(self, username, personal_access_token):
-        """ Tries to authenticate and create user.
+        """Tries to authenticate and create user.
 
-        :return models.User: user
+        :return authentication.User: user
         :raise AuthError
         """
-        logger.debug('User doesn\'t exist. Attempting to authenticate, then creating user.')
-
-        user = models.User(
-            id='',
-            full_name='',
-            login=username,
-            oauth_token=personal_access_token,
-        )
+        user = User(username=username, oauth_token=personal_access_token)
         return self.populate_user_data(user)
 
     def populate_user_data(self, user):
@@ -102,7 +89,7 @@ class AuthClient(object):
         Takes a user object, makes a request to ensure auth is working,
         and fills in any missing user data.
 
-        :return models.User: user
+        :return authentication.User: user
         :raise AuthError
         """
         me = furl.furl(settings.API_BASE)
@@ -124,40 +111,17 @@ class AuthClient(object):
 
             return user
 
-    def login(self, *, username=None, password=None, otp=None):
+    def login(self, username, password, otp=None):
         """
         Log in with the provided std auth credentials and return the database user object
         :param str username: The username / email address of the user
         :param str password: The password of the user
         :param str otp: One time password used for two-factor authentication
-        :return models.User: A database object representing the logged-in user
+        :return authentication.User: A object representing the logged-in user
         :raises: AuthError or TwoFactorRequiredError
         """
         if not username or not password:
             raise AuthError('Username and password required for login.')
 
-        try:
-            user = get_current_user()
-        except NoResultFound:
-            user = None
-
         personal_access_token = self._authenticate(username, password, otp=otp)
-        if user:
-            if user.login != username:
-                # Different user authenticated, drop old user and allow login
-                clear_models()
-                user = self._create_user(username, personal_access_token)
-            else:
-                user.oauth_token = personal_access_token
-        else:
-            user = self._create_user(username, personal_access_token)
-
-        try:
-            with Session() as session:
-                session.add(user)
-                session.commit()
-        except SQLAlchemyError:
-            msg = 'Unable to save user data. Please try again later'
-            logger.exception(msg)
-            raise AuthError(msg)
-        return user
+        return self._create_user(username, personal_access_token)
