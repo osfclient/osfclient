@@ -8,7 +8,6 @@ import requests
 
 from .. import settings
 from ..utils import Singleton
-from ..utils.authentication import get_current_user
 
 
 class ClientLoadError(Exception):
@@ -20,13 +19,13 @@ class ClientLoadError(Exception):
 
 
 class OSFClient(metaclass=Singleton):
-    def __init__(self, *, limit=5):
-        self.user = get_current_user()
-        self.headers = {
-            'User-Agent': 'OSF Sync',
-            'Authorization': 'Bearer {}'.format(self.user.oauth_token),
-        }
-        self.throttler = threading.Semaphore(limit)  # TODO: Is throttling active?
+    def __init__(self, user=None, limit=5):
+        self.user = user
+        self.headers = {'User-Agent': 'OSF Sync'}
+        if user is not None:
+            self.headers['Authorization'] = 'Bearer {}'.format(self.user.oauth_token)
+
+        self.throttler = threading.Semaphore(limit)
         self.request_session = requests.Session()
         self.request_session.headers.update(self.headers)
 

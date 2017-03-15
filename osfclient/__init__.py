@@ -16,24 +16,24 @@ def fetch(args):
     username = args.username
     if username:
         password = open('pw.txt').read()
+        user = auth_client.login(username=username, password=password)
+    else:
+        user = None
 
-        # this sets a global/singleton object => OSFClient.
-        auth_client.login(username=username, password=password, otp=None)
+    oo = osf.OSFClient(user)
 
-    # see auth_client, above, for authentication foo.
-    oo = osf.OSFClient()
     project = oo.get_node(args.project)
 
     print('looking at: {}'.format(project.title))
 
-    for obj in filetree.get_project_files(args.project):
+    for obj in filetree.get_project_files(args.project, oo):
         output_filename = os.path.join(out_path, obj.path)
         output_dir = os.path.dirname(output_filename)
         os.makedirs(output_dir, exist_ok=True)
 
         if obj.is_file:
             output_filename = os.path.join(out_path, obj.path)
-            
+
             print('Downloading: {} to {}...'.format(obj.path, out_path))
 
             # download the file contents
@@ -51,14 +51,14 @@ def list_(args):
     username = args.username
     if username:
         password = open('pw.txt').read()
+        user = auth_client.login(username=username, password=password)
+    else:
+        user = None
 
-        # this sets a global/singleton object => OSFClient.
-        auth_client.login(username=username, password=password, otp=None)
-
-    # see auth_client, above, for authentication foo.
+    oo = osf.OSFClient(user)
 
     filenames = []
-    for obj in filetree.get_project_files(args.project):
+    for obj in filetree.get_project_files(args.project, oo):
         filenames.append(obj.path)
 
     print("\n".join(filenames))

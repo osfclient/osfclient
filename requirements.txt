@@ -1,9 +1,4 @@
-fake-factory==0.5.3
-flake8==2.5.0
-pep8==1.6
 furl==0.4.8
-invoke==0.13.0
 iso8601==0.1.11
 pytest==2.8.5
 requests==2.8.1
-SQLAlchemy==1.0.9
