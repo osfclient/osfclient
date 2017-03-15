@@ -17,8 +17,8 @@ install: source build_tools/travis_install.sh
 script:
   - python --version
   - if [ ${COVERAGE} == "true" ];
-    then pytest --cov=osfclient; else
-    pytest;
+    then py.test --cov=osfclient; else
+    py.test;
     fi
 
 after_success:
