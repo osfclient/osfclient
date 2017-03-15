@@ -1,0 +1,28 @@
+language: python
+
+notifications:
+  email: false
+
+cache:
+  directories:
+   - $HOME/.cache/pip
+
+env:
+  matrix:
+    - DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="true"
+    - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
+
+install: source build_tools/travis_install.sh
+
+script:
+  - python --version
+  - if [ ${COVERAGE} == "true" ];
+    then pytest --cov=osfclient; else
+    pytest;
+    fi
+
+after_success:
+  - if [ ${COVERAGE} == "true" ]; then
+    pip install codecov;
+    codecov;
+    fi
