@@ -49,7 +49,7 @@ def fetch(args):
 def list_(args):
     auth_client = AuthClient()
     username = args.username
-    if username:
+    if username is not None:
         password = open('pw.txt').read()
         user = auth_client.login(username=username, password=password)
     else:
