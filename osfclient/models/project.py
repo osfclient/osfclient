@@ -22,6 +22,7 @@ class Project(OSFCore):
     def __str__(self):
         return '<Project [{0}]>'.format(self.id)
 
+    @property
     def storages(self):
         """Iterate over all storages for this projects"""
         stores = self._json(self._get(self._storages_url), 200)

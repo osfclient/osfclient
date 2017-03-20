@@ -1,4 +1,4 @@
-from osfclient.api import OSFSession
+from osfclient.models import OSFSession
 
 
 def test_basic_auth():

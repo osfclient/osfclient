@@ -1,4 +1,5 @@
-from .api import OSFCore
+from .core import OSFCore
+from .file import File
 
 
 class Storage(OSFCore):
@@ -22,3 +23,11 @@ class Storage(OSFCore):
 
     def __str__(self):
         return '<Storage [{0}]>'.format(self.id)
+
+    @property
+    def files(self):
+        """Iterate over files in this storage"""
+        files = self._json(self._get(self._files_url), 200)
+        files = files['data']
+        for file in files:
+            yield File(file)

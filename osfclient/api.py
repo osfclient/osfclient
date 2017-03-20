@@ -1,5 +1,5 @@
-from .core import OSFCore
-from .project import Project
+from .models import OSFCore
+from .models import Project
 
 
 class OSF(OSFCore):

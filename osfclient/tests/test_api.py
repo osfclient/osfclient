@@ -1,9 +1,12 @@
 from unittest.mock import patch
 import pytest
 
-from osfclient.api import OSF
-from osfclient.api import OSFCore
-from osfclient.api import OSFSession
+from osfclient import OSF
+from osfclient.models import OSFSession
+from osfclient.models import OSFCore
+from osfclient.models import Project
+
+from osfclient.tests.fake_responses import project_node
 
 
 class FakeResponse:
@@ -30,23 +33,23 @@ def test_login(session_basic_auth):
     session_basic_auth.assert_called_with('joe@example.com', 'secret_password')
 
 
-@patch.object(OSFCore, '_get', return_value=FakeResponse(200, '{"data": 123}'))
+@patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
 def test_get_project(OSFCore_get):
     osf = OSF()
-    project = osf.project('1234projectid')
+    project = osf.project('f3szh')
 
     OSFCore_get.assert_called_once_with(
-        'https://api.osf.io/v2//nodes/1234projectid/'
+        'https://api.osf.io/v2//nodes/f3szh/'
         )
-    assert 'data' in project
+    assert isinstance(project, Project)
 
 
-@patch.object(OSFCore, '_get', return_value=FakeResponse(404, '{"data": 123}'))
+@patch.object(OSFCore, '_get', return_value=FakeResponse(404, project_node))
 def test_failed_get_project(OSFCore_get):
     osf = OSF()
     with pytest.raises(RuntimeError):
-        osf.project('1234projectid')
+        osf.project('f3szh')
 
     OSFCore_get.assert_called_once_with(
-        'https://api.osf.io/v2//nodes/1234projectid/'
+        'https://api.osf.io/v2//nodes/f3szh/'
         )
