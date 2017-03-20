@@ -3,11 +3,11 @@
 from unittest.mock import patch, MagicMock, PropertyMock
 
 from osfclient import filetree
-from osfclient import list_
+from osfclient.cli import list_
 
 
-@patch('osfclient.osf.OSFClient')
-@patch('osfclient.AuthClient')
+@patch('osfclient.cli.osf.OSFClient')
+@patch('osfclient.cli.AuthClient')
 def test_auth(MockAuthClient, MockOSFClient):
     args = MagicMock()
     username = PropertyMock(return_value=None)

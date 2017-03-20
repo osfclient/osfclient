@@ -1,6 +1,6 @@
 import argparse
 
-from . import fetch, list_
+from .cli import fetch, list_
 
 
 def main():
