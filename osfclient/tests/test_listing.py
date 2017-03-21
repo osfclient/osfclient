@@ -1,31 +1,54 @@
 """Test `osf ls` command"""
 
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest import mock
+from unittest.mock import patch, MagicMock, PropertyMock, mock_open
 
-from osfclient import filetree
+from osfclient import OSF
 from osfclient.cli import list_
 
+from mocks import MockProject, MockStorage
 
-@patch('osfclient.cli.osf.OSFClient')
-@patch('osfclient.cli.AuthClient')
-def test_auth(MockAuthClient, MockOSFClient):
+
+@patch('osfclient.cli.OSF')
+def test_anonymous_doesnt_use_password(MockOSF):
     args = MagicMock()
     username = PropertyMock(return_value=None)
     type(args).username = username
 
-    node = MagicMock()
-    path = PropertyMock(return_value='a')
-    type(node).path = path
+    list_(args)
 
-    node2 = MagicMock()
-    path2 = PropertyMock(return_value='b')
-    type(node2).path = path2
+    MockOSF.assert_called_once_with(username=None, password=None)
 
-    filetree.get_project_files = MagicMock(return_value=[node, node2])
+
+@patch('osfclient.cli.OSF')
+def test_username_password(MockOSF):
+    args = MagicMock()
+    username = PropertyMock(return_value='joe@example.com')
+    type(args).username = username
+
+    mock_open_func = mock_open(read_data="secret")
+
+    with patch('osfclient.cli.open', mock_open_func, create=True):
+        list_(args)
+
+    MockOSF.assert_called_once_with(username='joe@example.com',
+                                    password='secret')
+    assert mock_open_func.called
+
+
+@patch.object(OSF, 'project', return_value=MockProject())
+def test_get_project(OSF_project):
+    args = MagicMock()
+    username = PropertyMock(return_value=None)
+    type(args).username = username
+    project = PropertyMock(return_value='1234')
+    type(args).project = project
 
     list_(args)
 
-    assert MockAuthClient.called
-    username.assert_called_once_with()
-    path.assert_called_once_with()
-    path2.assert_called_once_with()
+    OSF_project.assert_called_once_with('1234')
+    # check that the project and the files have been printed
+    for store in OSF_project.return_value.storages:
+        assert store.__str__.called
+        for f in store.files:
+            assert f.__str__.called
