@@ -36,7 +36,7 @@ def test_username_password(MockOSF):
     assert mock_open_func.called
 
 
-@patch.object(OSF, 'project', return_value=MockProject())
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
 def test_get_project(OSF_project):
     args = MagicMock()
     username = PropertyMock(return_value=None)

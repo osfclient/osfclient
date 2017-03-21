@@ -1,3 +1,5 @@
+import shutil
+
 from .core import OSFCore
 
 
@@ -25,3 +27,16 @@ class File(OSFCore):
 
     def __str__(self):
         return '<File [{0}, {1}]>'.format(self.id, self.path)
+
+    def write_to(self, fp):
+        if 'b' not in fp.mode:
+            raise ValueError("File has to be opened in binary mode.")
+
+        response = self._get(self._download_url)
+        if response.status_code == 200:
+            response.raw.decode_content = True
+            shutil.copyfileobj(response.raw, fp)
+
+        else:
+            raise RuntimeError("Response has status "
+                               "code {}.".format(response.status_code))
