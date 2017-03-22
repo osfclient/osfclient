@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock, PropertyMock, mock_open
 from osfclient import OSF
 from osfclient.cli import list_
 
-from mocks import MockProject, MockStorage
+from mocks import MockProject
 
 
 @patch('osfclient.cli.OSF')
@@ -43,12 +43,14 @@ def test_get_project(OSF_project):
     type(args).username = username
     project = PropertyMock(return_value='1234')
     type(args).project = project
+    output = PropertyMock(return_value=None)
+    type(args).output = output
 
     list_(args)
 
     OSF_project.assert_called_once_with('1234')
     # check that the project and the files have been printed
     for store in OSF_project.return_value.storages:
-        assert store.__str__.called
+        assert store._name_mock.called
         for f in store.files:
-            assert f.__str__.called
+            assert f._path_mock.called
