@@ -26,14 +26,17 @@ def test_username_password(MockOSF):
     username = PropertyMock(return_value='joe@example.com')
     type(args).username = username
 
-    mock_open_func = mock_open(read_data="secret")
+    def simple_getenv(key):
+        if key == 'OSF_PASSWORD':
+            return 'secret'
 
-    with patch('osfclient.cli.open', mock_open_func, create=True):
+    with patch('osfclient.cli.os.getenv',
+               side_effect=simple_getenv) as mock_getenv:
         list_(args)
 
     MockOSF.assert_called_once_with(username='joe@example.com',
                                     password='secret')
-    assert mock_open_func.called
+    mock_getenv.assert_called_with('OSF_PASSWORD')
 
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
