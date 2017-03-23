@@ -26,3 +26,12 @@ def MockProject(name):
     mock = MagicMock(name='Project-%s' % name,
                      storages=[MockStorage('osf'), MockStorage('gh')])
     return mock
+
+
+class FakeResponse:
+    def __init__(self, status_code, json):
+        self.status_code = status_code
+        self._json = json
+
+    def json(self):
+        return self._json

@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock, PropertyMock, mock_open
 from osfclient import OSF
 from osfclient.cli import list_
 
-from mocks import MockProject
+from osfclient.tests.mocks import MockProject
 
 
 @patch('osfclient.cli.OSF')

@@ -7,15 +7,7 @@ from osfclient.models import OSFCore
 from osfclient.models import Project
 
 from osfclient.tests.fake_responses import project_node
-
-
-class FakeResponse:
-    def __init__(self, status_code, json):
-        self.status_code = status_code
-        self._json = json
-
-    def json(self):
-        return self._json
+from osfclient.tests.mocks import FakeResponse
 
 
 @patch.object(OSFSession, 'basic_auth')

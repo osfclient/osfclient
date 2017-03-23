@@ -190,3 +190,53 @@ project_node = json.loads("""
   }
 }
 """)
+
+
+def storage_node(project_id, storages=['osfstorage']):
+    storage = """
+    {
+        "relationships": {
+            "files": {
+                "links": {
+                    "related": {
+                        "href": "https://api.osf.io/v2/nodes/%(project_id)s/files/%(name)s/",
+                        "meta": {}
+                    }
+                }
+            }
+        },
+        "links": {
+            "storage_addons": "https://api.osf.io/v2/addons/?filter%%5Bcategories%%5D=storage",
+            "upload": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(name)s/",
+            "new_folder": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(name)s/?kind=folder"
+        },
+        "attributes": {
+            "node": "%(project_id)s",
+            "path": "/",
+            "kind": "folder",
+            "name": "%(name)s",
+            "provider": "%(name)s"
+        },
+        "type": "files",
+        "id": "%(project_id)s:%(name)s"
+    }"""
+    used_storages = []
+    for store in storages:
+        used_storages.append(json.loads(storage % {'project_id': project_id,
+                                                   'name': store}))
+
+    files = """{
+    "data": %(storages)s,
+    "links": {
+        "first": null,
+        "last": null,
+        "prev": null,
+        "next": null,
+        "meta": {
+            "total": %(n_storages)s,
+            "per_page": 10
+        }
+    }
+    }"""
+    return json.loads(files % {'storages': json.dumps(used_storages),
+                               'n_storages': len(used_storages)})

@@ -22,6 +22,18 @@ class Project(OSFCore):
     def __str__(self):
         return '<Project [{0}]>'.format(self.id)
 
+    def storage(self, provider):
+        """Return storage `provider`"""
+        stores = self._json(self._get(self._storages_url), 200)
+        stores = stores['data']
+        for store in stores:
+            provides = self._get_attribute(store, 'attributes', 'provider')
+            if provides == provider:
+                return Storage(store)
+
+        raise RuntimeError("Project has no storage "
+                           "provider '{}'".format(provider))
+
     @property
     def storages(self):
         """Iterate over all storages for this projects"""
