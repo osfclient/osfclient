@@ -1,6 +1,7 @@
 from .session import OSFSession
 
 
+# Base class for all models and the user facing API object
 class OSFCore:
     def __init__(self, json, session=None):
         if session is None:
@@ -38,7 +39,7 @@ class OSFCore:
         return value
 
     def _json(self, response, status_code):
-        """Extract JSON from response if `status_code` matches"""
+        """Extract JSON from response if `status_code` matches."""
         if response.status_code == status_code:
             return response.json()
         else:
@@ -47,7 +48,7 @@ class OSFCore:
                                                        status_code))
 
     def _follow_next(self, url):
-        """Follow the 'next' link on paginated results"""
+        """Follow the 'next' link on paginated results."""
         response = self._json(self._get(url), 200)
         data = response['data']
 

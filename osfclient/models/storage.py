@@ -27,7 +27,7 @@ class Storage(OSFCore):
 
     @property
     def files(self):
-        """Iterate over all files in this storage"""
+        """Iterate over all files in this storage."""
         files = self._follow_next(self._files_url)
 
         while files:

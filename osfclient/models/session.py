@@ -6,6 +6,7 @@ class OSFSession(requests.Session):
     __attrs__ = requests.Session.__attrs__ + ['base_url']
 
     def __init__(self):
+        """Handle HTTP session related work."""
         super(OSFSession, self).__init__()
         self.headers.update({
             # Only accept JSON responses
