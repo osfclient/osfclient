@@ -1,4 +1,1 @@
-furl==0.4.8
-iso8601==0.1.11
-pytest==2.8.5
-requests==2.8.1
+requests
