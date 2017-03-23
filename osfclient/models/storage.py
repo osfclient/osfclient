@@ -18,8 +18,9 @@ class Storage(OSFCore):
         self.node = self._get_attribute(storage, 'attributes', 'node')
         self.provider = self._get_attribute(storage, 'attributes', 'provider')
 
-        files = ['relationships', 'files', 'links', 'related', 'href']
-        self._files_url = self._get_attribute(storage, *files)
+        self._files_key = ('relationships', 'files', 'links', 'related',
+                           'href')
+        self._files_url = self._get_attribute(storage, *self._files_key)
 
     def __str__(self):
         return '<Storage [{0}]>'.format(self.id)
@@ -35,7 +36,6 @@ class Storage(OSFCore):
             if kind == 'file':
                 yield File(file)
             else:
-                sub_dir_url = ('relationships', 'files', 'links',
-                               'related', 'href')
-                url = self._get_attribute(file, *sub_dir_url)
+                # recurse into a folder and add entries to `files`
+                url = self._get_attribute(file, *self._files_key)
                 files.extend(self._follow_next(url))
