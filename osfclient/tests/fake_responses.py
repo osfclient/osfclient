@@ -240,3 +240,79 @@ def storage_node(project_id, storages=['osfstorage']):
     }"""
     return json.loads(files % {'storages': json.dumps(used_storages),
                                'n_storages': len(used_storages)})
+
+
+def files_node(project_id, storage, file_names=['hello.txt']):
+    a_file = """{
+    "relationships": {
+        "node": {
+            "links": {
+                "related": {
+                    "href": "https://api.osf.io/v2/nodes/%(project_id)s/",
+                    "meta": {}
+                }
+            }
+        },
+        "versions": {
+            "links": {
+                "related": {
+                    "href": "https://api.osf.io/v2/files/58becc229ad5a101f98293a3/versions/",
+                    "meta": {}
+                }
+            }
+        }
+    },
+    "links": {
+        "info": "https://api.osf.io/v2/files/58becc229ad5a101f98293a3/",
+        "self": "https://api.osf.io/v2/files/58becc229ad5a101f98293a3/",
+        "move": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s",
+        "upload": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s",
+        "download": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s",
+        "delete": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s"
+    },
+    "attributes": {
+        "extra": {
+            "hashes": {
+                "sha256": null,
+                "md5": null
+            }
+        },
+        "kind": "file",
+        "name": "%(fname)s",
+        "last_touched": "2017-03-20T16:24:57.417044",
+        "materialized_path": "/%(fname)s",
+        "date_modified": null,
+        "current_version": 1,
+        "date_created": null,
+        "provider": "%(storage)s",
+        "path": "/%(fname)s",
+        "current_user_can_comment": true,
+        "guid": null,
+        "checkout": null,
+        "tags": [],
+        "size": null
+    },
+    "type": "files",
+    "id": "58becc229ad5a101f98293a3"
+}"""
+    files = []
+    for fname in file_names:
+        files.append(json.loads(a_file % dict(storage=storage,
+                                              fname=fname,
+                                              project_id=project_id)))
+
+    wrapper = """{
+    "data": %(files)s,
+    "links": {
+        "first": null,
+        "last": null,
+        "prev": null,
+        "next": null,
+        "meta": {
+            "total": %(n_files)s,
+            "per_page": %(n_files)s
+        }
+    }
+    }"""
+    return json.loads(wrapper % {'files': json.dumps(files),
+                                 'n_files': len(files)})
