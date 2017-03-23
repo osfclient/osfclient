@@ -5,8 +5,12 @@ from .cli import fetch, list_
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--username', default=None)
+    parser.add_argument('-u', '--username', default=None,
+                        help=('OSF username. Provide password via '
+                              'OSF_PASSWORD environment variable.'))
     subparsers = parser.add_subparsers()
+
+    # Fetch files
     fetch_parser = subparsers.add_parser('fetch',
                                          description=('Fetch all files from all'
                                                       ' storages for project.')
@@ -16,6 +20,7 @@ def main():
     fetch_parser.add_argument('output', help='Write files to this directory',
                               default=None, nargs='?')
 
+    # List files
     list_parser = subparsers.add_parser('list', aliases=['ls'],
                                         description=('List all files from all'
                                                      ' storages for project.')
