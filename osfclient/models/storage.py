@@ -34,7 +34,7 @@ class Storage(OSFCore):
             file = files.pop()
             kind = self._get_attribute(file, 'attributes', 'kind')
             if kind == 'file':
-                yield File(file)
+                yield File(file, self.session)
             else:
                 # recurse into a folder and add entries to `files`
                 url = self._get_attribute(file, *self._files_key)

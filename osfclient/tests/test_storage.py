@@ -1,5 +1,4 @@
 from unittest.mock import patch
-import pytest
 
 from osfclient.models import OSFCore
 from osfclient.models import Storage
@@ -24,6 +23,7 @@ def test_iterate_files(OSFCore_get):
     assert len(files) == 2
     for file_ in files:
         assert isinstance(file_, File)
+        assert file_.session == store.session
 
     OSFCore_get.assert_called_once_with(
         'https://api.osf.io/v2//nodes/f3szh/files/osfstorage')

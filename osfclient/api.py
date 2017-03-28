@@ -21,4 +21,4 @@ class OSF(OSFCore):
     def project(self, project_id):
         """Fetch project `project_id`."""
         url = self._build_url('nodes', project_id)
-        return Project(self._json(self._get(url), 200))
+        return Project(self._json(self._get(url), 200), self.session)
