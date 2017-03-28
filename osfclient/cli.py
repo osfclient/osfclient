@@ -8,10 +8,12 @@ CHUNK_SIZE = int(5e6)
 
 
 def _setup_osf(args):
-    username = args.username
-    password = None
-    if username is not None:
-        password = open('pw.txt').read()
+    # command line argument overrides environment variable
+    username = os.getenv("OSF_USERNAME")
+    if args.username is not None:
+        username = args.username
+
+    password = os.getenv("OSF_PASSWORD")
 
     return OSF(username=username, password=password)
 
