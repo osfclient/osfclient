@@ -3,7 +3,7 @@ import os
 from .core import OSFCore
 from .core import FolderExistsException
 from .file import File
-from .file import Folder
+from .file import Folder, _WaterButlerFolder
 
 
 class Storage(OSFCore):
@@ -48,15 +48,31 @@ class Storage(OSFCore):
                 url = self._get_attribute(file, *self._files_key)
                 files.extend(self._follow_next(url))
 
-    def _create_folder(self, name, exist_ok=False):
+    @property
+    def folders(self):
+        """Iterate over top-level folders in this storage"""
+        children = self._follow_next(self._files_url)
+
+        while children:
+            child = children.pop()
+            kind = self._get_attribute(child, 'attributes', 'kind')
+            if kind == 'folder':
+                yield Folder(child, self.session)
+
+    def create_folder(self, name, exist_ok=False):
         # Create a new sub-folder
         response = self._put(self._new_folder_url,
                              params={'name': name})
         if response.status_code == 409 and not exist_ok:
             raise FolderExistsException(name)
 
+        elif response.status_code == 409 and exist_ok:
+            for folder in self.folders:
+                if folder.name == name:
+                    return folder
+
         elif response.status_code == 201:
-            return Folder(response.json(), self.session)
+            return _WaterButlerFolder(response.json(), self.session)
 
         else:
             raise RuntimeError("Response has status code {} while creating "
@@ -70,7 +86,17 @@ class Storage(OSFCore):
         will be uploaded to `path` which is the full path at
         which to store the file.
         """
-        path = os.path.normpath(path)
+        # all paths are assumed to be absolute
+        path = os.path.normpath('/' + path)
+
         directory, fname = os.path.split(path)
-        import pdb; pdb.set_trace()
-        self._create_folder(directory)
+        directories = directory.split('/')[1:]
+        # navigate to the right parent object for our file
+        parent = self
+        for directory in directories:
+            parent = parent.create_folder(directory, exist_ok=True)
+
+        url = parent._new_file_url
+        response = self._put(url, params={'name': fname}, data=fp)
+        if response.status_code == 409:
+            raise FileExistsError(path)
