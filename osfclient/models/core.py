@@ -1,4 +1,19 @@
+import numbers
+
 from .session import OSFSession
+
+
+class OSFException(Exception):
+    pass
+
+
+class UnauthorizedException(OSFException):
+    pass
+
+
+class FolderExistsException(OSFException):
+    def __init__(self, name):
+        self.args = ('Folder %s already exists.' % name,)
 
 
 # Base class for all models and the user facing API object
@@ -17,8 +32,19 @@ class OSFCore:
     def _build_url(self, *args):
         return self.session.build_url(*args)
 
-    def _get(self, url):
-        return self.session.get(url)
+    def _get(self, url, *args, **kwargs):
+        response = self.session.get(url, *args, **kwargs)
+        if response.status_code == 401:
+            raise UnauthorizedException()
+
+        return response
+
+    def _put(self, url, *args, **kwargs):
+        response = self.session.put(url, *args, **kwargs)
+        if response.status_code == 401:
+            raise UnauthorizedException()
+
+        return response
 
     def _get_attribute(self, json, *keys, default=None):
         # pick value out of a (nested) dictionary
@@ -40,7 +66,10 @@ class OSFCore:
 
     def _json(self, response, status_code):
         """Extract JSON from response if `status_code` matches."""
-        if response.status_code == status_code:
+        if isinstance(status_code, numbers.Integral):
+            status_code = (status_code,)
+
+        if response.status_code in status_code:
             return response.json()
         else:
             raise RuntimeError("Response has status "
