@@ -13,7 +13,9 @@ def _setup_osf(args):
     if args.username is not None:
         username = args.username
 
-    password = os.getenv("OSF_PASSWORD")
+    password = None
+    if username is not None:
+        password = os.getenv("OSF_PASSWORD")
 
     return OSF(username=username, password=password)
 
