@@ -1,19 +1,17 @@
 """Test `osf ls` command"""
 
-from unittest import mock
 from unittest.mock import patch, MagicMock, PropertyMock, mock_open
 
 from osfclient import OSF
 from osfclient.cli import list_
 
 from osfclient.tests.mocks import MockProject
+from osfclient.tests.mocks import MockArgs
 
 
 @patch('osfclient.cli.OSF')
 def test_anonymous_doesnt_use_password(MockOSF):
-    args = MagicMock()
-    username = PropertyMock(return_value=None)
-    type(args).username = username
+    args = MockArgs()
 
     list_(args)
 
@@ -22,9 +20,7 @@ def test_anonymous_doesnt_use_password(MockOSF):
 
 @patch('osfclient.cli.OSF')
 def test_username_password(MockOSF):
-    args = MagicMock()
-    username = PropertyMock(return_value='joe@example.com')
-    type(args).username = username
+    args = MockArgs(username='joe@example.com')
 
     def simple_getenv(key):
         if key == 'OSF_PASSWORD':
@@ -41,13 +37,7 @@ def test_username_password(MockOSF):
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
 def test_get_project(OSF_project):
-    args = MagicMock()
-    username = PropertyMock(return_value=None)
-    type(args).username = username
-    project = PropertyMock(return_value='1234')
-    type(args).project = project
-    output = PropertyMock(return_value=None)
-    type(args).output = output
+    args = MockArgs(project='1234')
 
     list_(args)
 
