@@ -29,6 +29,11 @@ class File(OSFCore):
         return '<File [{0}, {1}]>'.format(self.id, self.path)
 
     def write_to(self, fp):
+        """Write contents of this file to a local file.
+
+        Pass in a filepointer `fp` that has been opened for writing in
+        binary mode.
+        """
         if 'b' not in fp.mode:
             raise ValueError("File has to be opened in binary mode.")
 
