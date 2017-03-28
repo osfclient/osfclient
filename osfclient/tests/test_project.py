@@ -57,3 +57,32 @@ def test_iterate_storages(OSFCore_get):
 
     OSFCore_get.assert_called_once_with(
         'https://api.osf.io/v2//nodes/f3szh/files/')
+
+
+@patch.object(OSFCore, '_get')
+def test_pass_down_session_to_storage(OSFCore_get):
+    # check that `self.session` is passed to newly created OSFCore instances
+    project = Project({})
+    project._storages_url = 'https://api.osf.io/v2//nodes/f3szh/files/'
+
+    store_json = fake_responses.storage_node('f3szh')
+    response = FakeResponse(200, store_json)
+    OSFCore_get.return_value = response
+
+    store = project.storage()
+
+    assert store.session == project.session
+
+
+@patch.object(OSFCore, '_get')
+def test_pass_down_session_to_storages(OSFCore_get):
+    # as previous test but for multiple storages
+    project = Project({})
+    project._storages_url = 'https://api.osf.io/v2//nodes/f3szh/files/'
+
+    store_json = fake_responses.storage_node('f3szh')
+    response = FakeResponse(200, store_json)
+    OSFCore_get.return_value = response
+
+    for store in project.storages:
+        assert store.session == project.session
