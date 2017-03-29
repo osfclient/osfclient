@@ -76,9 +76,6 @@ def test_iterate_files_and_folders():
             return top_level_response
         elif url == second_level_url:
             return second_level_response
-        else:
-            print(url)
-            raise ValueError()
 
     with patch.object(OSFCore, '_get',
                       side_effect=simple_OSFCore_get) as mock_osf_get:
