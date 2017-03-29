@@ -81,7 +81,9 @@ class Storage(OSFCore, ContainerMixin):
         # navigate to the right parent object for our file
         parent = self
         for directory in directories:
-            parent = parent.create_folder(directory, exist_ok=True)
+            # skip empty directory names
+            if directory:
+                parent = parent.create_folder(directory, exist_ok=True)
 
         url = parent._new_file_url
         response = self._put(url, params={'name': fname}, data=fp)

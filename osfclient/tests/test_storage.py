@@ -1,4 +1,6 @@
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
+
+import pytest
 
 from osfclient.models import OSFCore
 from osfclient.models import Storage
@@ -90,3 +92,41 @@ def test_iterate_files_and_folders():
     # check right URLs are called in the right order
     expected = [((store._files_url,),), ((second_level_url,),)]
     assert mock_osf_get.call_args_list == expected
+
+
+def test_create_existing_file():
+    # test a new file at the top level
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+    store._put = MagicMock(return_value=FakeResponse(409, None))
+
+    fake_fp = MagicMock()
+    with pytest.raises(FileExistsError):
+        store.create_file('foo.txt', fake_fp)
+
+    store._put.assert_called_once_with(new_file_url,
+                                       data=fake_fp,
+                                       params={'name': 'foo.txt'})
+
+    assert fake_fp.call_count == 0
+
+
+def test_create_new_file():
+    # test a new file at the top level
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+    store._put = MagicMock(return_value=FakeResponse(201, None))
+
+    fake_fp = MagicMock()
+
+    store.create_file('foo.txt', fake_fp)
+
+    store._put.assert_called_once_with(new_file_url,
+                                       data=fake_fp,
+                                       params={'name': 'foo.txt'})
+
+    assert fake_fp.call_count == 0
