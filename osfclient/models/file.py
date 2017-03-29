@@ -1,7 +1,7 @@
 import shutil
 
 from .core import OSFCore
-from .core import FolderExistsException
+from ..exceptions import FolderExistsException
 
 
 class File(OSFCore):
@@ -48,7 +48,62 @@ class File(OSFCore):
                                "code {}.".format(response.status_code))
 
 
-class Folder(OSFCore):
+class ContainerMixin:
+    def _iter_children(self, url, kind, klass, recurse=None):
+        """Iterate over all children of `kind`
+
+        Yield an instance of `klass` when a child is of type `kind`. Uses
+        `recurse` as the path of attributes in the JSON returned from `url`
+        to find more children.
+        """
+        children = self._follow_next(url)
+
+        while children:
+            child = children.pop()
+            kind_ = child['attributes']['kind']
+            if kind_ == kind:
+                yield klass(child, self.session)
+            elif recurse is not None:
+                # recurse into a child and add entries to `children`
+                url = self._get_attribute(child, *recurse)
+                children.extend(self._follow_next(url))
+
+    @property
+    def files(self):
+        """Iterate over all files in this folder.
+
+        Unlike a `Storage` instance this does not recursively find all files.
+        Only lists files in this folder.
+        """
+        return self._iter_children(self._files_url, 'file', File)
+
+    @property
+    def folders(self):
+        """Iterate over top-level folders in this folder."""
+        return self._iter_children(self._files_url, 'folder', Folder)
+
+    def create_folder(self, name, exist_ok=False):
+        url = self._new_folder_url
+        # Create a new sub-folder
+        response = self._put(url, params={'name': name})
+        if response.status_code == 409 and not exist_ok:
+            raise FolderExistsException(name)
+
+        elif response.status_code == 409 and exist_ok:
+            for folder in self.folders:
+                if folder.name == name:
+                    return folder
+
+        elif response.status_code == 201:
+            return _WaterButlerFolder(response.json(), self.session)
+
+        else:
+            raise RuntimeError("Response has status code {} while creating "
+                               "folder {}.".format(response.status_code,
+                                                   name))
+
+
+class Folder(OSFCore, ContainerMixin):
     def _update_attributes(self, file):
         if not file:
             return
@@ -79,57 +134,11 @@ class Folder(OSFCore):
         self.date_modified = self._get_attribute(file,
                                                  'attributes', 'date_modified')
 
-    @property
-    def files(self):
-        """Iterate over all files in this storage."""
-        files = self._follow_next(self._files_url)
-
-        while files:
-            file = files.pop()
-            kind = self._get_attribute(file, 'attributes', 'kind')
-            if kind == 'file':
-                yield File(file, self.session)
-            else:
-                # recurse into a folder and add entries to `files`
-                url = self._get_attribute(file, *self._files_key)
-                files.extend(self._follow_next(url))
-
-    @property
-    def folders(self):
-        """Iterate over top-level folders in this storage"""
-        children = self._follow_next(self._files_url)
-
-        while children:
-            child = children.pop()
-            kind = self._get_attribute(child, 'attributes', 'kind')
-            if kind == 'folder':
-                yield Folder(child, self.session)
-
     def __str__(self):
         return '<Folder [{0}, {1}]>'.format(self.id, self.path)
 
-    def create_folder(self, name, exist_ok=False):
-        # Create a new sub-folder
-        response = self._put(self._new_folder_url,
-                             params={'name': name})
-        if response.status_code == 409 and not exist_ok:
-            raise FolderExistsException(name)
 
-        elif response.status_code == 409 and exist_ok:
-            for folder in self.folders:
-                if folder.name == name:
-                    return folder
-
-        elif response.status_code == 201:
-            return _WaterButlerFolder(response.json(), self.session)
-
-        else:
-            raise RuntimeError("Response has status code {} while creating "
-                               "folder {}.".format(response.status_code,
-                                                   name))
-
-
-class _WaterButlerFolder(OSFCore):
+class _WaterButlerFolder(OSFCore, ContainerMixin):
     """A slimmed down `Folder` built from a WaterButler response
 
     This representation is enough to navigate the folder structure
@@ -137,6 +146,9 @@ class _WaterButlerFolder(OSFCore):
 
     Users should never see this, always show them a full `Folder`.
     """
+    def __str__(self):
+        return '<_WaterButlerFolder [{0}]>'.format(self.id)
+
     def _update_attributes(self, file):
         if not file:
             return
@@ -159,18 +171,3 @@ class _WaterButlerFolder(OSFCore):
         base_url = "https://api.osf.io/v2/files"
         folder = self._json(self._get(base_url % self.osf_path), 200)
         return Folder(folder, self.session)
-
-    def create_folder(self, name, exist_ok=False):
-        # Create a new sub-folder
-        response = self._put(self._new_folder_url,
-                             params={'name': name})
-        if response.status_code == 409 and not exist_ok:
-            raise FolderExistsException(name)
-
-        elif response.status_code == 201:
-            return _WaterButlerFolder(response.json(), self.session)
-
-        else:
-            raise RuntimeError("Response has status code {} while creating "
-                               "folder {}.".format(response.status_code,
-                                                   name))

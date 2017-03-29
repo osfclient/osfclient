@@ -1,5 +1,7 @@
 import requests
 
+from ..exceptions import UnauthorizedException
+
 
 class OSFSession(requests.Session):
     auth = None
@@ -30,3 +32,15 @@ class OSFSession(requests.Session):
         parts.extend(args)
         # canonical OSF URLs end with a slash
         return '/'.join(parts) + '/'
+
+    def put(self, url, *args, **kwargs):
+        response = super().put(url, *args, **kwargs)
+        if response.status_code == 401:
+            raise UnauthorizedException()
+        return response
+
+    def get(self, url, *args, **kwargs):
+        response = super().get(url, *args, **kwargs)
+        if response.status_code == 401:
+            raise UnauthorizedException()
+        return response

@@ -3,19 +3,6 @@ import numbers
 from .session import OSFSession
 
 
-class OSFException(Exception):
-    pass
-
-
-class UnauthorizedException(OSFException):
-    pass
-
-
-class FolderExistsException(OSFException):
-    def __init__(self, name):
-        self.args = ('Folder %s already exists.' % name,)
-
-
 # Base class for all models and the user facing API object
 class OSFCore:
     def __init__(self, json, session=None):
@@ -33,21 +20,13 @@ class OSFCore:
         return self.session.build_url(*args)
 
     def _get(self, url, *args, **kwargs):
-        response = self.session.get(url, *args, **kwargs)
-        if response.status_code == 401:
-            raise UnauthorizedException()
-
-        return response
+        return self.session.get(url, *args, **kwargs)
 
     def _put(self, url, *args, **kwargs):
-        response = self.session.put(url, *args, **kwargs)
-        if response.status_code == 401:
-            raise UnauthorizedException()
-
-        return response
+        return self.session.put(url, *args, **kwargs)
 
     def _get_attribute(self, json, *keys, default=None):
-        # pick value out of a (nested) dictionary
+        # pick value out of a (nested) dictionary/JSON
         # `keys` is a list of keys
         # XXX what should happen if a key doesn't match half way down
         # XXX traversing the list of keys?

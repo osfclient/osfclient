@@ -1,12 +1,11 @@
 import os
 
 from .core import OSFCore
-from .core import FolderExistsException
+from .file import ContainerMixin
 from .file import File
-from .file import Folder, _WaterButlerFolder
 
 
-class Storage(OSFCore):
+class Storage(OSFCore, ContainerMixin):
     def _update_attributes(self, storage):
         if not storage:
             return
@@ -33,51 +32,43 @@ class Storage(OSFCore):
     def __str__(self):
         return '<Storage [{0}]>'.format(self.id)
 
-    @property
-    def files(self):
-        """Iterate over all files in this storage."""
-        files = self._follow_next(self._files_url)
+    XXX = """
+    def remove(self, path):
+        # Remove `path` from this storage
+        path = os.path.normpath(path)
+        directory, fname = os.path.split(path)
 
-        while files:
-            file = files.pop()
-            kind = self._get_attribute(file, 'attributes', 'kind')
-            if kind == 'file':
-                yield File(file, self.session)
-            else:
-                # recurse into a folder and add entries to `files`
-                url = self._get_attribute(file, *self._files_key)
-                files.extend(self._follow_next(url))
-
-    @property
-    def folders(self):
-        """Iterate over top-level folders in this storage"""
+        stack = []
         children = self._follow_next(self._files_url)
-
         while children:
             child = children.pop()
             kind = self._get_attribute(child, 'attributes', 'kind')
-            if kind == 'folder':
-                yield Folder(child, self.session)
+            if kind == 'file':
+                child = File(child, self.session)
+            elif kind == 'folder':
+                child = Folder(child, self.session)
+                # only check folders that match the path
+                if path.startswith(child.path):
+                    url = self._get_attribute(file, *self._files_key)
+                    children.extend(self._follow_next(url))
 
-    def create_folder(self, name, exist_ok=False):
-        # Create a new sub-folder
-        response = self._put(self._new_folder_url,
-                             params={'name': name})
-        if response.status_code == 409 and not exist_ok:
-            raise FolderExistsException(name)
+            # if it forms part of the path to our target, queue it up for
+            # deletion
+            print(child.path, child)
+            if path.startswith(child.path):
+                stack.append(child)
 
-        elif response.status_code == 409 and exist_ok:
-            for folder in self.folders:
-                if folder.name == name:
-                    return folder
+        print(stack)
+        """
 
-        elif response.status_code == 201:
-            return _WaterButlerFolder(response.json(), self.session)
+    @property
+    def files(self):
+        """Iterate over all files in this storage.
 
-        else:
-            raise RuntimeError("Response has status code {} while creating "
-                               "folder {}.".format(response.status_code,
-                                                   name))
+        Recursively lists all files in all subfolders.
+        """
+        return self._iter_children(self._files_url, 'file', File,
+                                   self._files_key)
 
     def create_file(self, path, fp):
         """Store a new file at `path` in this storage.
