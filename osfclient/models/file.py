@@ -91,7 +91,7 @@ class ContainerMixin:
                     return folder
 
         elif response.status_code == 201:
-            return _WaterButlerFolder(response.json(), self.session)
+            return _WaterButlerFolder(response.json()['data'], self.session)
 
         else:
             raise RuntimeError("Response has status code {} while creating "

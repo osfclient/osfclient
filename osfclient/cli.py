@@ -3,8 +3,8 @@
 import os
 
 from .api import OSF
-
-CHUNK_SIZE = int(5e6)
+from .utils import norm_remote_path
+from .utils import split_storage
 
 
 def _setup_osf(args):
@@ -56,3 +56,15 @@ def list_(args):
                 path = path[1:]
 
             print(os.path.join(prefix, path))
+
+
+def upload(args):
+    osf = _setup_osf(args)
+
+    project = osf.project(args.project)
+
+    storage, remote_path = split_storage(args.destination)
+
+    store = project.storage(storage)
+    with open(args.source, 'rb') as fp:
+        store.create_file(remote_path, fp)

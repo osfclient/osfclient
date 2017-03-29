@@ -3,6 +3,7 @@ import os
 from .core import OSFCore
 from .file import ContainerMixin
 from .file import File
+from ..utils import norm_remote_path
 
 
 class Storage(OSFCore, ContainerMixin):
@@ -74,10 +75,10 @@ class Storage(OSFCore, ContainerMixin):
         which to store the file.
         """
         # all paths are assumed to be absolute
-        path = os.path.normpath('/' + path)
+        path = norm_remote_path(path)
 
         directory, fname = os.path.split(path)
-        directories = directory.split('/')[1:]
+        directories = directory.split('/')
         # navigate to the right parent object for our file
         parent = self
         for directory in directories:

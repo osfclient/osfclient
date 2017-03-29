@@ -1,4 +1,4 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, call
 
 import pytest
 
@@ -126,4 +126,39 @@ def test_create_new_file():
                                        data=fake_fp,
                                        params={'name': 'foo.txt'})
 
+    assert fake_fp.call_count == 0
+
+
+def test_create_new_file_subdirectory():
+    # test a new file in a new subdirectory
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/bar12/')
+    new_folder_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                      'osfstorage/?kind=folder')
+    store = Storage({})
+    store._new_file_url = new_file_url
+    store._new_folder_url = new_folder_url
+
+    def simple_put(url, params={}, data=None):
+        if url == new_folder_url:
+            # this is a full fledged Folder response but also works as a
+            # fake for _WaterButlerFolder
+            return FakeResponse(
+                201, {'data': fake_responses._folder('bar12', 'bar')}
+                )
+        elif url == new_file_url:
+            # we don't do anything with the response, so just make it None
+            return FakeResponse(201, None)
+        else:
+            print(url)
+            assert False, 'Whoops!'
+
+    fake_fp = MagicMock()
+
+    with patch.object(Storage, '_put', side_effect=simple_put) as mock_put:
+        store.create_file('bar/foo.txt', fake_fp)
+
+    expected = [call(new_folder_url, params={'name': 'bar'}),
+                call(new_file_url, params={'name': 'foo.txt'}, data=fake_fp)]
+    assert mock_put.call_args_list == expected
     assert fake_fp.call_count == 0

@@ -128,7 +128,8 @@ def test_create_new_folder():
     new_folder_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
                       'osfstorage/foo123/?kind=folder')
     folder._new_folder_url = new_folder_url
-    folder._put = MagicMock(return_value=FakeResponse(201, None))
+    # use an empty response as we won't do anything with the returned instance
+    folder._put = MagicMock(return_value=FakeResponse(201, {'data': {}}))
 
     new_folder = folder.create_folder('foobar')
 

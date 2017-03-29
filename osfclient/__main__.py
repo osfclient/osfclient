@@ -1,6 +1,6 @@
 import argparse
 
-from .cli import fetch, list_
+from .cli import fetch, list_, upload
 
 
 def main():
@@ -27,6 +27,16 @@ def main():
                                         )
     list_parser.set_defaults(func=list_)
     list_parser.add_argument('project', help='OSF project ID')
+
+    # Upload a file
+    upload_parser = subparsers.add_parser('upload',
+                                          description=('Upload a new file to'
+                                                       ' an existing project.')
+                                          )
+    upload_parser.set_defaults(func=upload)
+    upload_parser.add_argument('project', help='OSF project ID')
+    upload_parser.add_argument('source', help='Local file')
+    upload_parser.add_argument('destination', help='Remote file path')
 
     args = parser.parse_args()
     if 'func' in args:
