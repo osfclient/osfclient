@@ -6,6 +6,8 @@ from .file import File
 
 
 class Storage(OSFCore, ContainerMixin):
+    _files_key = ('relationships', 'files', 'links', 'related', 'href')
+
     def _update_attributes(self, storage):
         if not storage:
             return
@@ -21,8 +23,6 @@ class Storage(OSFCore, ContainerMixin):
         self.node = self._get_attribute(storage, 'attributes', 'node')
         self.provider = self._get_attribute(storage, 'attributes', 'provider')
 
-        self._files_key = ('relationships', 'files', 'links', 'related',
-                           'href')
         self._files_url = self._get_attribute(storage, *self._files_key)
 
         self._new_folder_url = self._get_attribute(storage,
