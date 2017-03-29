@@ -1,11 +1,17 @@
 from unittest.mock import patch
+from unittest.mock import MagicMock
+from unittest.mock import PropertyMock
+
+import pytest
 
 from osfclient.models import OSFCore
 from osfclient.models import File
 from osfclient.models import Folder
+from osfclient.exceptions import FolderExistsException
+from osfclient.models.file import _WaterButlerFolder
 
 from osfclient.tests import fake_responses
-from osfclient.tests.mocks import FakeResponse
+from osfclient.tests.mocks import FakeResponse, MockFolder
 
 _files_url = 'https://api.osf.io/v2//nodes/f3szh/files/osfstorage/foo123'
 
@@ -83,3 +89,50 @@ def test_iterate_files_and_folders():
     # check we did not try to recurse into subfolders
     expected = [((_files_url,),)]
     assert mock_osf_get.call_args_list == expected
+
+
+def test_create_existing_folder():
+    folder = Folder({})
+    new_folder_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                      'osfstorage/foo123/?kind=folder')
+    folder._new_folder_url = new_folder_url
+    folder._put = MagicMock(return_value=FakeResponse(409, None))
+
+    with pytest.raises(FolderExistsException):
+        folder.create_folder('foobar')
+
+    folder._put.assert_called_once_with(new_folder_url,
+                                        params={'name': 'foobar'})
+
+
+def test_create_existing_folder_exist_ok():
+    folder = Folder({})
+    new_folder_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                      'osfstorage/foo123/?kind=folder')
+    folder._new_folder_url = new_folder_url
+    folder._put = MagicMock(return_value=FakeResponse(409, None))
+
+    with patch.object(Folder, 'folders',
+                      new_callable=PropertyMock) as mock_folder:
+        mock_folder.return_value = [MockFolder('foobar'), MockFolder('fudge')]
+        existing_folder = folder.create_folder('foobar', exist_ok=True)
+
+    assert existing_folder.name == 'foobar'
+
+    folder._put.assert_called_once_with(new_folder_url,
+                                        params={'name': 'foobar'})
+
+
+def test_create_new_folder():
+    folder = Folder({})
+    new_folder_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                      'osfstorage/foo123/?kind=folder')
+    folder._new_folder_url = new_folder_url
+    folder._put = MagicMock(return_value=FakeResponse(201, None))
+
+    new_folder = folder.create_folder('foobar')
+
+    assert isinstance(new_folder, _WaterButlerFolder)
+
+    folder._put.assert_called_once_with(new_folder_url,
+                                        params={'name': 'foobar'})
