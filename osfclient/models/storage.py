@@ -12,10 +12,6 @@ class Storage(OSFCore, ContainerMixin):
         if not storage:
             return
 
-        # XXX does this happen?
-        if 'data' in storage:
-            storage = storage['data']
-
         self.id = self._get_attribute(storage, 'id')
 
         self.path = self._get_attribute(storage, 'attributes', 'path')

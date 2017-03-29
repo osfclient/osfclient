@@ -9,10 +9,6 @@ class File(OSFCore):
         if not file:
             return
 
-        # XXX does this happen?
-        if 'data' in file:
-            file = file['data']
-
         self.id = self._get_attribute(file, 'id')
 
         self._endpoint = self._get_attribute(file, 'links', 'self')
