@@ -38,7 +38,8 @@ def MockProject(name):
     return mock
 
 
-def MockArgs(username=None, password=None, output=None, project=None):
+def MockArgs(username=None, password=None, output=None, project=None,
+             source=None, destination=None):
     args = MagicMock()
     args._username_mock = PropertyMock(return_value=username)
     type(args).username = args._username_mock
@@ -49,6 +50,11 @@ def MockArgs(username=None, password=None, output=None, project=None):
     type(args).output = args._output_mock
     args._project_mock = PropertyMock(return_value=project)
     type(args).project = args._project_mock
+
+    args._source_mock = PropertyMock(return_value=source)
+    type(args).source = args._source_mock
+    args._destination_mock = PropertyMock(return_value=destination)
+    type(args).destination = args._destination_mock
 
     return args
 

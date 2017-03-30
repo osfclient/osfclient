@@ -59,6 +59,12 @@ def list_(args):
 
 
 def upload(args):
+    if args.username is None:
+        print('To upload a file you need to provider a username and password.')
+        return 1
+
+    #import pdb; pdb.set_trace()
+
     osf = _setup_osf(args)
 
     project = osf.project(args.project)

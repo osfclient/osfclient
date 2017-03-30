@@ -1,3 +1,4 @@
+import sys
 import argparse
 
 from .cli import fetch, list_, upload
@@ -40,7 +41,10 @@ def main():
 
     args = parser.parse_args()
     if 'func' in args:
-        args.func(args)
+        # give functions a chance to influence the exit code
+        exit_code = args.func(args)
+        if exit_code is not None:
+            sys.exit(exit_code)
 
 
 if __name__ == "__main__":
