@@ -3,8 +3,8 @@
 import os
 
 from .api import OSF
-
-CHUNK_SIZE = int(5e6)
+from .utils import norm_remote_path
+from .utils import split_storage
 
 
 def _setup_osf(args):
@@ -13,7 +13,9 @@ def _setup_osf(args):
     if args.username is not None:
         username = args.username
 
-    password = os.getenv("OSF_PASSWORD")
+    password = None
+    if username is not None:
+        password = os.getenv("OSF_PASSWORD")
 
     return OSF(username=username, password=password)
 
@@ -54,3 +56,21 @@ def list_(args):
                 path = path[1:]
 
             print(os.path.join(prefix, path))
+
+
+def upload(args):
+    if args.username is None:
+        print('To upload a file you need to provider a username and password.')
+        return 1
+
+    #import pdb; pdb.set_trace()
+
+    osf = _setup_osf(args)
+
+    project = osf.project(args.project)
+
+    storage, remote_path = split_storage(args.destination)
+
+    store = project.storage(storage)
+    with open(args.source, 'rb') as fp:
+        store.create_file(remote_path, fp)

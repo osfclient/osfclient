@@ -1,6 +1,7 @@
 import json
 
 
+# Use this to initialize a `Project` instance
 project_node = json.loads("""
 {
   "data": {
@@ -192,6 +193,8 @@ project_node = json.loads("""
 """)
 
 
+# Use this to fake a response when asking for a project's files/storages
+# e.g. project.storages or project.storage()
 def storage_node(project_id, storages=['osfstorage']):
     storage = """
     {
@@ -242,7 +245,66 @@ def storage_node(project_id, storages=['osfstorage']):
                                'n_storages': len(used_storages)})
 
 
-def files_node(project_id, storage, file_names=['hello.txt']):
+def _folder(osf_id, name, storage='osfstorage'):
+    template = """{
+        "relationships": {
+            "files": {
+                "links": {
+                    "related": {
+                        "href": "https://api.osf.io/v2/nodes/9zpcy/files/%(storage)s/%(osf_id)s/",
+                        "meta": {}
+                    }
+                }
+            },
+            "node": {
+                "links": {
+                    "related": {
+                        "href": "https://api.osf.io/v2/nodes/9zpcy/",
+                        "meta": {}
+                    }
+                }
+            }
+        },
+        "links": {
+            "info": "https://api.osf.io/v2/files/%(osf_id)s/",
+            "new_folder": "https://files.osf.io/v1/resources/9zpcy/providers/%(storage)s/%(osf_id)s/?kind=folder",
+            "self": "https://api.osf.io/v2/files/%(osf_id)s/",
+            "move": "https://files.osf.io/v1/resources/9zpcy/providers/%(storage)s/%(osf_id)s/",
+            "upload": "https://files.osf.io/v1/resources/9zpcy/providers/%(storage)s/%(osf_id)s/",
+            "delete": "https://files.osf.io/v1/resources/9zpcy/providers/%(storage)s/%(osf_id)s/"
+        },
+        "attributes": {
+            "extra": {
+                "hashes": {
+                    "sha256": null,
+                    "md5": null
+                }
+            },
+            "kind": "folder",
+            "name": "%(name)s",
+            "last_touched": null,
+            "materialized_path": "/%(name)s/",
+            "date_modified": null,
+            "current_version": 1,
+            "delete_allowed": true,
+            "date_created": null,
+            "provider": "%(storage)s",
+            "path": "/%(osf_id)s/",
+            "current_user_can_comment": true,
+            "guid": null,
+            "checkout": null,
+            "tags": [],
+            "size": null
+        },
+        "type": "files",
+        "id": "%(osf_id)s"
+    }"""
+    return json.loads(template % dict(osf_id=osf_id, name=name,
+                                      storage=storage))
+
+
+def files_node(project_id, storage, file_names=['hello.txt'],
+               folder_names=None):
     a_file = """{
     "relationships": {
         "node": {
@@ -300,6 +362,10 @@ def files_node(project_id, storage, file_names=['hello.txt']):
         files.append(json.loads(a_file % dict(storage=storage,
                                               fname=fname,
                                               project_id=project_id)))
+
+    if folder_names is not None:
+        for folder in folder_names:
+            files.append(_folder(folder + '123', folder, storage))
 
     wrapper = """{
     "data": %(files)s,

@@ -1,6 +1,6 @@
 """Test `osf ls` command"""
 
-from unittest.mock import patch, MagicMock, PropertyMock, mock_open
+from unittest.mock import patch
 
 from osfclient import OSF
 from osfclient.cli import list_
