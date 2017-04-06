@@ -3,7 +3,7 @@
 import os
 
 from .api import OSF
-from .utils import split_storage
+from .utils import norm_remote_path, split_storage
 
 
 def _setup_osf(args):
@@ -46,18 +46,24 @@ def fetch(args):
     osf = _setup_osf(args)
     project = osf.project(args.project)
 
-    storage, remote_path = split_storage(args.destination)
+    storage, remote_path = split_storage(args.remote)
 
     local_path = args.local
     if local_path is None:
         _, local_path = os.path.split(remote_path)
 
     directory, _ = os.path.split(local_path)
-    os.makedirs(directory, exist_ok=True)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
 
     store = project.storage(storage)
     for file_ in store.files:
-        if file_.path == remote_path:
+        if norm_remote_path(file_.path) == remote_path:
+            if os.path.exists(local_path):
+                print("Local file %s already exists, not "
+                      "overwriting." % local_path)
+                return 1
+
             with open(local_path, 'wb') as fp:
                 file_.write_to(fp)
 
