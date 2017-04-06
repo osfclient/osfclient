@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from .cli import fetch, list_, upload
+from .cli import clone, list_, upload
 
 
 def main():
@@ -11,14 +11,14 @@ def main():
                               'OSF_PASSWORD environment variable.'))
     subparsers = parser.add_subparsers()
 
-    # Fetch files
-    fetch_parser = subparsers.add_parser('fetch',
-                                         description=('Fetch all files from all'
+    # Clone project
+    clone_parser = subparsers.add_parser('clone',
+                                         description=('Copy all files from all'
                                                       ' storages for project.')
                                          )
-    fetch_parser.set_defaults(func=fetch)
-    fetch_parser.add_argument('project', help='OSF project ID')
-    fetch_parser.add_argument('output', help='Write files to this directory',
+    clone_parser.set_defaults(func=clone)
+    clone_parser.add_argument('project', help='OSF project ID')
+    clone_parser.add_argument('output', help='Write files to this directory',
                               default=None, nargs='?')
 
     # List files

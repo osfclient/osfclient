@@ -35,7 +35,7 @@ $ osf ls <projectid>
 $ osf -u yourOSFacount@example.com ls <projectid>
 
 # fetch all files from a project and store them in `output_directory`
-$ osf fetch <projectid> [output_directory]
+$ osf clone <projectid> [output_directory]
 
 # create a new file in a OSF project
 $ osf -u yourOSFacount@example.com upload <projectid> local/file.txt remote/path.txt

@@ -1,4 +1,4 @@
-"""Test `osf fetch` command."""
+"""Test `osf clone` command."""
 
 import os
 
@@ -6,21 +6,21 @@ from unittest import mock
 from unittest.mock import patch, mock_open
 
 from osfclient import OSF
-from osfclient.cli import fetch
+from osfclient.cli import clone
 
 from osfclient.tests.mocks import MockProject
 from osfclient.tests.mocks import MockArgs
 
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
-def test_fetch_project(OSF_project):
-    # check that `osf fetch` opens files with the right names and modes
+def test_clone_project(OSF_project):
+    # check that `osf clone` opens files with the right names and modes
     args = MockArgs(project='1234')
 
     mock_open_func = mock_open()
 
     with patch('osfclient.cli.open', mock_open_func):
-        fetch(args)
+        clone(args)
 
     OSF_project.assert_called_once_with('1234')
     # check that the project and the files have been accessed

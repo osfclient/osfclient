@@ -3,7 +3,6 @@
 import os
 
 from .api import OSF
-from .utils import norm_remote_path
 from .utils import split_storage
 
 
@@ -20,7 +19,7 @@ def _setup_osf(args):
     return OSF(username=username, password=password)
 
 
-def fetch(args):
+def clone(args):
     osf = _setup_osf(args)
     project = osf.project(args.project)
     output_dir = args.project
