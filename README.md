@@ -18,6 +18,35 @@ To participate in the development install the development requirements from
 directory.
 
 
+# Usage
+
+This project provides two things: a python library and a command-line program
+for interacting with files stored in the [OSF](https://osf.io/).
+
+The python library forms the basis for the command-line program. If you want
+programmatic access to your files use the library, otherwise try out the
+command-line program.
+
+```
+# list all files for a public project
+$ osf ls <projectid>
+
+# list all files for a private project
+$ osf -u yourOSFacount@example.com ls <projectid>
+
+# fetch all files from a project and store them in `output_directory`
+$ osf fetch <projectid> [output_directory]
+
+# create a new file in a OSF project
+$ osf -u yourOSFacount@example.com upload <projectid> local/file.txt remote/path.txt
+```
+
+If the project is private you will need to provide authentication details.
+You can provide your OSF account name as command-line argument or set
+the `OSF_USERNAME` environment variable. The password will be retrieved from
+the `OSF_PASSWORD` environment variable.
+
+
 # Contributing
 
 Contributions from everyone and anyone are welcome. Fork this repository,
