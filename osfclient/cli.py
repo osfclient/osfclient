@@ -42,6 +42,26 @@ def clone(args):
                 file_.write_to(f)
 
 
+def fetch(args):
+    osf = _setup_osf(args)
+    project = osf.project(args.project)
+
+    storage, remote_path = split_storage(args.destination)
+
+    local_path = args.local
+    if local_path is None:
+        _, local_path = os.path.split(remote_path)
+
+    directory, _ = os.path.split(local_path)
+    os.makedirs(directory, exist_ok=True)
+
+    store = project.storage(storage)
+    for file_ in store.files:
+        if file_.path == remote_path:
+            with open(local_path, 'wb') as fp:
+                file_.write_to(fp)
+
+
 def list_(args):
     osf = _setup_osf(args)
 
@@ -61,8 +81,6 @@ def upload(args):
     if args.username is None:
         print('To upload a file you need to provider a username and password.')
         return 1
-
-    #import pdb; pdb.set_trace()
 
     osf = _setup_osf(args)
 

@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from .cli import clone, list_, upload
+from .cli import clone, fetch, list_, upload
 
 
 def main():
@@ -19,6 +19,18 @@ def main():
     clone_parser.set_defaults(func=clone)
     clone_parser.add_argument('project', help='OSF project ID')
     clone_parser.add_argument('output', help='Write files to this directory',
+                              default=None, nargs='?')
+
+    # Fetch a individual files
+    fetch_parser = subparsers.add_parser('fetch',
+                                         description=('Fetch an individual'
+                                                      ' file from a project.')
+                                         )
+    fetch_parser.set_defaults(func=fetch)
+    fetch_parser.add_argument('project', help='OSF project ID')
+    fetch_parser.add_argument('remote', help='Remote path',
+                              default=None)
+    fetch_parser.add_argument('local', help='Local path',
                               default=None, nargs='?')
 
     # List files
