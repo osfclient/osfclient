@@ -43,27 +43,27 @@ def clone(args):
 
 
 def fetch(args):
-    osf = _setup_osf(args)
-    project = osf.project(args.project)
-
     storage, remote_path = split_storage(args.remote)
 
     local_path = args.local
     if local_path is None:
         _, local_path = os.path.split(remote_path)
 
+    if os.path.exists(local_path):
+        print("Local file %s already exists, not "
+              "overwriting." % local_path)
+        return 1
+
     directory, _ = os.path.split(local_path)
     if directory:
         os.makedirs(directory, exist_ok=True)
 
+    osf = _setup_osf(args)
+    project = osf.project(args.project)
+
     store = project.storage(storage)
     for file_ in store.files:
         if norm_remote_path(file_.path) == remote_path:
-            if os.path.exists(local_path):
-                print("Local file %s already exists, not "
-                      "overwriting." % local_path)
-                return 1
-
             with open(local_path, 'wb') as fp:
                 file_.write_to(fp)
 
