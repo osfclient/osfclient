@@ -21,7 +21,7 @@ def main():
     clone_parser.add_argument('output', help='Write files to this directory',
                               default=None, nargs='?')
 
-    # Fetch a individual files
+    # Fetch an individual file
     fetch_parser = subparsers.add_parser('fetch',
                                          description=('Fetch an individual'
                                                       ' file from a project.')
@@ -35,7 +35,7 @@ def main():
     fetch_parser.add_argument('local', help='Local path',
                               default=None, nargs='?')
 
-    # List files
+    # List all files in a project
     list_parser = subparsers.add_parser('list', aliases=['ls'],
                                         description=('List all files from all'
                                                      ' storages for project.')
@@ -43,7 +43,7 @@ def main():
     list_parser.set_defaults(func=list_)
     list_parser.add_argument('project', help='OSF project ID')
 
-    # Upload a file
+    # Upload a single file
     upload_parser = subparsers.add_parser('upload',
                                           description=('Upload a new file to'
                                                        ' an existing project.')
