@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from .cli import fetch, list_, upload
+from .cli import clone, fetch, list_, upload
 
 
 def main():
@@ -11,17 +11,31 @@ def main():
                               'OSF_PASSWORD environment variable.'))
     subparsers = parser.add_subparsers()
 
-    # Fetch files
-    fetch_parser = subparsers.add_parser('fetch',
-                                         description=('Fetch all files from all'
+    # Clone project
+    clone_parser = subparsers.add_parser('clone',
+                                         description=('Copy all files from all'
                                                       ' storages for project.')
                                          )
-    fetch_parser.set_defaults(func=fetch)
-    fetch_parser.add_argument('project', help='OSF project ID')
-    fetch_parser.add_argument('output', help='Write files to this directory',
+    clone_parser.set_defaults(func=clone)
+    clone_parser.add_argument('project', help='OSF project ID')
+    clone_parser.add_argument('output', help='Write files to this directory',
                               default=None, nargs='?')
 
-    # List files
+    # Fetch an individual file
+    fetch_parser = subparsers.add_parser('fetch',
+                                         description=('Fetch an individual'
+                                                      ' file from a project.')
+                                         )
+    fetch_parser.set_defaults(func=fetch)
+    fetch_parser.add_argument('-f', help='Force overwriting of local file',
+                              action='store_true')
+    fetch_parser.add_argument('project', help='OSF project ID')
+    fetch_parser.add_argument('remote', help='Remote path',
+                              default=None)
+    fetch_parser.add_argument('local', help='Local path',
+                              default=None, nargs='?')
+
+    # List all files in a project
     list_parser = subparsers.add_parser('list', aliases=['ls'],
                                         description=('List all files from all'
                                                      ' storages for project.')
@@ -29,7 +43,7 @@ def main():
     list_parser.set_defaults(func=list_)
     list_parser.add_argument('project', help='OSF project ID')
 
-    # Upload a file
+    # Upload a single file
     upload_parser = subparsers.add_parser('upload',
                                           description=('Upload a new file to'
                                                        ' an existing project.')

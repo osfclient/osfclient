@@ -41,9 +41,11 @@ def test_select_project(Project_storage, OSF_project):
 
     # the mock project created by calling OSF().project()
     fake_project = OSF_project.return_value
-    expected = [call.storage('osfstorage'),
-                # called with right path and the fake file object
-                # from fake_open
-                call.storage().create_file('bar/bar/foo.txt',
-                                           fake_open.return_value)]
+    expected = [call._storage_mock('osfstorage')]
     assert fake_project.mock_calls == expected
+
+    expected = [call.create_file('bar/bar/foo.txt',
+                                 fake_open.return_value)]
+    # we should call the create_file method on the return
+    # value of _storage_mock
+    assert fake_project._storage_mock.return_value.mock_calls == expected

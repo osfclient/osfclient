@@ -27,6 +27,7 @@ The python library forms the basis for the command-line program. If you want
 programmatic access to your files use the library, otherwise try out the
 command-line program.
 
+Below some examples on how to use it:
 ```
 # list all files for a public project
 $ osf ls <projectid>
@@ -35,16 +36,19 @@ $ osf ls <projectid>
 $ osf -u yourOSFacount@example.com ls <projectid>
 
 # fetch all files from a project and store them in `output_directory`
-$ osf fetch <projectid> [output_directory]
+$ osf clone <projectid> [output_directory]
 
-# create a new file in a OSF project
+# create a new file in an OSF project
 $ osf -u yourOSFacount@example.com upload <projectid> local/file.txt remote/path.txt
+
+# download a single file from an OSF project
+$ osf fetch <projectid> remote/path.txt local/file.txt
 ```
 
 If the project is private you will need to provide authentication details.
-You can provide your OSF account name as command-line argument or set
-the `OSF_USERNAME` environment variable. The password will be retrieved from
-the `OSF_PASSWORD` environment variable.
+You can provide your OSF account name as command-line argument (see the
+`osf upload` example) or set the `OSF_USERNAME` environment variable. The
+password will be retrieved from the `OSF_PASSWORD` environment variable.
 
 
 # Contributing

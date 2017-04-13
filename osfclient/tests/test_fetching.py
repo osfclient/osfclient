@@ -12,10 +12,12 @@ from osfclient.tests.mocks import MockProject
 from osfclient.tests.mocks import MockArgs
 
 
+@patch('osfclient.cli.os.makedirs')
+@patch('osfclient.cli.os.path.exists', return_value=False)
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
-def test_fetch_project(OSF_project):
-    # check that `osf fetch` opens files with the right names and modes
-    args = MockArgs(project='1234')
+def test_fetch_file(OSF_project, os_path_exists, os_makedirs):
+    # check that `osf fetch` opens the right files with the right name and mode
+    args = MockArgs(project='1234', remote='osfstorage/a/a/a')
 
     mock_open_func = mock_open()
 
@@ -24,17 +26,74 @@ def test_fetch_project(OSF_project):
 
     OSF_project.assert_called_once_with('1234')
     # check that the project and the files have been accessed
-    for store in OSF_project.return_value.storages:
-        assert store._name_mock.called
+    store = OSF_project.return_value.storages[0]
+    assert store._name_mock.return_value == 'osfstorage'
 
-        for f in store.files:
-            assert f._path_mock.called
-            fname = f._path_mock.return_value
-            if fname.startswith('/'):
-                fname = fname[1:]
+    # should create a file in the same directory when no local
+    # filename is specified
+    assert mock.call('a', 'wb') in mock_open_func.mock_calls
 
-            full_path = os.path.join('1234',
-                                     store._name_mock.return_value,
-                                     fname)
 
-            assert mock.call(full_path, 'wb') in mock_open_func.mock_calls
+@patch('osfclient.cli.os.makedirs')
+@patch('osfclient.cli.os.path.exists', return_value=False)
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+def test_fetch_file_local_name_specified(OSF_project, os_path_exists,
+                                         os_makedirs):
+    # check that `osf fetch` opens the right files with the right name
+    # and mode when specifying a local filename
+    args = MockArgs(project='1234', remote='osfstorage/a/a/a',
+                    local='foobar.txt')
+
+    mock_open_func = mock_open()
+
+    with patch('osfclient.cli.open', mock_open_func):
+        fetch(args)
+
+    OSF_project.assert_called_once_with('1234')
+    # check that the project and the files have been accessed
+    store = OSF_project.return_value.storages[0]
+    assert store._name_mock.return_value == 'osfstorage'
+
+    # should create a file in the same directory when no local
+    # filename is specified
+    assert mock.call('foobar.txt', 'wb') in mock_open_func.mock_calls
+    assert not os_makedirs.called
+
+
+@patch('osfclient.cli.os.makedirs')
+@patch('osfclient.cli.os.path.exists', return_value=False)
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+def test_fetch_file_local_dir_specified(OSF_project, os_path_exists,
+                                        os_makedirs):
+    # check that `osf fetch` opens the right files with the right name
+    # and mode when specifying a local filename
+    args = MockArgs(project='1234', remote='osfstorage/a/a/a',
+                    local='subdir/foobar.txt')
+
+    mock_open_func = mock_open()
+
+    with patch('osfclient.cli.open', mock_open_func):
+        fetch(args)
+
+    OSF_project.assert_called_once_with('1234')
+    # check that the project and the files have been accessed
+    store = OSF_project.return_value.storages[0]
+    assert store._name_mock.return_value == 'osfstorage'
+
+    assert (mock.call('subdir/foobar.txt', 'wb') in
+            mock_open_func.mock_calls)
+    assert mock.call('subdir', exist_ok=True) in os_makedirs.mock_calls
+
+
+@patch('osfclient.cli.os.path.exists', return_value=True)
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+def test_fetch_local_file_exists(OSF_project, os_path_exists, capsys):
+    # check that `osf fetch` opens the right files with the right name
+    # and mode when specifying a local filename
+    args = MockArgs(project='1234', remote='osfstorage/a/a/a',
+                    local='subdir/foobar.txt')
+
+    return_value = fetch(args)
+    assert return_value == 1
+    out, err = capsys.readouterr()
+    assert 'already exists, not overwriting' in out
