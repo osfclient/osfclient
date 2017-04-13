@@ -1,16 +1,56 @@
 """Command line interface to the OSF"""
 
 import os
+import configparser
+import sys
 
 from .api import OSF
 from .utils import norm_remote_path, split_storage
 
 
-def _setup_osf(args):
-    # command line argument overrides environment variable
+def config_from_file():
+    if os.path.exists(".osfcli.config"):
+        config_ = configparser.ConfigParser()
+        config_.read(".osfcli.config")
+
+        config = config_['osf']
+
+    else:
+        config = {}
+
+    return config
+
+
+def config_from_env(config):
     username = os.getenv("OSF_USERNAME")
-    if args.username is not None:
+    if username is not None:
+        config['username'] = username
+
+    project = os.getenv("OSF_PROJECT")
+    if project is not None:
+        config['project'] = project
+
+    return config
+
+
+def _setup_osf(args):
+    # Command line options have precedence over environment variables,
+    # which have precedence over the config file.
+    config = config_from_env(config_from_file())
+
+    if args.username is None:
+        username = config.get('username')
+    else:
         username = args.username
+
+    project = config.get('project')
+    if args.project is None:
+        args.project = project
+    # still None? We are in trouble
+    if args.project is None:
+        print('You have to specify a project ID via the command line,'
+              ' configuration file or environment variable.')
+        sys.exit(1)
 
     password = None
     if username is not None:
