@@ -20,6 +20,12 @@ def _setup_osf(args):
 
 
 def clone(args):
+    """Copy all files from all storages of a project.
+
+    The output directory defaults to the current directory.
+
+    If the project is private you need to specify a username.
+    """
     osf = _setup_osf(args)
     project = osf.project(args.project)
     output_dir = args.project
@@ -43,6 +49,16 @@ def clone(args):
 
 
 def fetch(args):
+    """Fetch an individual file from a project.
+
+    The first part of the remote path is interpreted as the name of the
+    storage provider. If there is no match the default (osfstorage) is
+    used.
+
+    The local path defaults to the name of the remote file.
+
+    If the project is private you need to specify a username.
+    """
     storage, remote_path = split_storage(args.remote)
 
     local_path = args.local
@@ -69,6 +85,10 @@ def fetch(args):
 
 
 def list_(args):
+    """List all files from all storages for project.
+
+    If the project is private you need to specify a username.
+    """
     osf = _setup_osf(args)
 
     project = osf.project(args.project)
@@ -84,6 +104,14 @@ def list_(args):
 
 
 def upload(args):
+    """Upload a new file to an existing project.
+
+    The first part of the remote path is interpreted as the name of the
+    storage provider. If there is no match the default (osfstorage) is
+    used.
+
+    If the project is private you need to specify a username.
+    """
     if args.username is None:
         print('To upload a file you need to provider a username and password.')
         return 1
