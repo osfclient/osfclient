@@ -1,5 +1,6 @@
 """Test `osf ls` command"""
 
+from unittest.mock import call
 from unittest.mock import patch
 
 from osfclient import OSF
@@ -11,16 +12,24 @@ from osfclient.tests.mocks import MockArgs
 
 @patch('osfclient.cli.OSF')
 def test_anonymous_doesnt_use_password(MockOSF):
-    args = MockArgs()
+    args = MockArgs(project='1234')
 
-    list_(args)
+    def simple_getenv(key):
+        return None
 
+    with patch('osfclient.cli.os.getenv',
+               side_effect=simple_getenv) as mock_getenv:
+        list_(args)
+
+    # if there is no username we should not try to obtain a password either
+    assert call('OSF_USERNAME') in mock_getenv.mock_calls
+    assert call('OSF_PASSWORD') not in mock_getenv.mock_calls
     MockOSF.assert_called_once_with(username=None, password=None)
 
 
 @patch('osfclient.cli.OSF')
 def test_username_password(MockOSF):
-    args = MockArgs(username='joe@example.com')
+    args = MockArgs(username='joe@example.com', project='1234')
 
     def simple_getenv(key):
         if key == 'OSF_PASSWORD':
