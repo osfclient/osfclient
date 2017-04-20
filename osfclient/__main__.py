@@ -9,6 +9,7 @@ def main():
     parser.add_argument('-u', '--username', default=None,
                         help=('OSF username. Provide password via '
                               'OSF_PASSWORD environment variable.'))
+    parser.add_argument('-p', '--project', default=None, help='OSF project.')
     subparsers = parser.add_subparsers()
 
     # Clone project
@@ -28,7 +29,6 @@ def main():
     fetch_parser.set_defaults(func=fetch)
     fetch_parser.add_argument('-f', help='Force overwriting of local file',
                               action='store_true')
-    fetch_parser.add_argument('project', help='OSF project ID')
     fetch_parser.add_argument('remote', help='Remote path',
                               default=None)
     fetch_parser.add_argument('local', help='Local path',
@@ -40,7 +40,6 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
         )
     list_parser.set_defaults(func=list_)
-    list_parser.add_argument('project', help='OSF project ID')
 
     # Upload a single file
     upload_parser = subparsers.add_parser(
@@ -48,7 +47,6 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
         )
     upload_parser.set_defaults(func=upload)
-    upload_parser.add_argument('project', help='OSF project ID')
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')
 
