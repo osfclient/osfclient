@@ -2,6 +2,10 @@ from unittest.mock import call
 from unittest.mock import Mock
 from unittest.mock import patch
 
+import pytest
+
+from osfclient.tests.mocks import MockArgs
+
 from osfclient import cli
 
 
@@ -60,3 +64,20 @@ def test_config_from_env_project():
         config = cli.config_from_env({'project': 'theproject'})
 
     assert config == {'project': 'theproject'}
+
+
+def test_config_project(capsys):
+    # No project in args or the config, should sys.exit(1)
+    args = MockArgs(project=None)
+
+    def simple_config(key):
+        return {}
+
+    with patch('osfclient.cli.config_from_env', side_effect=simple_config):
+        with pytest.raises(SystemExit):
+            cli._setup_osf(args)
+
+    out, err = capsys.readouterr()
+    expected = ('specify a project ID via the command line, configuration '
+                'file or environment variable')
+    assert expected in out
