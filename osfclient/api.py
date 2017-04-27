@@ -25,8 +25,10 @@ class OSF(OSFCore):
 
     @property
     def username(self):
-        return self.session.auth[0]
+        if self.session.auth is not None:
+            return self.session.auth[0]
 
     @property
     def password(self):
-        return self.session.auth[1]
+        if self.session.auth is not None:
+            return self.session.auth[1]

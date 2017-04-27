@@ -22,10 +22,14 @@ def test_anonymous_doesnt_work():
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
 def test_remove_file(OSF_project):
-    args = MockArgs(project='1234', username='joe', password='secret',
-                    target='osfstorage/a/a/a')
+    args = MockArgs(project='1234', username='joe', target='osfstorage/a/a/a')
 
-    remove(args)
+    def simple_getenv(key):
+        if key == 'OSF_PASSWORD':
+            return 'secret'
+
+    with patch('osfclient.cli.os.getenv', side_effect=simple_getenv):
+        remove(args)
 
     OSF_project.assert_called_once_with('1234')
 
@@ -38,10 +42,14 @@ def test_remove_file(OSF_project):
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
 def test_wrong_storage_name(OSF_project):
-    args = MockArgs(project='1234', username='joe', password='secret',
-                    target='DOESNTEXIST/a/a/a')
+    args = MockArgs(project='1234', username='joe', target='DOESNTEXIST/a/a/a')
 
-    remove(args)
+    def simple_getenv(key):
+        if key == 'OSF_PASSWORD':
+            return 'secret'
+
+    with patch('osfclient.cli.os.getenv', side_effect=simple_getenv):
+        remove(args)
 
     OSF_project.assert_called_once_with('1234')
 
