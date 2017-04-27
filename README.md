@@ -44,6 +44,12 @@ $ osf -p <projectid> -u yourOSFacount@example.com upload local/file.txt remote/p
 
 # download a single file from an OSF project
 $ osf -p <projectid> fetch remote/path.txt local/file.txt
+
+# upload a single file to an OSF project
+$ osf -p <projectid> upload local/path.txt remote/file.txt
+
+# remove a single file from an OSF project
+$ osf -p <projectid> remove remote/file.txt
 ```
 
 If the project is private you will need to provide authentication details.

@@ -22,3 +22,13 @@ class OSF(OSFCore):
         """Fetch project `project_id`."""
         url = self._build_url('nodes', project_id)
         return Project(self._json(self._get(url), 200), self.session)
+
+    @property
+    def username(self):
+        if self.session.auth is not None:
+            return self.session.auth[0]
+
+    @property
+    def password(self):
+        if self.session.auth is not None:
+            return self.session.auth[1]

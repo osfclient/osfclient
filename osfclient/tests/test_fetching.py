@@ -1,6 +1,6 @@
 """Test `osf fetch` command."""
 
-import os
+import pytest
 
 from unittest import mock
 from unittest.mock import patch, mock_open
@@ -87,13 +87,13 @@ def test_fetch_file_local_dir_specified(OSF_project, os_path_exists,
 
 @patch('osfclient.cli.os.path.exists', return_value=True)
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
-def test_fetch_local_file_exists(OSF_project, os_path_exists, capsys):
+def test_fetch_local_file_exists(OSF_project, os_path_exists):
     # check that `osf fetch` opens the right files with the right name
     # and mode when specifying a local filename
     args = MockArgs(project='1234', remote='osfstorage/a/a/a',
                     local='subdir/foobar.txt')
 
-    return_value = fetch(args)
-    assert return_value == 1
-    out, err = capsys.readouterr()
-    assert 'already exists, not overwriting' in out
+    with pytest.raises(SystemExit) as e:
+        fetch(args)
+
+    assert 'already exists, not overwriting' in e.value.args[0]

@@ -66,7 +66,7 @@ def test_config_from_env_project():
     assert config == {'project': 'theproject'}
 
 
-def test_config_project(capsys):
+def test_config_project():
     # No project in args or the config, should sys.exit(1)
     args = MockArgs(project=None)
 
@@ -74,10 +74,9 @@ def test_config_project(capsys):
         return {}
 
     with patch('osfclient.cli.config_from_env', side_effect=simple_config):
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit) as e:
             cli._setup_osf(args)
 
-    out, err = capsys.readouterr()
     expected = ('specify a project ID via the command line, configuration '
                 'file or environment variable')
-    assert expected in out
+    assert expected in e.value.args[0]

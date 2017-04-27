@@ -48,9 +48,8 @@ def _setup_osf(args):
         args.project = project
     # still None? We are in trouble
     if args.project is None:
-        print('You have to specify a project ID via the command line,'
-              ' configuration file or environment variable.')
-        sys.exit(1)
+        sys.exit('You have to specify a project ID via the command line,'
+                 ' configuration file or environment variable.')
 
     password = None
     if username is not None:
@@ -106,9 +105,7 @@ def fetch(args):
         _, local_path = os.path.split(remote_path)
 
     if os.path.exists(local_path):
-        print("Local file %s already exists, not "
-              "overwriting." % local_path)
-        return 1
+        sys.exit("Local file %s already exists, not overwriting." % local_path)
 
     directory, _ = os.path.split(local_path)
     if directory:
@@ -152,11 +149,10 @@ def upload(args):
 
     If the project is private you need to specify a username.
     """
-    if args.username is None:
-        print('To upload a file you need to provider a username and password.')
-        return 1
-
     osf = _setup_osf(args)
+    if osf.username is None or osf.password is None:
+        sys.exit('To upload a file you need to provide a username and'
+                 ' password.')
 
     project = osf.project(args.project)
 
@@ -165,3 +161,25 @@ def upload(args):
     store = project.storage(storage)
     with open(args.source, 'rb') as fp:
         store.create_file(remote_path, fp)
+
+
+def remove(args):
+    """Remove a file from the project's storage.
+
+    The first part of the remote path is interpreted as the name of the
+    storage provider. If there is no match the default (osfstorage) is
+    used.
+    """
+    osf = _setup_osf(args)
+    if osf.username is None or osf.password is None:
+        sys.exit('To remove a file you need to provide a username and'
+                 ' password.')
+
+    project = osf.project(args.project)
+
+    storage, remote_path = split_storage(args.target)
+
+    store = project.storage(storage)
+    for f in store.files:
+        if norm_remote_path(f.path) == remote_path:
+            f.remove()

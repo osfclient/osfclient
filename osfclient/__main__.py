@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from .cli import clone, fetch, list_, upload
+from .cli import clone, fetch, list_, remove, upload
 
 
 def main():
@@ -49,6 +49,14 @@ def main():
     upload_parser.set_defaults(func=upload)
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')
+
+    # Remove a single file
+    remove_parser = subparsers.add_parser(
+        'remove', aliases=['rm'], description=remove.__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter
+        )
+    remove_parser.set_defaults(func=remove)
+    remove_parser.add_argument('target', help='Remote file path')
 
     args = parser.parse_args()
     if 'func' in args:
