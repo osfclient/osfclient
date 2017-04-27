@@ -137,3 +137,27 @@ def test_create_new_folder():
 
     folder._put.assert_called_once_with(new_folder_url,
                                         params={'name': 'foobar'})
+
+
+def test_remove_file():
+    f = File({})
+    f._delete_url = 'http://delete.me/uri'
+    f._delete = MagicMock(return_value=FakeResponse(204, {'data': {}}))
+
+    f.remove()
+
+    assert f._delete.called
+
+
+def test_remove_file_failed():
+    f = File({})
+    f.path = 'some/path'
+    f._delete_url = 'http://delete.me/uri'
+    f._delete = MagicMock(return_value=FakeResponse(404, {'data': {}}))
+
+    with pytest.raises(RuntimeError) as e:
+        f.remove()
+
+    assert f._delete.called
+
+    assert 'Could not delete' in e.value.args[0]

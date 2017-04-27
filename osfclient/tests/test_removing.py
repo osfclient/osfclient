@@ -61,3 +61,25 @@ def test_wrong_storage_name(OSF_project):
     for f in MockStorage.files:
         if f._path_mock.return_value == '/a/a/a':
             assert call.remove() not in f.mock_calls
+
+
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+def test_non_existant_file(OSF_project):
+    args = MockArgs(project='1234', username='joe',
+                    target='osfstorage/DOESNTEXIST/a')
+
+    def simple_getenv(key):
+        if key == 'OSF_PASSWORD':
+            return 'secret'
+
+    with patch('osfclient.cli.os.getenv', side_effect=simple_getenv):
+        remove(args)
+
+    OSF_project.assert_called_once_with('1234')
+
+    # check that all files in osfstorage are visited but non get deleted
+    MockProject = OSF_project.return_value
+    MockStorage = MockProject._storage_mock.return_value
+    for f in MockStorage.files:
+        assert f._path_mock.called
+        assert call.remove() not in f.mock_calls
