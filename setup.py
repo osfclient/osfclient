@@ -1,5 +1,5 @@
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 setup(
@@ -15,7 +15,7 @@ setup(
     # Author details
     author='The OSF-cli authors',
     # Choose your license
-    license='LGPL',
+    license='BSD3',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -24,22 +24,19 @@ setup(
         #   4 - Beta
         #   5 - Production/Stable
         'Development Status :: 3 - Alpha',
-
+        'Environment :: Console',
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools',
-
+        'Intended Audience :: Science/Research',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'License :: OSI Approved :: BSD License',
+        'Topic :: Utilities'
     ],
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=['osfclient'],
-
-    # Alternatively, if you want to distribute just a my_module.py, uncomment
-    # this:
-    #   py_modules=["my_module"],
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
