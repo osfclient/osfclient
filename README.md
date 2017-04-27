@@ -30,25 +30,35 @@ command-line program.
 Below some examples on how to use it:
 ```
 # list all files for a public project
-$ osf ls <projectid>
+$ osf -p <projectid> ls
 
 # list all files for a private project
-$ osf -u yourOSFacount@example.com ls <projectid>
+# set $OSF_PASSWORD to provide the password
+$ osf -p <projectid> -u yourOSFacount@example.com ls
 
 # fetch all files from a project and store them in `output_directory`
-$ osf clone <projectid> [output_directory]
+$ osf -p <projectid> clone [output_directory]
 
 # create a new file in an OSF project
-$ osf -u yourOSFacount@example.com upload <projectid> local/file.txt remote/path.txt
+$ osf -p <projectid> -u yourOSFacount@example.com upload local/file.txt remote/path.txt
 
 # download a single file from an OSF project
-$ osf fetch <projectid> remote/path.txt local/file.txt
+$ osf -p <projectid> fetch remote/path.txt local/file.txt
 ```
 
 If the project is private you will need to provide authentication details.
 You can provide your OSF account name as command-line argument (see the
 `osf upload` example) or set the `OSF_USERNAME` environment variable. The
 password will be retrieved from the `OSF_PASSWORD` environment variable.
+
+You can set a default values by using a configuration file in the current
+directory. To set the username and project ID create `.osfcli.config`:
+```
+[osf]
+username = yourOSFaccount@example.com
+project = 9zpcy
+```
+after which you can simply run `osf ls` to list the contents of the project.
 
 
 # Contributing
