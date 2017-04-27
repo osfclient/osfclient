@@ -16,10 +16,13 @@ from osfclient.tests.mocks import MockStorage
 
 
 def test_anonymous_doesnt_work():
-    args = MockArgs()
+    args = MockArgs(project='1234')
 
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as e:
         upload(args)
+
+    expected = 'upload a file you need to provide a username and password'
+    assert expected in e.value.args[0]
 
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))

@@ -151,7 +151,7 @@ def upload(args):
     """
     osf = _setup_osf(args)
     if osf.username is None or osf.password is None:
-        sys.exit('To remove a file you need to provide a username and'
+        sys.exit('To upload a file you need to provide a username and'
                  ' password.')
 
     project = osf.project(args.project)
