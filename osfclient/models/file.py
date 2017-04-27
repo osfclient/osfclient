@@ -13,6 +13,7 @@ class File(OSFCore):
 
         self._endpoint = self._get_attribute(file, 'links', 'self')
         self._download_url = self._get_attribute(file, 'links', 'download')
+        self._delete_url = self._get_attribute(file, 'links', 'delete')
         self.osf_path = self._get_attribute(file, 'attributes', 'path')
         self.path = self._get_attribute(file,
                                         'attributes', 'materialized_path')
@@ -42,6 +43,10 @@ class File(OSFCore):
         else:
             raise RuntimeError("Response has status "
                                "code {}.".format(response.status_code))
+
+    def remove(self):
+        """Remove this file from the remote storage."""
+        self.session.delete(self._delete_url)
 
 
 class ContainerMixin:

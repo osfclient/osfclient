@@ -25,6 +25,9 @@ class OSFCore:
     def _put(self, url, *args, **kwargs):
         return self.session.put(url, *args, **kwargs)
 
+    def _delete(self, url, *args, **kwargs):
+        return self.session.delete(url, *args, **kwargs)
+
     def _get_attribute(self, json, *keys, default=None):
         # pick value out of a (nested) dictionary/JSON
         # `keys` is a list of keys
