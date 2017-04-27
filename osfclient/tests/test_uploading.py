@@ -4,6 +4,8 @@ from unittest.mock import call
 from unittest.mock import patch
 from unittest.mock import mock_open
 
+import pytest
+
 from osfclient import OSF
 from osfclient.cli import upload
 from osfclient.models import Project
@@ -16,7 +18,8 @@ from osfclient.tests.mocks import MockStorage
 def test_anonymous_doesnt_work():
     args = MockArgs()
 
-    assert upload(args) == 1
+    with pytest.raises(SystemExit):
+        upload(args)
 
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))

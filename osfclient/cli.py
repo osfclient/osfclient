@@ -48,9 +48,8 @@ def _setup_osf(args):
         args.project = project
     # still None? We are in trouble
     if args.project is None:
-        print('You have to specify a project ID via the command line,'
-              ' configuration file or environment variable.')
-        sys.exit(1)
+        sys.exit('You have to specify a project ID via the command line,'
+                 ' configuration file or environment variable.')
 
     password = None
     if username is not None:
@@ -106,9 +105,7 @@ def fetch(args):
         _, local_path = os.path.split(remote_path)
 
     if os.path.exists(local_path):
-        print("Local file %s already exists, not "
-              "overwriting." % local_path)
-        return 1
+        sys.exit("Local file %s already exists, not overwriting." % local_path)
 
     directory, _ = os.path.split(local_path)
     if directory:
@@ -152,11 +149,10 @@ def upload(args):
 
     If the project is private you need to specify a username.
     """
-    if args.username is None:
-        print('To upload a file you need to provider a username and password.')
-        return 1
-
     osf = _setup_osf(args)
+    if osf.username is None or osf.password is None:
+        sys.exit('To remove a file you need to provide a username and'
+                 ' password.')
 
     project = osf.project(args.project)
 
