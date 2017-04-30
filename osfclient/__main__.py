@@ -1,15 +1,32 @@
 import sys
 import argparse
+from textwrap import dedent
 
 from .cli import clone, fetch, list_, remove, upload
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    description = dedent("""
+    osf is a command-line program to up and download
+    files from osf.io.
+
+    These are common osf commands:
+
+        clone     Copy all files from all storages of a project
+        fetch     Fetch an individual file from a project
+        list      List all files from all storages for a project
+        upload    Upload a new file to an existing project
+        remove    Remove a file from a project's storage
+
+    See 'osf <command> -h' to read about a specific command.
+    """)
+    parser = argparse.ArgumentParser(
+        description=description,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-u', '--username', default=None,
-                        help=('OSF username. Provide password via '
-                              'OSF_PASSWORD environment variable.'))
-    parser.add_argument('-p', '--project', default=None, help='OSF project.')
+                        help=('OSF username. Provide your password via '
+                              'OSF_PASSWORD environment variable'))
+    parser.add_argument('-p', '--project', default=None, help='OSF project ID')
     subparsers = parser.add_subparsers()
 
     # Clone project
@@ -64,6 +81,9 @@ def main():
         exit_code = args.func(args)
         if exit_code is not None:
             sys.exit(exit_code)
+
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
