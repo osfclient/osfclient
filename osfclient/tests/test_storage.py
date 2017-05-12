@@ -162,3 +162,25 @@ def test_create_new_file_subdirectory():
                 call(new_file_url, params={'name': 'foo.txt'}, data=fake_fp)]
     assert mock_put.call_args_list == expected
     assert fake_fp.call_count == 0
+
+
+def test_create_new_zero_length_file():
+    # check zero length files are special cased
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+    store._put = MagicMock(return_value=FakeResponse(201, None))
+
+    fake_fp = MagicMock()
+    fake_fp.peek = lambda x: ''
+
+    store.create_file('foo.txt', fake_fp)
+
+    store._put.assert_called_once_with(new_file_url,
+                                       # this is the important check in
+                                       # this test
+                                       data=b'',
+                                       params={'name': 'foo.txt'})
+
+    assert fake_fp.call_count == 0
