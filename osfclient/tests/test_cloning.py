@@ -20,7 +20,8 @@ def test_clone_project(OSF_project):
     mock_open_func = mock_open()
 
     with patch('osfclient.cli.open', mock_open_func):
-        clone(args)
+        with patch('osfclient.cli.os.makedirs'):
+            clone(args)
 
     OSF_project.assert_called_once_with('1234')
     # check that the project and the files have been accessed
