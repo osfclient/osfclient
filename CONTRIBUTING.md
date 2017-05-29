@@ -9,6 +9,9 @@ conduct](CONDUCT.md).
 By contributing, you are agreeing that we may redistribute your work under
 [this license](license).
 
+We use the [GitHub flow](https://guides.github.com/introduction/flow/) model
+for contributions.
+
 Contributions should follow these guidelines:
 
 * all changes by pull request (PR);
