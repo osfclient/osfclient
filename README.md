@@ -73,3 +73,5 @@ Contributions from everyone and anyone are welcome. Fork this repository,
 make your changes, add a test to cover them and create a Pull Request.
 Then one of the maintainers will review your changes. When all comments
 have been addressed and all tests pass your changes will be merged.
+
+For details: [CONTRIBUTING.md](CONTRIBUTING.md)
