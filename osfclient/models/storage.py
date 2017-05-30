@@ -87,6 +87,13 @@ class Storage(OSFCore, ContainerMixin):
                 parent = parent.create_folder(directory, exist_ok=True)
 
         url = parent._new_file_url
-        response = self._put(url, params={'name': fname}, data=fp)
+        # peek at the file to check if it is an ampty file which needs special
+        # handling in requests. If we pass a file like object to data that
+        # turns out to be of length zero then no file is created on the OSF
+        if fp.peek(1):
+            response = self._put(url, params={'name': fname}, data=fp)
+        else:
+            response = self._put(url, params={'name': fname}, data=b'')
+
         if response.status_code == 409:
             raise FileExistsError(path)
