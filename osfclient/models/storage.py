@@ -64,7 +64,8 @@ class Storage(OSFCore, ContainerMixin):
 
         Recursively lists all files in all subfolders.
         """
-        return self._iter_children(self._files_url, 'file', File,
+        return self._iter_children(self._files_url + '?embed=files',
+                                   'file', File,
                                    self._files_key)
 
     def create_file(self, path, fp):
