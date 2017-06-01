@@ -81,8 +81,8 @@ def test_config_project():
                 'file or environment variable')
     assert expected in e.value.args[0]
 
-def test_password_prompt():
 
+def test_password_prompt():
     # No password in config should trigger the password prompt
     # when an username is specified
     args = MockArgs(project='test', username='theusername')
