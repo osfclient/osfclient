@@ -25,9 +25,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-u', '--username', default=None,
                         help=('OSF username. Provide your password via '
-                              'OSF_PASSWORD environment variable'))
+                              'OSF_PASSWORD environment variable.'))
     parser.add_argument('-p', '--project', default=None, help='OSF project ID')
-    subparsers = parser.add_subparsers()
+    # dest=command stores the name of the command in a variable, this is
+    # used later on to retrieve the correct sub-parser
+    subparsers = parser.add_subparsers(dest='command')
 
     # Clone project
     clone_parser = subparsers.add_parser(
@@ -78,8 +80,18 @@ def main():
     args = parser.parse_args()
     if 'func' in args:
         # give functions a chance to influence the exit code
-        exit_code = args.func(args)
+        # this setup is so we can print usage for the sub command
+        # even if there was an error further down
+        try:
+            exit_code = args.func(args)
+        except SystemExit as e:
+            exit_code = e.code
+
         if exit_code is not None:
+            sub_parser = subparsers.choices[args.command]
+            sub_parser.print_usage(file=sys.stderr)
+            print('{} {}: error:'.format(parser.prog, args.command),
+                  file=sys.stderr, end=' ')
             sys.exit(exit_code)
 
     else:
