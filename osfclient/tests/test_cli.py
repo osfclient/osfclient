@@ -80,3 +80,13 @@ def test_config_project():
     expected = ('specify a project ID via the command line, configuration '
                 'file or environment variable')
     assert expected in e.value.args[0]
+
+
+def test_password_prompt():
+    # No password in config should trigger the password prompt
+    # when an username is specified
+    args = MockArgs(project='test', username='theusername')
+    with patch('getpass.getpass') as getpass:
+        getpass.return_value = 'test_password'
+        osf = cli._setup_osf(args)
+        assert osf.password == 'test_password'

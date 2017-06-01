@@ -59,7 +59,8 @@ $ osf -p <projectid> remove remote/file.txt
 If the project is private you will need to provide authentication details.
 You can provide your OSF account name as command-line argument (see the
 `osf upload` example) or set the `OSF_USERNAME` environment variable. The
-password will be retrieved from the `OSF_PASSWORD` environment variable.
+password will be retrieved from the `OSF_PASSWORD` environment variable or
+asked directly by the tool.
 
 You can set a default values by using a configuration file in the current
 directory. To set the username and project ID create `.osfcli.config`:
