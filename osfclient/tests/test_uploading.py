@@ -1,8 +1,8 @@
 """Test `osf upload` command"""
 
-from unittest.mock import call
-from unittest.mock import patch
-from unittest.mock import mock_open
+from mock import call
+from mock import patch
+from mock import mock_open
 
 import pytest
 
