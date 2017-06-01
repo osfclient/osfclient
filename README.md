@@ -1,8 +1,12 @@
 # osfclient
 
-A python client for the Open Science Framework. This is a very new project,
-it has some rough edges.
+The `osfcli` is a python library and a command-line client for up- and downloading files to and from
+your [Open Science Framework](//osf.io) projects. The *Open Science Framework* (OSF) is an 
+open source project which facilitates the open collaboration of researchers on the web, by sharing data and other research outputs. 
 
+As such the OSF hosts large data sets, associated with papers or scientific projects, that can be freely downloaded. The *osfcli* allows people to store and retrieve large datasets associated to their scientific projects and papers on the OSF via the command line interface.
+
+This is a very new project, it has some rough edges.
 
 # Installing
 
