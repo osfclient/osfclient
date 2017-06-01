@@ -1,4 +1,5 @@
 import os
+import six
 
 KNOWN_PROVIDERS = ['osfstorage', 'github']
 
@@ -26,6 +27,9 @@ def split_storage(path, default='osfstorage'):
 
     for provider in KNOWN_PROVIDERS:
         if path.startswith(provider + '/'):
-            return path.split('/', maxsplit=1)
+            if six.PY3:
+                return path.split('/', maxsplit=1)
+            else:
+                return path.split('/', 1)
 
     return (default, path)

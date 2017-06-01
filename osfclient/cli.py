@@ -1,9 +1,12 @@
 """Command line interface to the OSF"""
 
 import os
-import configparser
 import getpass
 import sys
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 from .api import OSF
 from .utils import norm_remote_path, split_storage

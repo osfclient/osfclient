@@ -2,8 +2,7 @@
 
 import os
 
-from unittest import mock
-from unittest.mock import patch, mock_open
+from mock import patch, mock_open, call
 
 from osfclient import OSF
 from osfclient.cli import clone
@@ -38,4 +37,4 @@ def test_clone_project(OSF_project):
                                      store._name_mock.return_value,
                                      fname)
 
-            assert mock.call(full_path, 'wb') in mock_open_func.mock_calls
+            assert call(full_path, 'wb') in mock_open_func.mock_calls

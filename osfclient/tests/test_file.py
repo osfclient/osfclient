@@ -1,6 +1,6 @@
-from unittest.mock import patch
-from unittest.mock import MagicMock
-from unittest.mock import PropertyMock
+from mock import patch
+from mock import MagicMock
+from mock import PropertyMock
 
 import pytest
 

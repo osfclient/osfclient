@@ -1,6 +1,6 @@
-from unittest.mock import call
-from unittest.mock import Mock
-from unittest.mock import patch
+from mock import call
+from mock import Mock
+from mock import patch
 
 import pytest
 

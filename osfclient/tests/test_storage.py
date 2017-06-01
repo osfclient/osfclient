@@ -1,4 +1,4 @@
-from unittest.mock import patch, MagicMock, call
+from mock import patch, MagicMock, call
 
 import pytest
 
@@ -99,8 +99,13 @@ def test_create_existing_file():
     store._new_file_url = new_file_url
     store._put = MagicMock(return_value=FakeResponse(409, None))
 
+    try:
+        exception = FileExistsError
+    except NameError:
+        exception = OSError
+
     fake_fp = MagicMock()
-    with pytest.raises(FileExistsError):
+    with pytest.raises(exception):
         store.create_file('foo.txt', fake_fp)
 
     store._put.assert_called_once_with(new_file_url,

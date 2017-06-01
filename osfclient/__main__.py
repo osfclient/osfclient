@@ -1,4 +1,6 @@
+from __future__ import print_function
 import sys
+import six
 import argparse
 from textwrap import dedent
 
@@ -40,11 +42,17 @@ def main():
     clone_parser.add_argument('output', help='Write files to this directory',
                               default=None, nargs='?')
 
+    def _add_subparser(name, description, aliases=[]):
+        options = {
+            'description': description,
+            'formatter_class': argparse.RawDescriptionHelpFormatter,
+        }
+        if six.PY3:
+            options['aliases'] = aliases
+        return subparsers.add_parser(name, **options)
+
     # Fetch an individual file
-    fetch_parser = subparsers.add_parser(
-        'fetch', description=fetch.__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter
-        )
+    fetch_parser = _add_subparser('fetch', fetch.__doc__)
     fetch_parser.set_defaults(func=fetch)
     fetch_parser.add_argument('-f', help='Force overwriting of local file',
                               action='store_true')
@@ -54,28 +62,24 @@ def main():
                               default=None, nargs='?')
 
     # List all files in a project
-    list_parser = subparsers.add_parser(
-        'list', aliases=['ls'], description=list_.__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter
-        )
+    list_parser = _add_subparser('list', list.__doc__, aliases=['ls'])
     list_parser.set_defaults(func=list_)
 
     # Upload a single file
-    upload_parser = subparsers.add_parser(
-        'upload', description=upload.__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter
-        )
+    upload_parser = _add_subparser('upload', upload.__doc__)
     upload_parser.set_defaults(func=upload)
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')
 
     # Remove a single file
-    remove_parser = subparsers.add_parser(
-        'remove', aliases=['rm'], description=remove.__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter
-        )
+    remove_parser = _add_subparser('remove', remove.__doc__, aliases=['rm'])
     remove_parser.set_defaults(func=remove)
     remove_parser.add_argument('target', help='Remote file path')
+
+    # Python2 argparse exits with an error when no command is given
+    if six.PY2 and len(sys.argv) == 1:
+        parser.print_help()
+        return
 
     args = parser.parse_args()
     if 'func' in args:

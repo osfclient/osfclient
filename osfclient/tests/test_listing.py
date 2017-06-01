@@ -1,7 +1,7 @@
 """Test `osf ls` command"""
 
-from unittest.mock import call
-from unittest.mock import patch
+from mock import call
+from mock import patch
 
 from osfclient import OSF
 from osfclient.cli import list_

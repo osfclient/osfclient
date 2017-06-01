@@ -4,7 +4,7 @@ from .session import OSFSession
 
 
 # Base class for all models and the user facing API object
-class OSFCore:
+class OSFCore(object):
     def __init__(self, json, session=None):
         if session is None:
             self.session = OSFSession()
@@ -28,7 +28,7 @@ class OSFCore:
     def _delete(self, url, *args, **kwargs):
         return self.session.delete(url, *args, **kwargs)
 
-    def _get_attribute(self, json, *keys, default=None):
+    def _get_attribute(self, json, *keys, **kwargs):
         # pick value out of a (nested) dictionary/JSON
         # `keys` is a list of keys
         # XXX what should happen if a key doesn't match half way down
@@ -39,6 +39,7 @@ class OSFCore:
                 value = value[key]
 
         except KeyError:
+            default = kwargs.get('default')
             if default is not None:
                 return default
             else:

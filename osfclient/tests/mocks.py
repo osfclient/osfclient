@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, PropertyMock
+from mock import MagicMock, PropertyMock
 
 
 # When using a PropertyMock store it as an attribute

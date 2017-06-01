@@ -2,8 +2,8 @@
 
 import pytest
 
-from unittest import mock
-from unittest.mock import patch, mock_open
+import mock
+from mock import patch, mock_open
 
 from osfclient import OSF
 from osfclient.cli import fetch

@@ -34,13 +34,13 @@ class OSFSession(requests.Session):
         return '/'.join(parts) + '/'
 
     def put(self, url, *args, **kwargs):
-        response = super().put(url, *args, **kwargs)
+        response = super(OSFSession, self).put(url, *args, **kwargs)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
 
     def get(self, url, *args, **kwargs):
-        response = super().get(url, *args, **kwargs)
+        response = super(OSFSession, self).get(url, *args, **kwargs)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
