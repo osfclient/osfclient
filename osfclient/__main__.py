@@ -80,6 +80,8 @@ def main():
     args = parser.parse_args()
     if 'func' in args:
         # give functions a chance to influence the exit code
+        # this setup is so we can print usage for the sub command
+        # even if there was an error further down
         try:
             exit_code = args.func(args)
         except SystemExit as e:
@@ -88,6 +90,8 @@ def main():
         if exit_code is not None:
             sub_parser = subparsers.choices[args.command]
             sub_parser.print_usage(file=sys.stderr)
+            print('{} {}: error:'.format(parser.prog, args.command),
+                  file=sys.stderr, end=' ')
             sys.exit(exit_code)
 
     else:

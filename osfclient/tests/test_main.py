@@ -12,7 +12,8 @@ def test_no_args(capsys):
         main()
 
     out, err = capsys.readouterr()
-    assert not out
+    assert "osf is a command-line program to up and download" in out
+    assert "usage: osf [-h]" in out
     assert not err
 
 
