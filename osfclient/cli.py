@@ -2,6 +2,7 @@
 
 import os
 import configparser
+import getpass
 import sys
 
 from .api import OSF
@@ -54,6 +55,10 @@ def _setup_osf(args):
     password = None
     if username is not None:
         password = os.getenv("OSF_PASSWORD")
+
+        # Prompt user when password is not set
+        if password is None:
+            password = getpass.getpass('Please input your password: ')
 
     return OSF(username=username, password=password)
 
