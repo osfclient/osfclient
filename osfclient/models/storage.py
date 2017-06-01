@@ -1,9 +1,17 @@
 import os
+import six
 
 from .core import OSFCore
 from .file import ContainerMixin
 from .file import File
 from ..utils import norm_remote_path
+
+if six.PY2:
+    class FileExistsError(OSError):
+        """
+        Exception raised when a file already exists
+        Standard in Python 3
+        """
 
 
 class Storage(OSFCore, ContainerMixin):

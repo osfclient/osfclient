@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import six
 import argparse
@@ -65,7 +66,7 @@ def main():
     list_parser.set_defaults(func=list_)
 
     # Upload a single file
-    upload_parser = _add_subparser('upload', upload.__doc__, aliases=['ls'])
+    upload_parser = _add_subparser('upload', upload.__doc__)
     upload_parser.set_defaults(func=upload)
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')
@@ -74,6 +75,11 @@ def main():
     remove_parser = _add_subparser('remove', remove.__doc__, aliases=['rm'])
     remove_parser.set_defaults(func=remove)
     remove_parser.add_argument('target', help='Remote file path')
+
+    # Python2 argparse exits with an error when no command is given
+    if six.PY2 and len(sys.argv) == 1:
+        parser.print_help()
+        return
 
     args = parser.parse_args()
     if 'func' in args:

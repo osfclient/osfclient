@@ -4,7 +4,7 @@ from .session import OSFSession
 
 
 # Base class for all models and the user facing API object
-class OSFCore:
+class OSFCore(object):
     def __init__(self, json, session=None):
         if session is None:
             self.session = OSFSession()
