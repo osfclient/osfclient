@@ -7,7 +7,7 @@ Contributors to the project are required to follow the [code of
 conduct](CONDUCT.md).
 
 By contributing, you are agreeing that we may redistribute your work under
-[this license](license).
+[this license](LICENSE).
 
 We use the [GitHub flow](https://guides.github.com/introduction/flow/) model
 for contributions.
