@@ -81,34 +81,30 @@ def init(args):
 
     """
     # reading existing config file, convert to configparser object
-    config = config_from_file()
     config_ = configparser.ConfigParser()
-    config_.add_section('osf')
-    if 'username' not in config.keys():
+    config_.read_dict({'osf': config_from_file()})
+
+    if not config_.has_option('osf', 'username'):
         config_.set('osf', 'username', '')
-    else:
-        config_.set('osf', 'username', config['username'])
-    if 'project' not in config.keys():
+    if not config_.has_option('osf', 'project'):
         config_.set('osf', 'project', '')
-    else:
-        config_.set('osf', 'project', config['project'])
 
     # now we can start asking for new values
-    print('Provide a username for the config file \
-        [current username: {}]:'.format(config_.get('osf', 'username')))
+    print('Provide a username for the config file '
+          '[current username: {}]:'.format(config_.get('osf', 'username')))
     username = input()
-    if username != '':
+    if username:
         config_.set('osf', 'username', username)
 
-    print('Provide a project for the config file \
-        [current project: {}]:'.format(config_.get('osf', 'project')))
+    print('Provide a project for the config file '
+          '[current project: {}]:'.format(config_.get('osf', 'project')))
     project = input()
-    if project != '':
+    if project:
         config_.set('osf', 'project', project)
 
-    cfgfile = open(".osfcli.config", "w")
-    config_.write(cfgfile)
-    cfgfile.close()
+    configfile = open(".osfcli.config", "w")
+    config_.write(configfile)
+    configfile.close()
 
 
 def clone(args):
