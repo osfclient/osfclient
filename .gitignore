@@ -5,3 +5,4 @@ __pycache__/
 .cache/
 .coverage
 coverage.xml
+.osfcli.config
