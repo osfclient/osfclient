@@ -84,20 +84,16 @@ def init(args):
     config_ = configparser.ConfigParser()
     config_.read_dict({'osf': config_from_file()})
 
-    if not config_.has_option('osf', 'username'):
-        config_.set('osf', 'username', '')
-    if not config_.has_option('osf', 'project'):
-        config_.set('osf', 'project', '')
-
-    # now we can start asking for new values
     print('Provide a username for the config file '
-          '[current username: {}]:'.format(config_.get('osf', 'username')))
+          '[current username: {}]:'.
+          format(config_.get('osf', 'username', fallback='')))
     username = input()
     if username:
         config_.set('osf', 'username', username)
 
     print('Provide a project for the config file '
-          '[current project: {}]:'.format(config_.get('osf', 'project')))
+          '[current project: {}]:'.
+          format(config_.get('osf', 'project', fallback='')))
     project = input()
     if project:
         config_.set('osf', 'project', project)
