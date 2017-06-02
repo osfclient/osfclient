@@ -4,16 +4,8 @@ from six.moves import input
 import os
 import getpass
 import sys
-<<<<<<< HEAD
+
 from six.moves import configparser
-=======
-
-
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
->>>>>>> first init version
 
 from tqdm import tqdm
 
@@ -75,7 +67,6 @@ def _setup_osf(args):
 
     return OSF(username=username, password=password)
 
-
 def init(args):
     """Initialize or edit an existing .osfcli.config file
 
@@ -84,30 +75,31 @@ def init(args):
     config = config_from_file()
     config_ = configparser.ConfigParser()
     config_.add_section('osf')
-    if 'username' in config.keys():
-        config_.set('osf', 'username', config['username'])
-    if 'project' in config.keys():
-        config_.set('osf', 'project', config['project'])
+    if 'username' not in config.keys():
+        config_.set('osf','username','')
+    else:
+        config_.set('osf','username',config['username'])
+    if 'project' not in config.keys():
+        config_.set('osf','project','')
+    else:
+        config_.set('osf','project',config['project'])
 
-    print('Provide a username for the config file '
-          '[current username: {}]:'.
-          format(config_.get('osf', 'username', fallback='')))
+    # now we can start asking for new values
+    print('Provide a username for the config file [current username: {}]:'.format(
+        config_.get('osf','username')))
     username = input()
-    if username:
-        config_.set('osf', 'username', username)
+    if username != '':
+        config_.set('osf','username',username)
 
-    print('Provide a project for the config file '
-          '[current project: {}]:'.
-          format(config_.get('osf', 'project', fallback='')))
+    print('Provide a project for the config file [current project: {}]:'.format(
+        config_.get('osf','project')))
     project = input()
-    if project:
-        config_.set('osf', 'project', project)
+    if project != '':
+        config_.set('osf','project',project)
 
-    configfile = open(".osfcli.config", "w")
-    config_.write(configfile)
-    configfile.close()
-    return config_
-
+    cfgfile = open(".osfcli.config","w")
+    config_.write(cfgfile)
+    cfgfile.close()
 
 def clone(args):
     """Copy all files from all storages of a project.
