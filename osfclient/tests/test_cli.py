@@ -1,5 +1,6 @@
 from mock import call
 from mock import patch
+from mock import mock_open
 
 import pytest
 
@@ -90,14 +91,13 @@ def test_password_prompt():
         osf = cli._setup_osf(args)
         assert osf.password == 'test_password'
 
-def test_init():
+
+@patch('osfclient.cli.config_from_file', return_value={'username': 'tu2',
+                                                       'project': 'pj2'})
+def test_init(config_from_file):
     with patch('osfclient.cli.input',
-               side_effect=['test-user', 'test-project']) as fake_in:
-               init_results = cli.init(MockArgs())
+               side_effect=['test-user', '']) as fake_in:
+        init_results = cli.init(MockArgs())
 
     assert init_results.get('osf', 'username') == 'test-user'
-    assert init_results.get('osf', 'project') == 'test-project'
-
-
-
-    print(fake_in.mock_calls)
+    assert init_results.get('osf', 'project') == 'pj2'
