@@ -8,6 +8,8 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
+from tqdm import tqdm
+
 from .api import OSF
 from .utils import norm_remote_path, split_storage
 
@@ -79,20 +81,23 @@ def clone(args):
     if args.output is not None:
         output_dir = args.output
 
-    for store in project.storages:
-        prefix = os.path.join(output_dir, store.name)
+    with tqdm(unit='files') as pbar:
+        for store in project.storages:
+            prefix = os.path.join(output_dir, store.name)
 
-        for file_ in store.files:
-            path = file_.path
-            if path.startswith('/'):
-                path = path[1:]
+            for file_ in store.files:
+                path = file_.path
+                if path.startswith('/'):
+                    path = path[1:]
 
-            path = os.path.join(prefix, path)
-            directory, _ = os.path.split(path)
-            os.makedirs(directory, exist_ok=True)
+                path = os.path.join(prefix, path)
+                directory, _ = os.path.split(path)
+                os.makedirs(directory, exist_ok=True)
 
-            with open(path, "wb") as f:
-                file_.write_to(f)
+                with open(path, "wb") as f:
+                    file_.write_to(f)
+
+                pbar.update()
 
 
 def fetch(args):
@@ -127,6 +132,9 @@ def fetch(args):
         if norm_remote_path(file_.path) == remote_path:
             with open(local_path, 'wb') as fp:
                 file_.write_to(fp)
+
+            # only fetching one file so we are done
+            break
 
 
 def list_(args):

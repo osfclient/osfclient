@@ -1,7 +1,21 @@
-import shutil
+from tqdm import tqdm
 
 from .core import OSFCore
 from ..exceptions import FolderExistsException
+
+
+def copyfileobj(fsrc, fdst, total, length=16*1024):
+    """Copy data from file-like object fsrc to file-like object fdst
+
+    This is like shutil.copyfileobj but with a progressbar.
+    """
+    with tqdm(unit='bytes', total=total, unit_scale=True) as pbar:
+        while 1:
+            buf = fsrc.read(length)
+            if not buf:
+                break
+            fdst.write(buf)
+            pbar.update(len(buf))
 
 
 class File(OSFCore):
@@ -35,10 +49,11 @@ class File(OSFCore):
         if 'b' not in fp.mode:
             raise ValueError("File has to be opened in binary mode.")
 
-        response = self._get(self._download_url)
+        response = self._get(self._download_url, stream=True)
         if response.status_code == 200:
             response.raw.decode_content = True
-            shutil.copyfileobj(response.raw, fp)
+            copyfileobj(response.raw, fp,
+                        int(response.headers['Content-Length']))
 
         else:
             raise RuntimeError("Response has status "

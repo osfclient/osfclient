@@ -1,3 +1,5 @@
+import io
+from mock import call
 from mock import patch
 from mock import MagicMock
 from mock import PropertyMock
@@ -147,6 +149,33 @@ def test_remove_file():
     f.remove()
 
     assert f._delete.called
+
+
+def test_file_uses_streaming_request():
+    # check we use streaming mode to fetch files
+    fp = io.BytesIO(b"")
+    fp.mode = "b"
+    file_content = b"hello world"
+
+    def fake_get(url, stream):
+        raw = MagicMock()
+        src = io.BytesIO(file_content)
+        raw.read = src.read
+
+        res = FakeResponse(200, {})
+        res.raw = raw
+        res.headers = {'Content-Length': str(len(file_content))}
+        return res
+
+    with patch.object(File, "_get", side_effect=fake_get) as mock_get:
+        f = File({})
+        f._download_url = "http://example.com/download_url/"
+        f.write_to(fp)
+
+    fp.seek(0)
+    assert file_content == fp.read()
+    expected = call('http://example.com/download_url/', stream=True)
+    assert expected in mock_get.mock_calls
 
 
 def test_remove_file_failed():

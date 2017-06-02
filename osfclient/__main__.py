@@ -38,7 +38,6 @@ def main():
         'clone', description=clone.__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     clone_parser.set_defaults(func=clone)
-    clone_parser.add_argument('project', help='OSF project ID')
     clone_parser.add_argument('output', help='Write files to this directory',
                               default=None, nargs='?')
 

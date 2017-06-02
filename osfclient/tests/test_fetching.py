@@ -3,7 +3,7 @@
 import pytest
 
 import mock
-from mock import patch, mock_open
+from mock import call, patch, mock_open
 
 from osfclient import OSF
 from osfclient.cli import fetch
@@ -36,7 +36,7 @@ def test_fetch_file(OSF_project, os_path_exists, os_makedirs):
 
 @patch('osfclient.cli.os.makedirs')
 @patch('osfclient.cli.os.path.exists', return_value=False)
-@patch.object(OSF, 'project', return_value=MockProject('1234'))
+@patch('osfclient.cli.OSF.project', return_value=MockProject('1234'))
 def test_fetch_file_local_name_specified(OSF_project, os_path_exists,
                                          os_makedirs):
     # check that `osf fetch` opens the right files with the right name
@@ -50,9 +50,16 @@ def test_fetch_file_local_name_specified(OSF_project, os_path_exists,
         fetch(args)
 
     OSF_project.assert_called_once_with('1234')
+
     # check that the project and the files have been accessed
-    store = OSF_project.return_value.storages[0]
+    project = OSF_project.return_value
+    store = project._storage_mock.return_value
     assert store._name_mock.return_value == 'osfstorage'
+
+    expected = [call._path_mock(), call.write_to(mock_open_func())]
+    assert expected == store.files[0].mock_calls
+    # second file should not have been looked at
+    assert not store.files[1].mock_calls
 
     # should create a file in the same directory when no local
     # filename is specified
