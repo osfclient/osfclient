@@ -35,7 +35,8 @@ def MockStorage(name):
 def MockProject(name):
     mock = MagicMock(name='Project-%s' % name,
                      storages=[MockStorage('osfstorage'), MockStorage('gh')])
-    storage = MagicMock(return_value=MockStorage('osfstorage'))
+    storage = MagicMock(name='Project-%s-storage' % name,
+                        return_value=MockStorage('osfstorage'))
     type(mock).storage = storage
     mock._storage_mock = storage
 
