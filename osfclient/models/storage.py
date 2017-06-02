@@ -75,13 +75,18 @@ class Storage(OSFCore, ContainerMixin):
         return self._iter_children(self._files_url, 'file', File,
                                    self._files_key)
 
-    def create_file(self, path, fp):
+    def create_file(self, path, fp, update=False):
         """Store a new file at `path` in this storage.
 
         The contents of the file descriptor `fp` (opened in 'rb' mode)
         will be uploaded to `path` which is the full path at
         which to store the file.
+
+        To update an existing file set `update=True`.
         """
+        if 'b' not in fp.mode:
+            raise ValueError("File has to be opened in binary mode.")
+
         # all paths are assumed to be absolute
         path = norm_remote_path(path)
 
@@ -98,10 +103,22 @@ class Storage(OSFCore, ContainerMixin):
         # peek at the file to check if it is an ampty file which needs special
         # handling in requests. If we pass a file like object to data that
         # turns out to be of length zero then no file is created on the OSF
-        if fp.peek(1):
+        empty_file = fp.peek(1)
+        if empty_file:
             response = self._put(url, params={'name': fname}, data=fp)
         else:
             response = self._put(url, params={'name': fname}, data=b'')
 
         if response.status_code == 409:
-            raise FileExistsError(path)
+            if not update:
+                raise FileExistsError(path)
+
+            else:
+                # find the upload URL for the file we are trying to update
+                for file_ in self.files:
+                    if norm_remote_path(file_.path) == path:
+                        file_.update(fp)
+                        break
+                else:
+                    raise RuntimeError("Could not create a new file at "
+                                       "({}) nor update it.".format(path))

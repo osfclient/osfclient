@@ -8,7 +8,7 @@ from osfclient.models import File
 from osfclient.models import Folder
 
 from osfclient.tests import fake_responses
-from osfclient.tests.mocks import FakeResponse
+from osfclient.tests.mocks import FakeResponse, MockFile
 
 
 @patch.object(OSFCore, '_get')
@@ -92,7 +92,7 @@ def test_iterate_files_and_folders():
 
 
 def test_create_existing_file():
-    # test a new file at the top level
+    # try to create file with a name that is already taken
     new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
                     'osfstorage/foo123/')
     store = Storage({})
@@ -105,6 +105,7 @@ def test_create_existing_file():
         exception = OSError
 
     fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
     with pytest.raises(exception):
         store.create_file('foo.txt', fake_fp)
 
@@ -115,8 +116,82 @@ def test_create_existing_file():
     assert fake_fp.call_count == 0
 
 
+def test_update_existing_file():
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+
+    def simple_OSFCore_put(url, params=None, data=None):
+        if url == new_file_url:
+            return FakeResponse(409, None)
+        elif url.endswith("osfstorage/foo.txt"):
+            return FakeResponse(200, None)
+
+    store._files_url = 'https://api.osf.io/v2//nodes/f3szh/files/osfstorage'
+    json = fake_responses.files_node('f3szh', 'osfstorage',
+                                     file_names=['hello.txt', 'foo.txt'])
+    top_level_response = FakeResponse(200, json)
+
+    def simple_OSFCore_get(url):
+        if url == store._files_url:
+            return top_level_response
+
+    fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
+    with patch.object(OSFCore, '_put',
+                      side_effect=simple_OSFCore_put) as fake_put:
+        with patch.object(OSFCore, '_get',
+                          side_effect=simple_OSFCore_get) as fake_get:
+            store.create_file('foo.txt', fake_fp, update=True)
+
+    assert fake_fp.call_count == 0
+    assert call.peek(1) in fake_fp.mock_calls
+    # should have made two PUT requests, first attempt at uploading then
+    # to update the file
+    assert fake_put.call_count == 2
+    # should have made one GET request to list files
+    assert fake_get.call_count == 1
+
+
+def test_update_existing_file_fails():
+    # test we raise an error when we fail to update a file that we think
+    # exists
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+
+    def simple_OSFCore_put(url, params=None, data=None):
+        if url == new_file_url:
+            return FakeResponse(409, None)
+        elif url.endswith("osfstorage/foo.txt"):
+            return FakeResponse(200, None)
+
+    store._files_url = 'https://api.osf.io/v2//nodes/f3szh/files/osfstorage'
+    json = fake_responses.files_node('f3szh', 'osfstorage',
+                                     # this is the key, none of the files are
+                                     # named after the file we are trying to
+                                     # update
+                                     file_names=['hello.txt', 'bar.txt'])
+    top_level_response = FakeResponse(200, json)
+
+    def simple_OSFCore_get(url):
+        if url == store._files_url:
+            return top_level_response
+
+    fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
+    with patch.object(OSFCore, '_put',
+                      side_effect=simple_OSFCore_put):
+        with patch.object(OSFCore, '_get',
+                          side_effect=simple_OSFCore_get):
+            with pytest.raises(RuntimeError):
+                store.create_file('foo.txt', fake_fp, update=True)
+
+
 def test_create_new_file():
-    # test a new file at the top level
+    # create a new file at the top level
     new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
                     'osfstorage/foo123/')
     store = Storage({})
@@ -124,6 +199,7 @@ def test_create_new_file():
     store._put = MagicMock(return_value=FakeResponse(201, None))
 
     fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
 
     store.create_file('foo.txt', fake_fp)
 
@@ -159,6 +235,7 @@ def test_create_new_file_subdirectory():
             assert False, 'Whoops!'
 
     fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
 
     with patch.object(Storage, '_put', side_effect=simple_put) as mock_put:
         store.create_file('bar/foo.txt', fake_fp)
@@ -178,6 +255,7 @@ def test_create_new_zero_length_file():
     store._put = MagicMock(return_value=FakeResponse(201, None))
 
     fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
     fake_fp.peek = lambda x: ''
 
     store.create_file('foo.txt', fake_fp)
