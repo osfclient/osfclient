@@ -81,8 +81,13 @@ def init(args):
 
     """
     # reading existing config file, convert to configparser object
+    config = config_from_file()
     config_ = configparser.ConfigParser()
-    config_.read_dict({'osf': config_from_file()})
+    config_.add_section('osf')
+    if 'username' in config.keys():
+        config_.set('osf', 'username', config['username'])
+    if 'project' in config.keys():
+        config_.set('osf', 'project', config['project'])
 
     print('Provide a username for the config file '
           '[current username: {}]:'.
