@@ -101,6 +101,7 @@ def init(args):
     configfile = open(".osfcli.config", "w")
     config_.write(configfile)
     configfile.close()
+    return config_
 
 
 def clone(args):

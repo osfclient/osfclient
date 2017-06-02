@@ -89,3 +89,15 @@ def test_password_prompt():
         getpass.return_value = 'test_password'
         osf = cli._setup_osf(args)
         assert osf.password == 'test_password'
+
+def test_init():
+    with patch('osfclient.cli.input',
+               side_effect=['test-user', 'test-project']) as fake_in:
+               init_results = cli.init(MockArgs())
+
+    assert init_results.get('osf', 'username') == 'test-user'
+    assert init_results.get('osf', 'project') == 'test-project'
+
+
+
+    print(fake_in.mock_calls)
