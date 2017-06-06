@@ -3,10 +3,7 @@
 import os
 import getpass
 import sys
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+from six.moves import configparser
 
 from tqdm import tqdm
 
@@ -19,7 +16,8 @@ def config_from_file():
         config_ = configparser.ConfigParser()
         config_.read(".osfcli.config")
 
-        config = config_['osf']
+        # for python2 compatibility
+        config = dict(config_.items('osf'))
 
     else:
         config = {}
