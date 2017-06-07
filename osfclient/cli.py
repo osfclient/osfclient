@@ -3,15 +3,12 @@
 import os
 import getpass
 import sys
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+from six.moves import configparser
 
 from tqdm import tqdm
 
 from .api import OSF
-from .utils import norm_remote_path, split_storage
+from .utils import norm_remote_path, split_storage, makedirs
 
 
 def config_from_file():
@@ -19,7 +16,8 @@ def config_from_file():
         config_ = configparser.ConfigParser()
         config_.read(".osfcli.config")
 
-        config = config_['osf']
+        # for python2 compatibility
+        config = dict(config_.items('osf'))
 
     else:
         config = {}
@@ -92,7 +90,7 @@ def clone(args):
 
                 path = os.path.join(prefix, path)
                 directory, _ = os.path.split(path)
-                os.makedirs(directory, exist_ok=True)
+                makedirs(directory, exist_ok=True)
 
                 with open(path, "wb") as f:
                     file_.write_to(f)
@@ -122,7 +120,7 @@ def fetch(args):
 
     directory, _ = os.path.split(local_path)
     if directory:
-        os.makedirs(directory, exist_ok=True)
+        makedirs(directory, exist_ok=True)
 
     osf = _setup_osf(args)
     project = osf.project(args.project)

@@ -1,5 +1,4 @@
 from mock import call
-from mock import Mock
 from mock import patch
 
 import pytest
@@ -12,14 +11,14 @@ from osfclient import cli
 @patch('osfclient.cli.os.path.exists', return_value=True)
 @patch('osfclient.cli.configparser.ConfigParser')
 def test_config_file(MockConfigParser, os_path_exists):
-    MockConfigParser().__getitem__ = Mock(return_value={'project': '1234'})
-
+    MockConfigParser.return_value.items.return_value = (('project', '1234'),)
     config = cli.config_from_file()
 
     assert config == {'project': '1234'}
 
-    assert call.read('.osfcli.config') in MockConfigParser().mock_calls
-    assert call('osf') in MockConfigParser().__getitem__.mock_calls
+    assert call().read('.osfcli.config') in MockConfigParser.mock_calls
+    assert call().items('osf') in MockConfigParser.mock_calls
+    print(MockConfigParser.mock_calls)
 
 
 def test_config_from_env_replace_username():

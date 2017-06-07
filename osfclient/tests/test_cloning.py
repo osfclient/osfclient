@@ -19,7 +19,7 @@ def test_clone_project(OSF_project):
     mock_open_func = mock_open()
 
     with patch('osfclient.cli.open', mock_open_func):
-        with patch('osfclient.cli.os.makedirs'):
+        with patch('osfclient.cli.makedirs'):
             with patch('osfclient.cli.os.getenv', side_effect='SECRET'):
                 clone(args)
 
