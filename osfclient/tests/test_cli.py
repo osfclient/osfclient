@@ -98,7 +98,7 @@ def test_init(config_from_file):
     mock_open_func = mock_open()
 
     with patch('osfclient.cli.open', mock_open_func):
-        with patch('osfclient.cli.input', side_effect=['test-user', 'pj2']):
+        with patch('osfclient.cli.input', side_effect=['test-user', '']):
             cli.init(MockArgs())
 
     assert call('.osfcli.config', 'w') in mock_open_func.mock_calls
