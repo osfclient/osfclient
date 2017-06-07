@@ -4,7 +4,7 @@ import six
 import argparse
 from textwrap import dedent
 
-from .cli import clone, fetch, list_, remove, upload
+from .cli import clone, fetch, list_, remove, upload, init
 
 
 def main():
@@ -14,6 +14,7 @@ def main():
 
     These are common osf commands:
 
+        init      Set up a .osfcli.config file
         clone     Copy all files from all storages of a project
         fetch     Fetch an individual file from a project
         list      List all files from all storages for a project
@@ -49,6 +50,9 @@ def main():
         if six.PY3:
             options['aliases'] = aliases
         return subparsers.add_parser(name, **options)
+
+    init_parser = _add_subparser('init', init.__doc__)
+    init_parser.set_defaults(func=init)
 
     # Fetch an individual file
     fetch_parser = _add_subparser('fetch', fetch.__doc__)
