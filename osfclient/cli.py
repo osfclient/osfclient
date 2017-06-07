@@ -8,7 +8,7 @@ from six.moves import configparser
 from tqdm import tqdm
 
 from .api import OSF
-from .utils import norm_remote_path, split_storage
+from .utils import norm_remote_path, split_storage, makedirs
 
 
 def config_from_file():
@@ -90,7 +90,7 @@ def clone(args):
 
                 path = os.path.join(prefix, path)
                 directory, _ = os.path.split(path)
-                os.makedirs(directory, exist_ok=True)
+                makedirs(directory, exist_ok=True)
 
                 with open(path, "wb") as f:
                     file_.write_to(f)
@@ -120,7 +120,7 @@ def fetch(args):
 
     directory, _ = os.path.split(local_path)
     if directory:
-        os.makedirs(directory, exist_ok=True)
+        makedirs(directory, exist_ok=True)
 
     osf = _setup_osf(args)
     project = osf.project(args.project)

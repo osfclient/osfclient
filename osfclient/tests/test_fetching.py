@@ -12,7 +12,7 @@ from osfclient.tests.mocks import MockProject
 from osfclient.tests.mocks import MockArgs
 
 
-@patch('osfclient.cli.os.makedirs')
+@patch('osfclient.cli.makedirs')
 @patch('osfclient.cli.os.path.exists', return_value=False)
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
 def test_fetch_file(OSF_project, os_path_exists, os_makedirs):
@@ -34,7 +34,7 @@ def test_fetch_file(OSF_project, os_path_exists, os_makedirs):
     assert mock.call('a', 'wb') in mock_open_func.mock_calls
 
 
-@patch('osfclient.cli.os.makedirs')
+@patch('osfclient.cli.makedirs')
 @patch('osfclient.cli.os.path.exists', return_value=False)
 @patch('osfclient.cli.OSF.project', return_value=MockProject('1234'))
 def test_fetch_file_local_name_specified(OSF_project, os_path_exists,
@@ -67,7 +67,7 @@ def test_fetch_file_local_name_specified(OSF_project, os_path_exists,
     assert not os_makedirs.called
 
 
-@patch('osfclient.cli.os.makedirs')
+@patch('osfclient.cli.makedirs')
 @patch('osfclient.cli.os.path.exists', return_value=False)
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
 def test_fetch_file_local_dir_specified(OSF_project, os_path_exists,

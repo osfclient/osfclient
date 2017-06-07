@@ -33,3 +33,14 @@ def split_storage(path, default='osfstorage'):
                 return path.split('/', 1)
 
     return (default, path)
+
+
+def makedirs(path, mode=511, exist_ok=False):
+    # mode 0777 is 511 in decimal
+    if six.PY3:
+        return os.makedirs(path, mode, exist_ok)
+    else:
+        if os.path.exists(path) and exist_ok:
+            return None
+        else:
+            return os.makedirs(path, mode)
