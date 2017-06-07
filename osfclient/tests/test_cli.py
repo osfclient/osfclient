@@ -95,9 +95,13 @@ def test_password_prompt():
 @patch('osfclient.cli.config_from_file', return_value={'username': 'tu2',
                                                        'project': 'pj2'})
 def test_init(config_from_file):
-    with patch('osfclient.cli.input',
-               side_effect=['test-user', '']) as fake_in:
-        init_results = cli.init(MockArgs())
+    mock_open_func = mock_open()
 
-    assert init_results.get('osf', 'username') == 'test-user'
-    assert init_results.get('osf', 'project') == 'pj2'
+    with patch('osfclient.cli.open', mock_open_func):
+        with patch('osfclient.cli.input', side_effect=['test-user', 'pj2']):
+            cli.init(MockArgs())
+
+    assert call('.osfcli.config', 'w') in mock_open_func.mock_calls
+    assert call().write('username = test-user\n') in mock_open_func.mock_calls
+    assert call().write('project = pj2\n') in mock_open_func.mock_calls
+    assert call().write('[osf]\n') in mock_open_func.mock_calls
