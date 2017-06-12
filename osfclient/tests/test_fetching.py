@@ -92,15 +92,21 @@ def test_fetch_file_local_dir_specified(OSF_project, os_path_exists,
     assert mock.call('subdir', exist_ok=True) in os_makedirs.mock_calls
 
 
-@patch('osfclient.cli.os.path.exists', return_value=True)
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
-def test_fetch_local_file_exists(OSF_project, os_path_exists):
+def test_fetch_local_file_exists(OSF_project):
     # check that `osf fetch` opens the right files with the right name
     # and mode when specifying a local filename
     args = MockArgs(project='1234', remote='osfstorage/a/a/a',
                     local='subdir/foobar.txt')
 
-    with pytest.raises(SystemExit) as e:
-        fetch(args)
+    def exists(path):
+        if path == ".osfcli.config":
+            return False
+        else:
+            return True
+
+    with patch('osfclient.cli.os.path.exists', side_effect=exists):
+        with pytest.raises(SystemExit) as e:
+            fetch(args)
 
     assert 'already exists, not overwriting' in e.value.args[0]

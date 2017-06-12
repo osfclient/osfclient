@@ -152,7 +152,7 @@ def fetch(args):
     if local_path is None:
         _, local_path = os.path.split(remote_path)
 
-    if os.path.exists(local_path):
+    if os.path.exists(local_path) and not args.force:
         sys.exit("Local file %s already exists, not overwriting." % local_path)
 
     directory, _ = os.path.split(local_path)

@@ -103,8 +103,8 @@ class Storage(OSFCore, ContainerMixin):
         # peek at the file to check if it is an ampty file which needs special
         # handling in requests. If we pass a file like object to data that
         # turns out to be of length zero then no file is created on the OSF
-        empty_file = fp.peek(1)
-        if empty_file:
+        not_empty = fp.peek(1)
+        if not_empty:
             response = self._put(url, params={'name': fname}, data=fp)
         else:
             response = self._put(url, params={'name': fname}, data=b'')
@@ -117,6 +117,10 @@ class Storage(OSFCore, ContainerMixin):
                 # find the upload URL for the file we are trying to update
                 for file_ in self.files:
                     if norm_remote_path(file_.path) == path:
+                        # in the process of attempting to upload the file we
+                        # moved through it -> reset read position to beginning
+                        # of the file
+                        fp.seek(0)
                         file_.update(fp)
                         break
                 else:
