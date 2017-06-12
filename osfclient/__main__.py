@@ -71,6 +71,8 @@ def main():
     # Upload a single file
     upload_parser = _add_subparser('upload', upload.__doc__)
     upload_parser.set_defaults(func=upload)
+    upload_parser.add_argument('-f', help='Force overwriting of remote file',
+                               action='store_true')
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')
 

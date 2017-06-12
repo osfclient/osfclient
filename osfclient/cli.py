@@ -211,7 +211,7 @@ def upload(args):
 
     store = project.storage(storage)
     with open(args.source, 'rb') as fp:
-        store.create_file(remote_path, fp)
+        store.create_file(remote_path, fp, update=args.force)
 
 
 def remove(args):
