@@ -152,7 +152,7 @@ def fetch(args):
     if local_path is None:
         _, local_path = os.path.split(remote_path)
 
-    if os.path.exists(local_path):
+    if os.path.exists(local_path) and not args.force:
         sys.exit("Local file %s already exists, not overwriting." % local_path)
 
     directory, _ = os.path.split(local_path)
@@ -211,7 +211,7 @@ def upload(args):
 
     store = project.storage(storage)
     with open(args.source, 'rb') as fp:
-        store.create_file(remote_path, fp)
+        store.create_file(remote_path, fp, update=args.force)
 
 
 def remove(args):

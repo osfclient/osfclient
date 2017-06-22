@@ -57,7 +57,8 @@ def main():
     # Fetch an individual file
     fetch_parser = _add_subparser('fetch', fetch.__doc__)
     fetch_parser.set_defaults(func=fetch)
-    fetch_parser.add_argument('-f', help='Force overwriting of local file',
+    fetch_parser.add_argument('-f', '--force',
+                              help='Force overwriting of local file',
                               action='store_true')
     fetch_parser.add_argument('remote', help='Remote path',
                               default=None)
@@ -71,6 +72,9 @@ def main():
     # Upload a single file
     upload_parser = _add_subparser('upload', upload.__doc__)
     upload_parser.set_defaults(func=upload)
+    upload_parser.add_argument('-f', '--force',
+                               help='Force overwriting of remote file',
+                               action='store_true')
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')
 
