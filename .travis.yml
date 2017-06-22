@@ -27,3 +27,15 @@ after_success:
     pip install codecov;
     codecov;
     fi
+
+deploy:
+  provider: pypi
+  user: betatim
+  # this line together with `setup.cfg` creates universal wheels as long as
+  # osfclient is a python only module (no compiled code)
+  distributions: sdist bdist_wheel
+  on:
+    tags: true
+    repo: dib-lab/osf-cli
+    condition: "$PYTHON_VERSION = 3.5"
+  password:
