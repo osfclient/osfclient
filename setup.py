@@ -7,7 +7,7 @@ setup(
     version='0.0.1',
 
     description='An OSF command line library',
-    long_description='An OSF command line library',
+    long_description='An OSF command line library.',
 
     # The project's main homepage.
     url='https://github.com/dib-lab/osf-cli',
