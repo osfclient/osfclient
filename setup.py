@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='osfclient',
-    version='0.0.1',
+    version='0.0.2',
 
     description='An OSF command line library',
     long_description='An OSF command line library.',
