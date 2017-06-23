@@ -43,7 +43,9 @@ deploy:
 
   # test pypi
   - provider: pypi
-    distributions: sdist
+    # this line together with `setup.cfg` creates universal wheels as long as
+    # osfclient is a python only module (no compiled code)
+    distributions: sdist bdist_wheel
     server: https://testpypi.python.org/pypi
     user: "jackrabbit"
     password:
