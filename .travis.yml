@@ -45,7 +45,7 @@ deploy:
   - provider: pypi
     distributions: sdist
     server: https://testpypi.python.org/pypi
-    user: "betatim"
+    user: "jackrabbit"
     password:
       secure: "U6hl13NL7WtH49npp3tmw3dLEKHrw3PZamTJ6oa1N79PPLugA38ZMG0Alu4JGQgyMFRad+XlVlxD0uq6Y6P3xktfUIw5fcKDCvrCjfOZnR3fT8wnbtxsyjXWfnhXCqTL9nzZ5AJrEHFD+g1lsTzTPko2fSU3k/n5un26dxnvhotLATBtwAnlc4vLVGQ5kTaiUi5m30E3hESudODMbipXm2S7FZ8RjvvnvjNJ5TxZVK6EQHlqdY+VAv22bf765Ti5TTatvIoaee6gbojDCXM28ve4G8h7RB1SiJWSaxfQqcVC3iJGe03nT1YwYbsVYUAsJmVwj0Pf08PwXC7g/1lh0cjnf2WXD9XbqPmFmpmot7Jr3iWzZhKBaBmmlQC57nOXIzf0EE+7ULZAjkH+Fu9vAIuzF8/CjCEdQHobPt5h3V4ZwhcTvoCE5I3yxgbs9dSiRAYzWQywRfVt7jxhOMN+cchdPELA4oxWRD9u0u+mPvJwnKx0ui1/Ki8AWM6Hq6LZCdkTZktVrvE5+ovjegxLMTWEvrzv+wrUpzYIuQ05wjBTCuZCSwBRxAk+0ck58B430EgCTSdD9w0PYc4T+0sli9H85vb4zZQkdv00K1bJZMhAao4orAKthCENBiFP8H0g7IdztSmXd7lVwpAHcqtpOEBRhcayD4KqlPO1TCcOxUE="
     on:
