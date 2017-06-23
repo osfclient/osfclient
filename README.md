@@ -1,25 +1,24 @@
 # osfclient
 
-The `osfcli` is a python library and a command-line client for up- and downloading files to and from
-your [Open Science Framework](//osf.io) projects. The *Open Science Framework* (OSF) is an 
-open source project which facilitates the open collaboration of researchers on the web, by sharing data and other research outputs. 
+The `osfclient` is a python library and a command-line client for up- and downloading files to and from
+your [Open Science Framework](//osf.io) projects. The *Open Science Framework* (OSF) is an
+open source project which facilitates the open collaboration of researchers on the web, by sharing data and other research outputs.
 
-As such the OSF hosts large data sets, associated with papers or scientific projects, that can be freely downloaded. The *osfcli* allows people to store and retrieve large datasets associated to their scientific projects and papers on the OSF via the command line interface.
+As such the OSF hosts large data sets, associated with papers or scientific projects, that can be freely downloaded. The *osfclient* allows people to store and retrieve large datasets associated to their scientific projects and papers on the OSF via the command line interface.
 
 This is a very new project, it has some rough edges.
 
 # Installing
 
-To use `osfclient` install its dependencies with
-`pip install -r requirements.txt`. Install the library itself in development
-mode with:
+To use `osfclient` install it:
 ```
-pip install -e .
+$ git clone https://github.com/dib-lab/osf-cli/
+$ cd osf-cli
+$ pip install -e .
 ```
 
-To participate in the development install the development requirements from
-`devRequirements.txt`. Run the tests by executing `pytest` in the top level
-directory.
+For details on participating in the development of `osfclient` check out
+the [Contributing section](https://github.com/dib-lab/osf-cli#contributing).
 
 
 # Usage
@@ -79,4 +78,13 @@ make your changes, add a test to cover them and create a Pull Request.
 Then one of the maintainers will review your changes. When all comments
 have been addressed and all tests pass your changes will be merged.
 
-For details: [CONTRIBUTING.md](CONTRIBUTING.md)
+To setup a development version:
+```
+$ git clone https://github.com/YOURNAMEHERE/osf-cli
+$ git remote add upstream https://github.com/dib-lab/osf-cli
+$ cd osf-cli
+$ pip install -r devRequirements.txt
+$ pip install -e.
+```
+
+For more details and instructions: [CONTRIBUTING.md](CONTRIBUTING.md)

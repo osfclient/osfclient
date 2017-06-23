@@ -12,6 +12,10 @@ By contributing, you are agreeing that we may redistribute your work under
 We use the [GitHub flow](https://guides.github.com/introduction/flow/) model
 for contributions.
 
+If you ever have a question about Python, `git`, GitHub, PRs, jargon,
+lingo, processes or how to do something: please ask! We are more than happy to
+help and spread the knowledge.
+
 Contributions should follow these guidelines:
 
 * all changes by pull request (PR);
@@ -27,6 +31,8 @@ Contributions should follow these guidelines:
 * new code needs to come with a test;
 * apply [PEP8](https://www.python.org/dev/peps/pep-0008/) as much
   as possible, but not too much;
+* please rebase your PR when it becomes outdated instead of merging in
+  master; and
 * no merging if travis is red.
 
 These are not hard rules to be enforced by :police_car: but instead guidelines.
