@@ -1,6 +1,7 @@
 from mock import patch, MagicMock, call
 
 import pytest
+import six
 
 from osfclient.models import OSFCore
 from osfclient.models import Storage
@@ -256,7 +257,10 @@ def test_create_new_zero_length_file():
 
     fake_fp = MagicMock()
     fake_fp.mode = 'rb'
-    fake_fp.peek = lambda x: ''
+    if six.PY3:
+        fake_fp.peek = lambda: ''
+    if six.PY2:
+        fake_fp.read = lambda: ''
 
     store.create_file('foo.txt', fake_fp)
 
