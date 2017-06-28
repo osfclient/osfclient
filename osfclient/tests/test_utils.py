@@ -1,5 +1,6 @@
-from mock import call, patch
+from mock import call, patch, Mock
 
+from osfclient.utils import file_empty
 from osfclient.utils import norm_remote_path
 from osfclient.utils import makedirs
 from osfclient.utils import split_storage
@@ -84,3 +85,25 @@ def test_makedirs_py3(mock_makedirs):
 
     expected = [call('/this/path/exists', 511, True)]
     assert expected == mock_makedirs.mock_calls
+
+
+def test_empty_file():
+    fake_fp = Mock()
+    with patch('osfclient.utils.six.PY2', False):
+        empty = file_empty(fake_fp)
+
+    expected = [call.peek()]
+    assert expected == fake_fp.mock_calls
+    # mocks and calls on mocks always return True, so this should be False
+    assert not empty
+
+
+def test_empty_file_py2():
+    fake_fp = Mock()
+    with patch('osfclient.utils.six.PY2', True):
+        empty = file_empty(fake_fp)
+
+    expected = [call.read(), call.seek(0)]
+    assert expected == fake_fp.mock_calls
+    # mocks and calls on mocks always return True, so this should be False
+    assert not empty
