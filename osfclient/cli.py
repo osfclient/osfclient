@@ -210,8 +210,17 @@ def upload(args):
     storage, remote_path = split_storage(args.destination)
 
     store = project.storage(storage)
-    with open(args.source, 'rb') as fp:
-        store.create_file(remote_path, fp, update=args.force)
+    if args.recursive:
+        for root, _, files in os.walk(args.source):
+            for fname in files:
+                full_path = os.path.join(root, fname)
+                with open(full_path, 'rb') as fp:
+                    name = remote_path + full_path
+                    store.create_file(name, fp, update=args.force)
+
+    else:
+        with open(args.source, 'rb') as fp:
+            store.create_file(remote_path, fp, update=args.force)
 
 
 def remove(args):
