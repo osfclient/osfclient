@@ -1,4 +1,7 @@
-"""Command line interface to the OSF"""
+"""Command line interface to the OSF
+
+These functions implement the functionality of the command-line interface.
+"""
 from __future__ import print_function
 from six.moves import input
 import os

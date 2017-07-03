@@ -25,6 +25,7 @@ This is a very new project, it has some rough edges.
    :maxdepth: 2
    :caption: Contents:
 
+   api/osfclient
 
 
 Indices and tables

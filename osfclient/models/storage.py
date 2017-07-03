@@ -37,35 +37,6 @@ class Storage(OSFCore, ContainerMixin):
     def __str__(self):
         return '<Storage [{0}]>'.format(self.id)
 
-    XXX = """
-    def remove(self, path):
-        # Remove `path` from this storage
-        path = os.path.normpath(path)
-        directory, fname = os.path.split(path)
-
-        stack = []
-        children = self._follow_next(self._files_url)
-        while children:
-            child = children.pop()
-            kind = self._get_attribute(child, 'attributes', 'kind')
-            if kind == 'file':
-                child = File(child, self.session)
-            elif kind == 'folder':
-                child = Folder(child, self.session)
-                # only check folders that match the path
-                if path.startswith(child.path):
-                    url = self._get_attribute(file, *self._files_key)
-                    children.extend(self._follow_next(url))
-
-            # if it forms part of the path to our target, queue it up for
-            # deletion
-            print(child.path, child)
-            if path.startswith(child.path):
-                stack.append(child)
-
-        print(stack)
-        """
-
     @property
     def files(self):
         """Iterate over all files in this storage.

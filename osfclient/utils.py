@@ -1,3 +1,8 @@
+"""Utility functions
+
+Helpers and other assorted functions.
+"""
+
 import os
 import six
 
