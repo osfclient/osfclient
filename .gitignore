@@ -6,3 +6,6 @@ __pycache__/
 .coverage
 coverage.xml
 .osfcli.config
+
+# docs build output
+docs/_build

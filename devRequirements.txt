@@ -2,3 +2,5 @@ mock>=2.0.0
 pytest
 pytest-cov
 pep8
+sphinx
+sphinx-autobuild
