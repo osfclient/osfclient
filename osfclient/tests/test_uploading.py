@@ -1,5 +1,6 @@
 """Test `osf upload` command"""
 
+import mock
 from mock import call
 from mock import patch
 from mock import mock_open
@@ -8,11 +9,9 @@ import pytest
 
 from osfclient import OSF
 from osfclient.cli import upload
-from osfclient.models import Project
 
 from osfclient.tests.mocks import MockArgs
 from osfclient.tests.mocks import MockProject
-from osfclient.tests.mocks import MockStorage
 
 
 def test_anonymous_doesnt_work():
@@ -26,8 +25,7 @@ def test_anonymous_doesnt_work():
 
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
-@patch.object(Project, 'storage', return_value=MockStorage('osfstorage'))
-def test_select_project(Project_storage, OSF_project):
+def test_select_project(OSF_project):
     args = MockArgs(username='joe@example.com',
                     project='1234',
                     source='foo/bar.txt',
@@ -59,8 +57,7 @@ def test_select_project(Project_storage, OSF_project):
 
 
 @patch.object(OSF, 'project', return_value=MockProject('1234'))
-@patch.object(Project, 'storage', return_value=MockStorage('osfstorage'))
-def test_recursive_requires_directory(Project_storage, OSF_project):
+def test_recursive_requires_directory(OSF_project):
     # test that we check if source is a directory when using recursive mode
     args = MockArgs(username='joe@example.com',
                     project='1234',
@@ -79,3 +76,35 @@ def test_recursive_requires_directory(Project_storage, OSF_project):
 
     assert 'recursive' in str(e.value)
     assert 'Expected source (foo/bar.txt)' in str(e.value)
+
+
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+def test_recursive_upload(OSF_project):
+    # test that we check if source is a directory when using recursive mode
+    args = MockArgs(username='joe@example.com',
+                    project='1234',
+                    source='foo/',
+                    recursive=True,
+                    destination='bar/')
+
+    def simple_getenv(key):
+        if key == 'OSF_PASSWORD':
+            return 'secret'
+
+    fake_open = mock_open()
+    fake_storage = OSF_project.return_value.storage.return_value
+
+    dir_contents = [('foo', None, ['bar.txt', 'abc.txt'])]
+
+    with patch('osfclient.cli.open', fake_open):
+        with patch('os.walk', return_value=iter(dir_contents)):
+            with patch('osfclient.cli.os.getenv', side_effect=simple_getenv):
+                with patch('osfclient.cli.os.path.isdir', return_value=True):
+                    upload(args)
+
+    assert call('foo/bar.txt', 'rb') in fake_open.mock_calls
+    assert call('foo/abc.txt', 'rb') in fake_open.mock_calls
+
+    fake_storage.assert_has_calls(
+        [call.create_file('bar/foo/bar.txt', mock.ANY, update=False),
+         call.create_file('bar/foo/abc.txt', mock.ANY, update=False)])

@@ -206,7 +206,6 @@ def upload(args):
                  ' password.')
 
     project = osf.project(args.project)
-
     storage, remote_path = split_storage(args.destination)
 
     store = project.storage(storage)
@@ -219,9 +218,10 @@ def upload(args):
             for fname in files:
                 full_path = os.path.join(root, fname)
                 with open(full_path, 'rb') as fp:
+                    # remove storage specifier from path if it exists
+                    _, full_path = split_storage(full_path)
                     name = os.path.join(remote_path, full_path)
-                    #store.create_file(name, fp, update=args.force)
-                    print(store, full_path, name)
+                    store.create_file(name, fp, update=args.force)
 
     else:
         with open(args.source, 'rb') as fp:
