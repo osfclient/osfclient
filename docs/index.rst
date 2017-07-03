@@ -25,14 +25,8 @@ This is a very new project, it has some rough edges.
    :maxdepth: 2
    :caption: Contents:
 
+   cli-usage
    api/osfclient
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-.. _Open Science Framework: //osf.io
+.. _Open Science Framework: https://osf.io

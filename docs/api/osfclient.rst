@@ -1,13 +1,13 @@
-osfclient package
-=================
+osfclient API
+=============
 
 .. automodule:: osfclient
     :members:
     :undoc-members:
 
 
-The osfclient.cli module
-------------------------
+osfclient.cli
+-------------
 
 .. automodule:: osfclient.cli
     :members:
@@ -15,8 +15,8 @@ The osfclient.cli module
     :show-inheritance:
 
 
-The osfclient.utils module
---------------------------
+osfclient.utils
+---------------
 
 .. automodule:: osfclient.utils
     :members:
@@ -24,11 +24,34 @@ The osfclient.utils module
     :show-inheritance:
 
 
-Models
-------
+osfclient.models
+----------------
 
-These classes are used by :class:`osfclient.OSF` to implement the API.
+Classes to model entities in the OSF API.
 
-.. toctree::
+.. autoclass:: osfclient.models.File
+    :members:
+    :undoc-members:
 
-    osfclient.models
+.. autoclass:: osfclient.models.Project
+    :members:
+    :undoc-members:
+
+.. autoclass:: osfclient.models.Storage
+    :members:
+    :undoc-members:
+
+
+Helpers and inner workings
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These classes do not directly model entities in the OSF API. They are used
+to help with technical things in building the API.
+
+.. autoclass:: osfclient.models.core.OSFCore
+    :members:
+    :undoc-members:
+
+.. autoclass:: osfclient.models.OSFSession
+    :members:
+    :undoc-members:
