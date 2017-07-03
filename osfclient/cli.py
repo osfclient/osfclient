@@ -211,12 +211,17 @@ def upload(args):
 
     store = project.storage(storage)
     if args.recursive:
+        if not os.path.isdir(args.source):
+            raise RuntimeError("Expected source ({}) to be a directory when "
+                               "using recursive mode.".format(args.source))
+
         for root, _, files in os.walk(args.source):
             for fname in files:
                 full_path = os.path.join(root, fname)
                 with open(full_path, 'rb') as fp:
-                    name = remote_path + full_path
-                    store.create_file(name, fp, update=args.force)
+                    name = os.path.join(remote_path, full_path)
+                    #store.create_file(name, fp, update=args.force)
+                    print(store, full_path, name)
 
     else:
         with open(args.source, 'rb') as fp:

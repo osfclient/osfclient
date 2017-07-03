@@ -56,3 +56,26 @@ def test_select_project(Project_storage, OSF_project):
     # we should call the create_file method on the return
     # value of _storage_mock
     assert fake_project._storage_mock.return_value.mock_calls == expected
+
+
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+@patch.object(Project, 'storage', return_value=MockStorage('osfstorage'))
+def test_recursive_requires_directory(Project_storage, OSF_project):
+    # test that we check if source is a directory when using recursive mode
+    args = MockArgs(username='joe@example.com',
+                    project='1234',
+                    source='foo/bar.txt',
+                    recursive=True,
+                    destination='bar/bar/foo.txt')
+
+    def simple_getenv(key):
+        if key == 'OSF_PASSWORD':
+            return 'secret'
+
+    with pytest.raises(RuntimeError) as e:
+        with patch('osfclient.cli.os.getenv', side_effect=simple_getenv):
+            with patch('osfclient.cli.os.path.isdir', return_value=False):
+                upload(args)
+
+    assert 'recursive' in str(e.value)
+    assert 'Expected source (foo/bar.txt)' in str(e.value)
