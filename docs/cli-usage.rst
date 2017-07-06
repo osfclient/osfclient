@@ -1,5 +1,5 @@
-Using the command-line interface
-================================
+User's Guide
+============
 
 This project provides two things: a python library and a command-line program
 for interacting with files stored in the `OSF`_.

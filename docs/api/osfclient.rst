@@ -1,4 +1,4 @@
-osfclient API
+API Reference
 =============
 
 .. automodule:: osfclient
