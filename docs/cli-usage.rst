@@ -8,11 +8,18 @@ The python library forms the basis for the command-line program. If you want
 programmatic access to your files use the library, otherwise try out the
 command-line program.
 
-Below some examples on how to use it:
+Below some examples on how to use the command-line program:
 ::
+
+    # getting help
+    $ osf -h
+    $ osf <command> -h
 
     # list all files for a public project
     $ osf -p <projectid> ls
+
+    # setup a local folder for an existing project
+    $ osf init
 
     # list all files for a private project
     # set $OSF_PASSWORD to provide the password
