@@ -1,6 +1,4 @@
-.. image:: LOGO/osf-cli-logo-v1.png
-   :height: 100px
-   :width: 100px
+.. image:: LOGO/osf-cli-logo-v1-small.png
    :alt: osfclient
    :align: right
 
