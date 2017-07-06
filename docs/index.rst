@@ -1,7 +1,7 @@
-.. osfclient documentation master file, created by
-   sphinx-quickstart on Mon Jul  3 16:19:39 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. image:: ../LOGO/osf-cli-logo-v1.png
+   :alt: osfclient
+   :width: 200px
+   :align: right
 
 Welcome to osfclient's documentation!
 =====================================
@@ -25,13 +25,8 @@ This is a very new project, it has some rough edges.
    :maxdepth: 2
    :caption: Contents:
 
+   cli-usage
+   api/osfclient
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-.. _Open Science Framework: //osf.io
+.. _Open Science Framework: https://osf.io

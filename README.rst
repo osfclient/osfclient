@@ -1,3 +1,7 @@
+.. image:: LOGO/osf-cli-logo-v1-small.png
+   :alt: osfclient
+   :align: right
+
 osfclient
 =========
 
@@ -39,41 +43,36 @@ The python library forms the basis for the command-line program. If you
 want programmatic access to your files use the library, otherwise try
 out the command-line program.
 
+Read the full documentation: http://osfclient.readthedocs.io/en/latest/
+
 Below some examples on how to use it:
 
 ::
 
-    # list all files for a public project
-    $ osf -p <projectid> ls
+    # get help and see available commands, get help on a specific command
+    $ osf -h
+    $ osf <command> -h
 
-    # list all files for a private project
-    # set $OSF_PASSWORD to provide the password
-    $ osf -p <projectid> -u yourOSFacount@example.com ls
+    # setup a local folder for an existing project
+    $ osf init
 
-    # fetch all files from a project and store them in `output_directory`
-    $ osf -p <projectid> clone [output_directory]
+    # list all files for the project
+    $ osf ls
 
-    # create a new file in an OSF project
-    $ osf -p <projectid> -u yourOSFacount@example.com upload local/file.txt remote/path.txt
+    # fetch all files for that project
+    $ osf clone
 
-    # download a single file from an OSF project
-    $ osf -p <projectid> fetch remote/path.txt local/file.txt
-
-    # upload a single file to an OSF project
-    $ osf -p <projectid> upload local/path.txt remote/file.txt
-
-    # remove a single file from an OSF project
-    $ osf -p <projectid> remove remote/file.txt
+    # add a new file
+    $ osf upload local/file.txt remote/path.txt
 
 If the project is private you will need to provide authentication
-details. You can provide your OSF account name as command-line argument
-(see the ``osf upload`` example) or set the ``OSF_USERNAME`` environment
-variable. The password will be retrieved from the ``OSF_PASSWORD``
-environment variable or asked directly by the tool.
+details. The password will be retrieved from the ``OSF_PASSWORD``
+environment variable or you will be asked directly by the tool when you
+run it.
 
 You can set a default values by using a configuration file in the
-current directory. To set the username and project ID create
-``.osfcli.config``:
+current directory. This is what ``osf init`` does for you. To set the
+username and project ID create ``.osfcli.config``:
 
 ::
 

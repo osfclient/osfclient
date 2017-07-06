@@ -3,13 +3,13 @@ from .models import Project
 
 
 class OSF(OSFCore):
-    def __init__(self, username=None, password=None, token=None):
-        """Interact with the Open Science Framework.
+    """Interact with the Open Science Framework.
 
-        This is the main point of contact for interactions with the
-        OSF. Use the methods of this class to find projects, login
-        to the OSF, etc.
-        """
+    This is the main point of contact for interactions with the
+    OSF. Use the methods of this class to find projects, login
+    to the OSF, etc.
+    """
+    def __init__(self, username=None, password=None, token=None):
         super(OSF, self).__init__({})
         if username is not None and password is not None:
             self.login(username, password)
