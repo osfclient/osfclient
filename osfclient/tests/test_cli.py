@@ -7,6 +7,7 @@ import pytest
 from osfclient.tests.mocks import MockArgs
 
 from osfclient import cli
+from osfclient.exceptions import UnauthorizedException
 
 
 @patch('osfclient.cli.os.path.exists', return_value=True)
@@ -19,7 +20,6 @@ def test_config_file(MockConfigParser, os_path_exists):
 
     assert call().read('.osfcli.config') in MockConfigParser.mock_calls
     assert call().items('osf') in MockConfigParser.mock_calls
-    print(MockConfigParser.mock_calls)
 
 
 def test_config_from_env_replace_username():
@@ -105,3 +105,32 @@ def test_init(config_from_file):
     assert call().write('username = test-user\n') in mock_open_func.mock_calls
     assert call().write('project = pj2\n') in mock_open_func.mock_calls
     assert call().write('[osf]\n') in mock_open_func.mock_calls
+
+
+@patch('osfclient.cli.config_from_env', return_value={'username': 'tu2',
+                                                      'project': 'pj2'})
+def test_might_need_auth_unauthorized(config_from_file):
+    mock_args = MockArgs(project='test', username='theusername')
+
+    @cli.might_need_auth
+    def dummy(x):
+        raise UnauthorizedException()
+
+    with pytest.raises(SystemExit) as e:
+        dummy(mock_args)
+
+    assert "not authorized to access" in str(e.value)
+
+
+@patch('osfclient.cli.config_from_env', return_value={'project': 'pj2'})
+def test_might_need_auth_no_username(config_from_file):
+    mock_args = MockArgs(project='test')
+
+    @cli.might_need_auth
+    def dummy(x):
+        raise UnauthorizedException()
+
+    with pytest.raises(SystemExit) as e:
+        dummy(mock_args)
+
+    assert "set a username" in str(e.value)
