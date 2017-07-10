@@ -20,7 +20,7 @@ interface. If you are completely new to the OSF you can
 read the `OSF introductory materials`.
 
 This is a very new project, it has some rough edges. You can find the code for
-the osf-cli in the `GitHub repository`.
+the ``osfclient`` in the `GitHub repository`.
 
 
 .. toctree::
