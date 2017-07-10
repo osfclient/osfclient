@@ -15,7 +15,8 @@ As such the OSF hosts large data sets, associated with papers or
 scientific projects, that can be freely downloaded. The *osfclient*
 allows people to store and retrieve large datasets associated to their
 scientific projects and papers on the OSF via the command line
-interface.
+interface. If you are completely new to the OSF you can `read their
+introductory materials <https://cos.io/our-products/open-science-framework/>`__
 
 This is a very new project, it has some rough edges.
 
