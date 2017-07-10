@@ -16,9 +16,11 @@ As such the OSF hosts large data sets, associated with papers or
 scientific projects, that can be freely downloaded. The *osfclient*
 allows people to store and retrieve large datasets associated to their
 scientific projects and papers on the OSF via the command line
-interface.
+interface. If you are completely new to the OSF you can
+read the `OSF introductory materials`.
 
-This is a very new project, it has some rough edges.
+This is a very new project, it has some rough edges. You can find the code for
+the ``osfclient`` in the `GitHub repository`.
 
 
 .. toctree::
@@ -30,3 +32,5 @@ This is a very new project, it has some rough edges.
 
 
 .. _Open Science Framework: https://osf.io
+.. _OSF introductory materials: https://cos.io/our-products/open-science-framework/
+.. _GitHub repository: https://github.com/dib-lab/osf-cli
