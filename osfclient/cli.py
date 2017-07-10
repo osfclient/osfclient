@@ -3,16 +3,19 @@
 These functions implement the functionality of the command-line interface.
 """
 from __future__ import print_function
-from six.moves import input
-import os
+
+from functools import wraps
 import getpass
+import os
 import sys
 
 from six.moves import configparser
+from six.moves import input
 
 from tqdm import tqdm
 
 from .api import OSF
+from .exceptions import UnauthorizedException
 from .utils import norm_remote_path, split_storage, makedirs
 
 
@@ -42,15 +45,20 @@ def config_from_env(config):
     return config
 
 
+def _get_username(args, config):
+    if args.username is None:
+        username = config.get('username')
+    else:
+        username = args.username
+    return username
+
+
 def _setup_osf(args):
     # Command line options have precedence over environment variables,
     # which have precedence over the config file.
     config = config_from_env(config_from_file())
 
-    if args.username is None:
-        username = config.get('username')
-    else:
-        username = args.username
+    username = _get_username(args, config)
 
     project = config.get('project')
     if args.project is None:
@@ -71,10 +79,32 @@ def _setup_osf(args):
     return OSF(username=username, password=password)
 
 
-def init(args):
-    """Initialize or edit an existing .osfcli.config file
+def might_need_auth(f):
+    """Decorate a CLI function that might require authentication.
 
+    Catches any UnauthorizedException raised, prints a helpful message and
+    then exits.
     """
+    @wraps(f)
+    def wrapper(cli_args):
+        try:
+            return_value = f(cli_args)
+        except UnauthorizedException as e:
+            config = config_from_env(config_from_file())
+            username = _get_username(cli_args, config)
+
+            if username is None:
+                sys.exit("Please set a username (run `osf -h` for details).")
+            else:
+                sys.exit("You are not authorized to access this project.")
+
+        return return_value
+
+    return wrapper
+
+
+def init(args):
+    """Initialize or edit an existing .osfcli.config file."""
     # reading existing config file, convert to configparser object
     config = config_from_file()
     config_ = configparser.ConfigParser()
@@ -106,6 +136,7 @@ def init(args):
     cfgfile.close()
 
 
+@might_need_auth
 def clone(args):
     """Copy all files from all storages of a project.
 
@@ -138,6 +169,7 @@ def clone(args):
                 pbar.update()
 
 
+@might_need_auth
 def fetch(args):
     """Fetch an individual file from a project.
 
@@ -175,6 +207,7 @@ def fetch(args):
             break
 
 
+@might_need_auth
 def list_(args):
     """List all files from all storages for project.
 
@@ -194,6 +227,7 @@ def list_(args):
             print(os.path.join(prefix, path))
 
 
+@might_need_auth
 def upload(args):
     """Upload a new file to an existing project.
 
@@ -217,6 +251,7 @@ def upload(args):
         store.create_file(remote_path, fp, update=args.force)
 
 
+@might_need_auth
 def remove(args):
     """Remove a file from the project's storage.
 
