@@ -69,11 +69,14 @@ def main():
     list_parser = _add_subparser('list', list.__doc__, aliases=['ls'])
     list_parser.set_defaults(func=list_)
 
-    # Upload a single file
+    # Upload a single file or a directory tree
     upload_parser = _add_subparser('upload', upload.__doc__)
     upload_parser.set_defaults(func=upload)
     upload_parser.add_argument('-f', '--force',
                                help='Force overwriting of remote file',
+                               action='store_true')
+    upload_parser.add_argument('-r', '--recursive',
+                               help='Recursively upload entire directories.',
                                action='store_true')
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')

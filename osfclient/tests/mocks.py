@@ -45,9 +45,10 @@ def MockProject(name):
 
 def MockArgs(username=None, password=None, output=None, project=None,
              source=None, destination=None, local=None, remote=None,
-             target=None, force=False):
+             target=None, force=False, recursive=False):
     args = MagicMock(spec=['username', 'password', 'output', 'project',
-                           'source', 'destination', 'target', 'force'])
+                           'source', 'destination', 'target', 'force',
+                           'recursive'])
     args._username_mock = PropertyMock(return_value=username)
     type(args).username = args._username_mock
     args._password_mock = PropertyMock(return_value=password)
@@ -73,6 +74,9 @@ def MockArgs(username=None, password=None, output=None, project=None,
 
     args._force_mock = PropertyMock(return_value=force)
     type(args).force = args._force_mock
+
+    args._recursive_mock = PropertyMock(return_value=recursive)
+    type(args).recursive = args._recursive_mock
 
     return args
 
