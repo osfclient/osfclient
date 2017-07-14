@@ -3,4 +3,5 @@ from .api import OSF
 
 __all__ = ['OSF']
 
-__version__ = '0.0.2'
+# update `setup.py` as well
+__version__ = '0.0.3'
