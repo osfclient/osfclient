@@ -5,6 +5,7 @@ import argparse
 from textwrap import dedent
 
 from .cli import clone, fetch, list_, remove, upload, init
+from . import __version__
 
 
 def main():
@@ -28,8 +29,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-u', '--username', default=None,
                         help=('OSF username. Provide your password via '
-                              'OSF_PASSWORD environment variable.'))
-    parser.add_argument('-p', '--project', default=None, help='OSF project ID')
+                              'OSF_PASSWORD environment variable'))
+    parser.add_argument('-p', '--project', default=None,
+                        help='OSF project ID')
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s {}'.format(__version__))
     # dest=command stores the name of the command in a variable, this is
     # used later on to retrieve the correct sub-parser
     subparsers = parser.add_subparsers(dest='command')
@@ -76,7 +80,7 @@ def main():
                                help='Force overwriting of remote file',
                                action='store_true')
     upload_parser.add_argument('-r', '--recursive',
-                               help='Recursively upload entire directories.',
+                               help='Recursively upload entire directories',
                                action='store_true')
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')

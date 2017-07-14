@@ -4,10 +4,11 @@ from setuptools import setup, find_packages
 
 setup(
     name='osfclient',
-    version='0.0.2',
+    # update `osfclient/__init__.py` as well
+    version='0.0.3',
 
-    description='An OSF command line library',
-    long_description='An OSF command line library.',
+    description='An OSF command-line library',
+    long_description='An OSF command-line client and library.',
 
     # The project's main homepage.
     url='https://github.com/dib-lab/osf-cli',
