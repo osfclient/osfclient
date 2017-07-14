@@ -17,10 +17,10 @@ scientific projects, that can be freely downloaded. The *osfclient*
 allows people to store and retrieve large datasets associated to their
 scientific projects and papers on the OSF via the command line
 interface. If you are completely new to the OSF you can
-read the `OSF introductory materials`.
+read the `OSF introductory materials`_.
 
 This is a very new project, it has some rough edges. You can find the code for
-the ``osfclient`` in the `GitHub repository`.
+the ``osfclient`` in the `GitHub repository`_.
 
 
 .. toctree::
