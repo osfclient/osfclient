@@ -29,6 +29,14 @@ def test_split_storage():
     assert store == 'github'
     assert path == 'foo/bar/baz'
 
+    store, path = split_storage('figshare/foo/bar/baz')
+    assert store == 'figshare'
+    assert path == 'foo/bar/baz'
+
+    store, path = split_storage('/figshare/foo/bar/baz')
+    assert store == 'figshare'
+    assert path == 'foo/bar/baz'
+
 
 def test_norm_remote_path():
     path = 'foo/bar/baz.txt'
