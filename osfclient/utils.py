@@ -6,7 +6,7 @@ Helpers and other assorted functions.
 import os
 import six
 
-KNOWN_PROVIDERS = ['osfstorage', 'github', 'figshare']
+KNOWN_PROVIDERS = ['osfstorage', 'github', 'figshare', 'googledrive']
 
 
 def norm_remote_path(path):
