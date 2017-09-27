@@ -266,9 +266,6 @@ def upload(args):
         _, dir_name = os.path.split(args.source)
 
         for root, _, files in os.walk(args.source):
-            # these are extra subdirectories we have walked into since the root
-            # directory, have to clean off leading slashes from their name
-            # for path.join() to work later on
             subdir_path = os.path.relpath(root, args.source)
             for fname in files:
                 local_path = os.path.join(root, fname)
@@ -276,6 +273,7 @@ def upload(args):
                     # build the remote path + fname
                     name = os.path.join(remote_path, dir_name, subdir_path,
                                         fname)
+                    name = os.path.normpath(name)  # can be removed if tests are fixed
                     store.create_file(name, fp, update=args.force)
 
     else:
