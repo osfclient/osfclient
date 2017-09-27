@@ -64,7 +64,7 @@ class Storage(OSFCore, ContainerMixin):
         path = norm_remote_path(path)
 
         directory, fname = os.path.split(path)
-        directories = directory.split('/')
+        directories = directory.split(os.path.sep)
         # navigate to the right parent object for our file
         parent = self
         for directory in directories:
