@@ -273,7 +273,6 @@ def upload(args):
                     # build the remote path + fname
                     name = os.path.join(remote_path, dir_name, subdir_path,
                                         fname)
-                    name = os.path.normpath(name)  # can be removed if tests are fixed
                     store.create_file(name, fp, update=args.force)
 
     else:
