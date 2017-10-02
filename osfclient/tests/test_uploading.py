@@ -115,8 +115,8 @@ def test_recursive_upload(OSF_project):
     assert len(fake_open.mock_calls) == 4 + 4*2
 
     fake_storage.assert_has_calls([
-        call.create_file('BAR/bar.txt', mock.ANY, update=False),
-        call.create_file('BAR/abc.txt', mock.ANY, update=False),
+        call.create_file('BAR/./bar.txt', mock.ANY, update=False),
+        call.create_file('BAR/./abc.txt', mock.ANY, update=False),
         call.create_file('BAR/baz/bar.txt', mock.ANY, update=False),
         call.create_file('BAR/baz/abc.txt', mock.ANY, update=False)
         ])
@@ -162,8 +162,8 @@ def test_recursive_upload_with_subdir(OSF_project):
     assert len(fake_open.mock_calls) == 4 + 4*2
 
     fake_storage.assert_has_calls([
-        call.create_file('BAR/foobar/bar.txt', mock.ANY, update=False),
-        call.create_file('BAR/foobar/abc.txt', mock.ANY, update=False),
+        call.create_file('BAR/foobar/./bar.txt', mock.ANY, update=False),
+        call.create_file('BAR/foobar/./abc.txt', mock.ANY, update=False),
         call.create_file('BAR/foobar/baz/bar.txt', mock.ANY, update=False),
         call.create_file('BAR/foobar/baz/abc.txt', mock.ANY, update=False)
         ])

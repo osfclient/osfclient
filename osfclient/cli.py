@@ -266,13 +266,7 @@ def upload(args):
         _, dir_name = os.path.split(args.source)
 
         for root, _, files in os.walk(args.source):
-            # these are extra subdirectories we have walked into since the root
-            # directory, have to clean off leading slashes from their name
-            # for path.join() to work later on
-            subdir_path = root.replace(args.source, '')
-            if subdir_path.startswith('/'):
-                subdir_path = subdir_path[1:]
-
+            subdir_path = os.path.relpath(root, args.source)
             for fname in files:
                 local_path = os.path.join(root, fname)
                 with open(local_path, 'rb') as fp:
