@@ -18,6 +18,7 @@ help and spread the knowledge.
 
 Contributions should follow these guidelines:
 
+* all development done in a personal fork;
 * all changes by pull request (PR);
 * open your PR as early as possible and add "[WIP]" to the title to mark it as
   work in progress;
