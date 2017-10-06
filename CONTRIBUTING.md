@@ -16,9 +16,11 @@ If you ever have a question about Python, `git`, GitHub, PRs, jargon,
 lingo, processes or how to do something: please ask! We are more than happy to
 help and spread the knowledge.
 
-Contributions should follow these guidelines:
+Contributions should follow 
+[these guidelines](https://opensource.guide/how-to-contribute/#opening-a-pull-request),
+and the ones below:
 
-* all development done in a personal fork;
+* all development is done in a personal fork;
 * all changes by pull request (PR);
 * open your PR as early as possible and add "[WIP]" to the title to mark it as
   work in progress;
