@@ -1,11 +1,31 @@
 # Always prefer setuptools over distutils
+
+
+import os
 from setuptools import setup, find_packages
+
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+
+with open(os.path.join(here, 'VERSION')) as f:
+    __version__ = f.read().strip()
+
+
+with open(os.path.join(here, 'requirements.txt')) as f:
+    required = f.read().splitlines()
+
+
+extra_files = []
+extra_files.append(os.path.join(here, 'LICENSE'))
+extra_files.append(os.path.join(here, 'requirements.txt'))
+extra_files.append(os.path.join(here, 'VERSION'))
 
 
 setup(
     name='osfclient',
     # update `osfclient/__init__.py` as well
-    version='0.0.3',
+    version=__version__,
 
     description='An OSF command-line library',
     long_description='An OSF command-line client and library.',
@@ -39,12 +59,14 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(),
+    incude_package_data=True,
+    package_data={'': extra_files},
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['requests', 'tqdm', 'six'],
+    install_requires=required,
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
