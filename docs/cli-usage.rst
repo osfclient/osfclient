@@ -16,14 +16,14 @@ Below some examples on how to use the command-line program:
     $ osf <command> -h
 
     # list all files for a public project
-    $ osf -p <projectid> ls
+    $ osf -p <projectid> list
 
     # setup a local folder for an existing project
     $ osf init
 
     # list all files for a private project
     # set $OSF_PASSWORD to provide the password
-    $ osf -p <projectid> -u yourOSFacount@example.com ls
+    $ osf -p <projectid> -u yourOSFacount@example.com list
 
     # fetch all files from a project and store them in `output_directory`
     $ osf -p <projectid> clone [output_directory]
@@ -58,7 +58,7 @@ current directory. To set the username and project ID create
     project = 9zpcy
 
 
-after which you can simply run `osf ls` to list the contents of the project.
+after which you can simply run `osf list` to list the contents of the project.
 
 
 .. _OSF: https://osf.io
