@@ -8,6 +8,7 @@ from functools import wraps
 import getpass
 import os
 import sys
+import csv
 
 from six import ensure_text
 from six.moves import configparser
@@ -261,6 +262,7 @@ def list_(args):
 
     project = osf.project(args.project)
 
+    writer = csv.writer(sys.stdout)
     for store in project.storages:
         prefix = store.name
         for file_ in store.files:
@@ -268,7 +270,11 @@ def list_(args):
             if path.startswith('/'):
                 path = path[1:]
 
-            print(os.path.join(prefix, path))
+            vals = [os.path.join(prefix, path)]
+            if args.long:
+                vals.append(str(file_.guid))
+                vals.append(str(file_.download))
+            writer.writerow(vals)
 
 
 @might_need_auth
