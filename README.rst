@@ -2,8 +2,9 @@
    :alt: osfclient
    :align: right
 
+*********
 osfclient
-=========
+*********
 
 The ``osfclient`` is a python library and a command-line client for up-
 and downloading files to and from your `Open Science
