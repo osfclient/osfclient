@@ -15,6 +15,9 @@ with open(os.path.join(here, 'VERSION')) as f:
 with open(os.path.join(here, 'requirements.txt')) as f:
     required = f.read().splitlines()
 
+with open(os.path.join(here, 'README.rst')) as f:
+    long_description = f.read()
+
 
 extra_files = []
 extra_files.append(os.path.join(here, 'LICENSE'))
@@ -28,7 +31,7 @@ setup(
     version=__version__,
 
     description='An OSF command-line library',
-    long_description='An OSF command-line client and library.',
+    long_description=long_description,
 
     # The project's main homepage.
     url='https://github.com/dib-lab/osf-cli',
@@ -52,6 +55,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'License :: OSI Approved :: BSD License',
         'Topic :: Utilities'
     ],
