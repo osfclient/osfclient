@@ -40,6 +40,8 @@ Below some examples on how to use the command-line program:
     # remove a single file from an OSF project
     $ osf -p <projectid> remove remote/file.txt
 
+If you're using python 3+, you can also use the aliases `ls` in place of `list`, and `rm` in place of `remove`.
+
 
 If the project is private you will need to provide authentication
 details. You can provide your OSF account name as command-line argument
