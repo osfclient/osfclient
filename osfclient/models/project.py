@@ -3,6 +3,11 @@ from .storage import Storage
 
 
 class Project(OSFCore):
+    _types = [
+        'nodes',
+        'registrations'
+    ]
+
     def _update_attributes(self, project):
         if not project:
             return

@@ -1,3 +1,4 @@
+from .exceptions import OSFException
 from .models import OSFCore
 from .models import Project
 
@@ -20,8 +21,15 @@ class OSF(OSFCore):
 
     def project(self, project_id):
         """Fetch project `project_id`."""
-        url = self._build_url('nodes', project_id)
-        return Project(self._json(self._get(url), 200), self.session)
+        type_ = self.guid(project_id)
+        url = self._build_url(type_, project_id)
+        if type_ in Project._types:
+            return Project(self._json(self._get(url), 200), self.session)
+        raise OSFException('{} is unrecognized type {}. Clone supports projects and registrations'.format(project_id, type_))
+
+    def guid(self, guid):
+        """Determines JSONAPI type for provided GUID"""
+        return self._json(self._get(self._build_url('guids', guid)), 200)['data']['type']
 
     @property
     def username(self):
