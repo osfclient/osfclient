@@ -1,12 +1,13 @@
 import os
 import six
 
+from requests.exceptions import ConnectionError
+
 from .core import OSFCore
 from .file import ContainerMixin
 from .file import File
 from ..utils import norm_remote_path
 from ..utils import file_empty
-
 
 if six.PY2:
     class FileExistsError(OSError):
@@ -76,13 +77,18 @@ class Storage(OSFCore, ContainerMixin):
         # peek at the file to check if it is an ampty file which needs special
         # handling in requests. If we pass a file like object to data that
         # turns out to be of length zero then no file is created on the OSF
+        conn_error = False
         if file_empty(fp):
             response = self._put(url, params={'name': fname}, data=b'')
         else:
-            response = self._put(url, params={'name': fname}, data=fp)
-
-        if response.status_code == 409:
+            try:
+                response = self._put(url, params={'name': fname}, data=fp)
+            except ConnectionError as err:
+                conn_error = True
+                
+        if conn_error or response.status_code == 409:
             if not update:
+                # note in case of connection error, we are making an inference here
                 raise FileExistsError(path)
 
             else:
