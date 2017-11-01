@@ -2,7 +2,7 @@ import json
 
 
 # Use this to initialize a `Project` instance
-project_node = json.loads("""
+node_json = """
 {
   "data": {
     "relationships": {
@@ -186,11 +186,20 @@ project_node = json.loads("""
         "qatest"
       ]
     },
-    "type": "nodes",
+    "type": "{type}",
     "id": "f3szh"
   }
 }
-""")
+"""
+
+def _build_node(type_):
+    node = json.loads(node_json)
+    node['data']['type'] = type_
+    return node
+
+project_node = _build_node('nodes')
+registration_node = _build_node('registrations')
+fake_node = _build_node('fakes')
 
 
 # Use this to fake a response when asking for a project's files/storages
