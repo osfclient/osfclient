@@ -9,6 +9,7 @@ from .file import File
 from ..utils import norm_remote_path
 from ..utils import file_empty
 
+
 if six.PY2:
     class FileExistsError(OSError):
         """
