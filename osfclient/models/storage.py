@@ -78,7 +78,7 @@ class Storage(OSFCore, ContainerMixin):
 
         # When uploading a large file (>a few MB) that already exists
         # we sometimes get a ConnectionError instead of a status == 409.
-        conn_error = False
+        connection_error = False
         
         # peek at the file to check if it is an empty file which needs special
         # handling in requests. If we pass a file like object to data that
@@ -90,9 +90,9 @@ class Storage(OSFCore, ContainerMixin):
             try:
                 response = self._put(url, params={'name': fname}, data=fp)
             except ConnectionError:
-                conn_error = True
+                connection_error = True
                 
-        if conn_error or response.status_code == 409:
+        if connection_error or response.status_code == 409:
             if not update:
                 # note in case of connection error, we are making an inference here
                 raise FileExistsError(path)
