@@ -75,16 +75,21 @@ class Storage(OSFCore, ContainerMixin):
                 parent = parent.create_folder(directory, exist_ok=True)
 
         url = parent._new_file_url
+
+        # When uploading a large file (>a few MB) that already exists
+        # we sometimes get a ConnectionError instead of a status == 409.
+        conn_error = False
+        
         # peek at the file to check if it is an empty file which needs special
         # handling in requests. If we pass a file like object to data that
-        # turns out to be of length zero then no file is created on the OSF
-        conn_error = False
+        # turns out to be of length zero then no file is created on the OSF.
+        # See: https://github.com/osfclient/osfclient/pull/135
         if file_empty(fp):
             response = self._put(url, params={'name': fname}, data=b'')
         else:
             try:
                 response = self._put(url, params={'name': fname}, data=fp)
-            except ConnectionError as err:
+            except ConnectionError:
                 conn_error = True
                 
         if conn_error or response.status_code == 409:
