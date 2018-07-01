@@ -98,9 +98,9 @@ To setup a development version:
 
 ::
 
-    $ git clone https://github.com/YOURNAMEHERE/osf-cli
-    $ git remote add upstream https://github.com/dib-lab/osf-cli
-    $ cd osf-cli
+    $ git clone https://github.com/YOURNAMEHERE/osfclient
+    $ git remote add upstream https://github.com/osfclient/osfclient
+    $ cd osfclient
     $ pip install -r devRequirements.txt
     $ pip install -e.
 
