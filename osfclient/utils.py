@@ -3,6 +3,7 @@
 Helpers and other assorted functions.
 """
 
+import hashlib
 import os
 import six
 
@@ -61,3 +62,13 @@ def file_empty(fp):
 
     else:
         return not fp.peek()
+
+def sha256_checksum(filename, block_size=65536):
+    """Returns sha256 checksum.
+    Copied from https://gist.github.com/rji/b38c7238128edf53a181#file-sha256-py
+    """
+    sha256 = hashlib.sha256()
+    with open(filename, 'rb') as f:
+        for block in iter(lambda: f.read(block_size), b''):
+            sha256.update(block)
+    return sha256.hexdigest()

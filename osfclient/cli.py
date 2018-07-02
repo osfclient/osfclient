@@ -273,11 +273,13 @@ def upload(args):
                     # build the remote path + fname
                     name = os.path.join(remote_path, dir_name, subdir_path,
                                         fname)
-                    store.create_file(name, fp, update=args.force)
+                    store.create_file(name, fp, force=args.force,
+                                      update=args.update)
 
     else:
         with open(args.source, 'rb') as fp:
-            store.create_file(remote_path, fp, update=args.force)
+            store.create_file(remote_path, fp, force=args.force,
+                              update=args.update)
 
 
 @might_need_auth

@@ -6,6 +6,7 @@ from .file import ContainerMixin
 from .file import File
 from ..utils import norm_remote_path
 from ..utils import file_empty
+from ..utils import sha256_checksum
 
 
 if six.PY2:
@@ -48,7 +49,7 @@ class Storage(OSFCore, ContainerMixin):
         return self._iter_children(self._files_url, 'file', File,
                                    self._files_key)
 
-    def create_file(self, path, fp, update=False):
+    def create_file(self, path, fp, force=False, update=False):
         """Store a new file at `path` in this storage.
 
         The contents of the file descriptor `fp` (opened in 'rb' mode)
@@ -82,13 +83,18 @@ class Storage(OSFCore, ContainerMixin):
             response = self._put(url, params={'name': fname}, data=fp)
 
         if response.status_code == 409:
-            if not update:
+            if not force and not update:
                 raise FileExistsError(path)
 
             else:
                 # find the upload URL for the file we are trying to update
                 for file_ in self.files:
                     if norm_remote_path(file_.path) == path:
+                        if not force:
+                            if sha256_checksum(path) == file_.hashes['sha256']:
+                                # If the hashes are equal and force is False,
+                                # we're done here
+                                break
                         # in the process of attempting to upload the file we
                         # moved through it -> reset read position to beginning
                         # of the file

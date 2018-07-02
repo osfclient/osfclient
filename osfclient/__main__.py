@@ -79,6 +79,9 @@ def main():
     upload_parser.add_argument('-f', '--force',
                                help='Force overwriting of remote file',
                                action='store_true')
+    upload_parser.add_argument('-u', '--update',
+                               help='Overwrite only if local and remote files differ',
+                               action='store_true')
     upload_parser.add_argument('-r', '--recursive',
                                help='Recursively upload entire directories',
                                action='store_true')
