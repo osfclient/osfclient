@@ -47,7 +47,7 @@ out the command-line program.
 
 Read the full documentation: http://osfclient.readthedocs.io/en/latest/
 
-Below some examples on how to use it:
+Below are some examples on how to use it:
 
 ::
 
@@ -61,18 +61,21 @@ Below some examples on how to use it:
     # list all files for the project
     $ osf ls
 
-    # fetch all files for that project
+    # fetch all files for the project
     $ osf clone
 
     # add a new file
     $ osf upload local/file.txt remote/path.txt
+
+    # add a new directory
+    $ osf upload -r local/directory/ remote/directory
 
 If the project is private you will need to provide authentication
 details. The password will be retrieved from the ``OSF_PASSWORD``
 environment variable or you will be asked directly by the tool when you
 run it.
 
-You can set a default values by using a configuration file in the
+You can set default values by using a configuration file in the
 current directory. This is what ``osf init`` does for you. To set the
 username and project ID create ``.osfcli.config``:
 
