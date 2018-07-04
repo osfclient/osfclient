@@ -45,6 +45,9 @@ def main():
     clone_parser.set_defaults(func=clone)
     clone_parser.add_argument('output', help='Write files to this directory',
                               default=None, nargs='?')
+    clone_parser.add_argument('-u', '--update',
+                               help='Overwrite only if local and remote files differ',
+                               action='store_true')
 
     def _add_subparser(name, description, aliases=[]):
         options = {
@@ -64,6 +67,9 @@ def main():
     fetch_parser.add_argument('-f', '--force',
                               help='Force overwriting of local file',
                               action='store_true')
+    fetch_parser.add_argument('-u', '--update',
+                               help='Overwrite only if local and remote files differ',
+                               action='store_true')
     fetch_parser.add_argument('remote', help='Remote path',
                               default=None)
     fetch_parser.add_argument('local', help='Local path',
