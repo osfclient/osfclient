@@ -91,7 +91,7 @@ class Storage(OSFCore, ContainerMixin):
                 for file_ in self.files:
                     if norm_remote_path(file_.path) == path:
                         if not force:
-                            if sha256_checksum(path) == file_.hashes['sha256']:
+                            if sha256_checksum(path) == file_.hashes.get('sha256'):
                                 # If the hashes are equal and force is False,
                                 # we're done here
                                 break
