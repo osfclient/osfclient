@@ -56,7 +56,8 @@ class Storage(OSFCore, ContainerMixin):
         will be uploaded to `path` which is the full path at
         which to store the file.
 
-        To update an existing file set `update=True`.
+        To force overwrite of an existing file, set `force=True`.
+        To overwrite an existing file only if the files differ, set `update=True`
         """
         if 'b' not in fp.mode:
             raise ValueError("File has to be opened in binary mode.")

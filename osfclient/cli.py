@@ -143,6 +143,9 @@ def clone(args):
     The output directory defaults to the current directory.
 
     If the project is private you need to specify a username.
+
+    If args.update is True, overwrite any existing local files only if local and
+    remote files differ.
     """
     osf = _setup_osf(args)
     project = osf.project(args.project)
@@ -183,6 +186,10 @@ def fetch(args):
     The local path defaults to the name of the remote file.
 
     If the project is private you need to specify a username.
+
+    If args.force is True, write local file even if that file already exists.
+    If args.force is False but args.update is True, overwrite an existing local
+    file only if local and remote files differ.
     """
     storage, remote_path = split_storage(args.remote)
 
