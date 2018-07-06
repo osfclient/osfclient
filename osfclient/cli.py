@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from .api import OSF
 from .exceptions import UnauthorizedException
-from .utils import norm_remote_path, split_storage, makedirs, sha256_checksum
+from .utils import norm_remote_path, split_storage, makedirs, checksum
 
 
 def config_from_file():
@@ -164,7 +164,7 @@ def clone(args):
 
                 path = os.path.join(prefix, path)
                 if os.path.exists(path) and args.update:
-                    if sha256_checksum(path) == file_.hashes.get('sha256'):
+                    if checksum(path) == file_.hashes.get('md5'):
                         continue
                 directory, _ = os.path.split(path)
                 makedirs(directory, exist_ok=True)
@@ -212,7 +212,7 @@ def fetch(args):
     for file_ in store.files:
         if norm_remote_path(file_.path) == remote_path:
             if local_path_exists and not args.force and args.update:
-                if file_.hashes.get('sha256') == sha256_checksum(local_path):
+                if file_.hashes.get('md5') == checksum(local_path):
                     print("Local file %s already matches remote." % local_path)
                     break
             with open(local_path, 'wb') as fp:

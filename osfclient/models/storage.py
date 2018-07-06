@@ -6,7 +6,7 @@ from .file import ContainerMixin
 from .file import File
 from ..utils import norm_remote_path
 from ..utils import file_empty
-from ..utils import sha256_checksum
+from ..utils import checksum
 
 
 if six.PY2:
@@ -92,7 +92,7 @@ class Storage(OSFCore, ContainerMixin):
                 for file_ in self.files:
                     if norm_remote_path(file_.path) == path:
                         if not force:
-                            if sha256_checksum(path) == file_.hashes.get('sha256'):
+                            if checksum(path) == file_.hashes.get('md5'):
                                 # If the hashes are equal and force is False,
                                 # we're done here
                                 break
