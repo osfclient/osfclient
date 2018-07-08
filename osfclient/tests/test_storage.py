@@ -144,7 +144,7 @@ def test_update_existing_file():
                       side_effect=simple_OSFCore_put) as fake_put:
         with patch.object(OSFCore, '_get',
                           side_effect=simple_OSFCore_get) as fake_get:
-            store.create_file('foo.txt', fake_fp, update=True)
+            store.create_file('foo.txt', fake_fp, force=True)
 
     assert fake_fp.call_count == 0
     assert call.peek(1) in fake_fp.mock_calls
