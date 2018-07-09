@@ -117,7 +117,8 @@ def test_create_existing_file():
     assert fake_fp.call_count == 0
 
 
-def test_update_existing_file():
+def test_force_existing_file():
+    # test that adding `force=True` lets you overwrite existing remote files
     new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
                     'osfstorage/foo123/')
     store = Storage({})
@@ -150,6 +151,148 @@ def test_update_existing_file():
     assert call.peek(1) in fake_fp.mock_calls
     # should have made two PUT requests, first attempt at uploading then
     # to update the file
+    assert fake_put.call_count == 2
+    # should have made one GET request to list files
+    assert fake_get.call_count == 1
+
+
+def test_update_existing_file_files_differ():
+    # test that adding `update=True` lets you overwrite an existing remote file
+    # if it differs from the local file
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+
+    def simple_OSFCore_put(url, params=None, data=None):
+        if url == new_file_url:
+            return FakeResponse(409, None)
+        elif url.endswith("osfstorage/foo.txt"):
+            return FakeResponse(200, None)
+
+    store._files_url = 'https://api.osf.io/v2//nodes/f3szh/files/osfstorage'
+    json = fake_responses.files_node('f3szh', 'osfstorage',
+                                     file_names=['hello.txt', 'foo.txt'])
+    for i_file in range(2):
+        json['data'][i_file]['attributes']['extra']['hashes']['md5'] = '1' * 32
+    top_level_response = FakeResponse(200, json)
+
+    def simple_OSFCore_get(url):
+        if url == store._files_url:
+            return top_level_response
+
+    def simple_checksum(file_path):
+        return '0' * 32
+
+    fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
+    with patch.object(OSFCore, '_put',
+                      side_effect=simple_OSFCore_put) as fake_put:
+        with patch.object(OSFCore, '_get',
+                          side_effect=simple_OSFCore_get) as fake_get:
+            with patch('osfclient.models.storage.checksum',
+                       side_effect=simple_checksum):
+                store.create_file('foo.txt', fake_fp, update=True)
+
+    assert fake_fp.call_count == 0
+    assert call.peek(1) in fake_fp.mock_calls
+    # should have made two PUT requests, first attempt at uploading then
+    # to update the file
+    assert fake_put.call_count == 2
+    # should have made one GET request to list files
+    assert fake_get.call_count == 1
+
+
+def test_update_existing_file_files_match():
+    # test that `update=True` will not overwrite a remote file if it matches the
+    # local file
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+
+    def simple_OSFCore_put(url, params=None, data=None):
+        if url == new_file_url:
+            return FakeResponse(409, None)
+        elif url.endswith("osfstorage/foo.txt"):
+            return FakeResponse(200, None)
+
+    store._files_url = 'https://api.osf.io/v2//nodes/f3szh/files/osfstorage'
+    json = fake_responses.files_node('f3szh', 'osfstorage',
+                                     file_names=['hello.txt', 'foo.txt'])
+    for i_file in range(2):
+        json['data'][i_file]['attributes']['extra']['hashes']['md5'] = '0' * 32
+    top_level_response = FakeResponse(200, json)
+
+    def simple_OSFCore_get(url):
+        if url == store._files_url:
+            return top_level_response
+
+    def simple_checksum(file_path):
+        return '0' * 32
+    
+    fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
+    with patch.object(OSFCore, '_put',
+                      side_effect=simple_OSFCore_put) as fake_put:
+        with patch.object(OSFCore, '_get',
+                          side_effect=simple_OSFCore_get) as fake_get:
+            with patch('osfclient.models.storage.checksum',
+                       side_effect=simple_checksum):
+                store.create_file('foo.txt', fake_fp, update=True)
+
+    assert fake_fp.call_count == 0
+    assert call.peek(1) not in fake_fp.mock_calls
+    # should have made one PUT requests, first attempt at uploading, and no
+    # attempt to update the file since they match
+    assert fake_put.call_count == 1
+    # should have made one GET request to list files
+    assert fake_get.call_count == 1
+
+
+def test_update_existing_file_files_match_force_overrides_update():
+    # test that adding `force=True` and `update=True` forces overwriting of the
+    # remote file, since `force=True` overrides `update=True`
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+
+    def simple_OSFCore_put(url, params=None, data=None):
+        if url == new_file_url:
+            return FakeResponse(409, None)
+        elif url.endswith("osfstorage/foo.txt"):
+            return FakeResponse(200, None)
+
+    store._files_url = 'https://api.osf.io/v2//nodes/f3szh/files/osfstorage'
+    json = fake_responses.files_node('f3szh', 'osfstorage',
+                                     file_names=['hello.txt', 'foo.txt'])
+    for i_file in range(2):
+        json['data'][i_file]['attributes']['extra']['hashes']['md5'] = '0' * 32
+    top_level_response = FakeResponse(200, json)
+
+    def simple_OSFCore_get(url):
+        if url == store._files_url:
+            return top_level_response
+
+    def simple_checksum(file_path):
+        return '0' * 32
+    
+    fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
+    with patch.object(OSFCore, '_put',
+                      side_effect=simple_OSFCore_put) as fake_put:
+        with patch.object(OSFCore, '_get',
+                          side_effect=simple_OSFCore_get) as fake_get:
+            with patch('osfclient.models.storage.checksum',
+                       side_effect=simple_checksum):
+                store.create_file('foo.txt', fake_fp, force=True, update=True)
+
+    assert fake_fp.call_count == 0
+    assert call.peek(1) in fake_fp.mock_calls
+    # should have made two PUT requests, first attempt at uploading then
+    # to update the file, even though they match, since force=True overrides
+    # update=True
     assert fake_put.call_count == 2
     # should have made one GET request to list files
     assert fake_get.call_count == 1
