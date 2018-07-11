@@ -79,6 +79,7 @@ class Storage(OSFCore, ContainerMixin):
         # When uploading a large file (>a few MB) that already exists
         # we sometimes get a ConnectionError instead of a status == 409.
         connection_error = False
+        large_file_cutoff_bytes = 2**20 # 1 MB in bytes
         
         # peek at the file to check if it is an empty file which needs special
         # handling in requests. If we pass a file like object to data that
@@ -94,8 +95,19 @@ class Storage(OSFCore, ContainerMixin):
                 
         if connection_error or response.status_code == 409:
             if not update:
-                # note in case of connection error, we are making an inference here
-                raise FileExistsError(path)
+                # one-liner to get file size from file pointer from
+                # https://stackoverflow.com/a/283719/2680824
+                file_size_bytes = os.fstat(fp.fileno()).st_size 
+                if connection_error and file_size_bytes < large_file_cutoff_bytes:
+                    msg = (
+                        "There was a connection error which might mean {} " +
+                        "already exists. Try again with the `--force` flag " +
+                        "specified."
+                    ).format(path)
+                    raise RuntimeError(msg)
+                else:
+                    # note in case of connection error, we are making an inference here
+                    raise FileExistsError(path)
 
             else:
                 # find the upload URL for the file we are trying to update
