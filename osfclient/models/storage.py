@@ -37,6 +37,8 @@ class Storage(OSFCore, ContainerMixin):
         self._new_folder_url = self._get_attribute(storage,
                                                    'links', 'new_folder')
         self._new_file_url = self._get_attribute(storage, 'links', 'upload')
+        self.known_file_dict = dict()
+        self.known_folder_set = set()
 
     def __str__(self):
         return '<Storage [{0}]>'.format(self.id)
@@ -69,10 +71,13 @@ class Storage(OSFCore, ContainerMixin):
         directories = directory.split(os.path.sep)
         # navigate to the right parent object for our file
         parent = self
+        if os.path.dirname(path) not in self.known_folder_set:
         for directory in directories:
             # skip empty directory names
             if directory:
                 parent = parent.create_folder(directory, exist_ok=True)
+                    # keep '/' at beginning of path but remove from the end
+                    self.known_folder_set.add(parent.path.strip('/'))
 
         url = parent._new_file_url
 
@@ -99,14 +104,19 @@ class Storage(OSFCore, ContainerMixin):
 
             else:
                 # find the upload URL for the file we are trying to update
+                if path in self.known_file_dict:
+                    file_to_update = self.known_file_dict[path]
+                else:
                 for file_ in self.files:
                     if norm_remote_path(file_.path) == path:
+                            file_to_update = file_
+                            break
+                    else:
+                        raise RuntimeError("Could not create a new file at "
+                                           "({}) nor update it.".format(path))
+
                         # in the process of attempting to upload the file we
                         # moved through it -> reset read position to beginning
                         # of the file
                         fp.seek(0)
-                        file_.update(fp)
-                        break
-                else:
-                    raise RuntimeError("Could not create a new file at "
-                                       "({}) nor update it.".format(path))
+                file_to_update.update(fp)
