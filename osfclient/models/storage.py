@@ -72,10 +72,10 @@ class Storage(OSFCore, ContainerMixin):
         # navigate to the right parent object for our file
         parent = self
         if os.path.dirname(path) not in self.known_folder_set:
-        for directory in directories:
-            # skip empty directory names
-            if directory:
-                parent = parent.create_folder(directory, exist_ok=True)
+            for directory in directories:
+                # skip empty directory names
+                if directory:
+                    parent = parent.create_folder(directory, exist_ok=True)
                     # keep '/' at beginning of path but remove from the end
                     self.known_folder_set.add(parent.path.strip('/'))
 
