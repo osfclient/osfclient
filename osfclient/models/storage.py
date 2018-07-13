@@ -107,16 +107,16 @@ class Storage(OSFCore, ContainerMixin):
                 if path in self.known_file_dict:
                     file_to_update = self.known_file_dict[path]
                 else:
-                for file_ in self.files:
-                    if norm_remote_path(file_.path) == path:
+                    for file_ in self.files:
+                        if norm_remote_path(file_.path) == path:
                             file_to_update = file_
                             break
                     else:
                         raise RuntimeError("Could not create a new file at "
                                            "({}) nor update it.".format(path))
 
-                        # in the process of attempting to upload the file we
-                        # moved through it -> reset read position to beginning
-                        # of the file
-                        fp.seek(0)
+                # in the process of attempting to upload the file we
+                # moved through it -> reset read position to beginning
+                # of the file
+                fp.seek(0)
                 file_to_update.update(fp)
