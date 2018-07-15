@@ -61,3 +61,9 @@ def file_empty(fp):
 
     else:
         return not fp.peek()
+
+def get_local_file_size(fp):
+    """Get file size from file pointer"""
+    # one-liner to get file size from file pointer explained at
+    # https://stackoverflow.com/a/283719/2680824
+    return os.fstat(fp.fileno()).st_size 

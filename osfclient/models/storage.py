@@ -8,6 +8,7 @@ from .file import ContainerMixin
 from .file import File
 from ..utils import norm_remote_path
 from ..utils import file_empty
+from ..utils import get_local_file_size
 
 
 if six.PY2:
@@ -96,7 +97,7 @@ class Storage(OSFCore, ContainerMixin):
             if not update:
                 # one-liner to get file size from file pointer from
                 # https://stackoverflow.com/a/283719/2680824
-                file_size_bytes = os.fstat(fp.fileno()).st_size 
+                file_size_bytes = get_local_file_size(fp)
                 large_file_cutoff = 2**20 # 1 MB in bytes
                 if connection_error and file_size_bytes < large_file_cutoff:
                     msg = (
