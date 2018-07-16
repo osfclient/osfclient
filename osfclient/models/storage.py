@@ -37,8 +37,7 @@ class Storage(OSFCore, ContainerMixin):
         self._new_folder_url = self._get_attribute(storage,
                                                    'links', 'new_folder')
         self._new_file_url = self._get_attribute(storage, 'links', 'upload')
-        self.known_file_dict = dict()
-        self.known_folder_set = set()
+        self._known_paths = dict()
 
     def __str__(self):
         return '<Storage [{0}]>'.format(self.id)
@@ -51,8 +50,23 @@ class Storage(OSFCore, ContainerMixin):
         """
         return self._iter_children(self._files_url, 'file', File,
                                    self._files_key)
+    
+    def update_cache(self):
+        """Store all files and folders in dictionary.
 
-    def create_file(self, path, fp, update=False):
+        The files are stored like `_known_paths['path/to/file'] = file_object`.
+        The folders are stored like `_known_paths['path/to/folder'] = None`
+        since we just need to know if a folder is there and don't need to access
+        a folder object.
+
+        No `/` at the beginning or end of all keys in _known_paths
+        """
+        for file_ in self.files:
+            self._known_paths[file_.path.strip('/')] = file_
+            self._known_paths[os.path.dirname(file_.path).strip('/')] = None
+
+
+    def create_file(self, path, fp, update=False, cache=False):
         """Store a new file at `path` in this storage.
 
         The contents of the file descriptor `fp` (opened in 'rb' mode)
@@ -71,13 +85,13 @@ class Storage(OSFCore, ContainerMixin):
         directories = directory.split(os.path.sep)
         # navigate to the right parent object for our file
         parent = self
-        if os.path.dirname(path) not in self.known_folder_set:
+        if not cache or os.path.dirname(path) not in self._known_paths:
             for directory in directories:
                 # skip empty directory names
                 if directory:
                     parent = parent.create_folder(directory, exist_ok=True)
-                    # keep '/' at beginning of path but remove from the end
-                    self.known_folder_set.add(parent.path.strip('/'))
+                    if cache:
+                        self._known_paths[parent.path.strip('/')] = None
 
         url = parent._new_file_url
 
@@ -104,8 +118,8 @@ class Storage(OSFCore, ContainerMixin):
 
             else:
                 # find the upload URL for the file we are trying to update
-                if path in self.known_file_dict:
-                    file_to_update = self.known_file_dict[path]
+                if cache and path in self._known_paths:
+                    file_to_update = self._known_paths[path]
                 else:
                     for file_ in self.files:
                         if norm_remote_path(file_.path) == path:

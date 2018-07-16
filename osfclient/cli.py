@@ -262,10 +262,9 @@ def upload(args):
             raise RuntimeError("Expected source ({}) to be a directory when "
                                "using recursive mode.".format(args.source))
 
-        # cache files in dict and folders in a set
-        for file_ in store.files:
-            store.known_file_dict[file_.path.strip('/')] = file_
-            store.known_folder_set.add(os.path.dirname(file_.path).strip('/'))
+        if args.cache:
+            # cache known paths in remote storage
+            store.update_cache()
 
         # local name of the directory that is being uploaded
         _, dir_name = os.path.split(args.source)
@@ -278,11 +277,14 @@ def upload(args):
                     # build the remote path + fname
                     name = os.path.join(remote_path, dir_name, subdir_path,
                                         fname)
-                    store.create_file(name, fp, update=args.force)
+                    print(name)
+                    store.create_file(name, fp, update=args.force,
+                                      cache=args.cache)
 
     else:
         with open(args.source, 'rb') as fp:
-            store.create_file(remote_path, fp, update=args.force)
+            store.create_file(remote_path, fp, update=args.force,
+                              cache=False)
 
 
 @might_need_auth
