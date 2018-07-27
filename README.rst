@@ -6,6 +6,8 @@
 osfclient
 *********
 
+|travis_badge|_
+
 The ``osfclient`` is a python library and a command-line client for up-
 and downloading files to and from your `Open Science
 Framework <//osf.io>`__ projects. The *Open Science Framework* (OSF) is
@@ -20,6 +22,9 @@ interface. If you are completely new to the OSF you can `read their
 introductory materials <https://cos.io/our-products/open-science-framework/>`__
 
 This is a very new project, it has some rough edges.
+
+.. |travis_badge| image:: https://travis-ci.org/osfclient/osfclient.svg?branch=master
+.. _travis-badge: https://travis-ci.org/osfclient/osfclient
 
 Installing
 ==========
