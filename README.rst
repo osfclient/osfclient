@@ -6,7 +6,7 @@
 osfclient
 *********
 
-|travis_badge|_
+|travisbadge|
 
 The ``osfclient`` is a python library and a command-line client for up-
 and downloading files to and from your `Open Science
@@ -23,8 +23,8 @@ introductory materials <https://cos.io/our-products/open-science-framework/>`__
 
 This is a very new project, it has some rough edges.
 
-.. |travis_badge| image:: https://travis-ci.org/osfclient/osfclient.svg?branch=master
-.. _travis-badge: https://travis-ci.org/osfclient/osfclient
+.. |travisbadge| image:: https://travis-ci.org/osfclient/osfclient.svg?branch=master
+   :target: https://travis-ci.org/osfclient/osfclient
 
 Installing
 ==========
