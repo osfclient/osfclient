@@ -112,4 +112,14 @@ To setup a development version:
     $ pip install -r devRequirements.txt
     $ pip install -e.
 
+The following secrets are used for this project:
+
+- test.pypi.org password
+
+If you need access to any of these secrets to contribute to this project,
+contact one of the following maintaners on `Keybase <//keybase.io>`__:
+
+- Tim Head (@betatim)
+- Ben Lindsay (@benlindsay)
+
 For more details and instructions: `CONTRIBUTING.md <CONTRIBUTING.md>`__
