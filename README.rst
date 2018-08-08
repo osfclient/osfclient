@@ -112,12 +112,10 @@ To setup a development version:
     $ pip install -r devRequirements.txt
     $ pip install -e.
 
-The following secrets are used for this project:
-
-- test.pypi.org password
-
-If you need access to any of these secrets to contribute to this project,
-contact one of the following maintaners on `Keybase <//keybase.io>`__:
+There are a few secret keys relevant to this project, like passwords to
+pypi.org, test.pypi.org, and the osfclient email account. We store these in an
+encrypted git repo on `Keybase <//keybase.io>`__. If you need access to this
+repo, contact any of the following maintainters on Keybase:
 
 - Tim Head (@betatim)
 - Ben Lindsay (@benlindsay)
