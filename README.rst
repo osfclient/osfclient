@@ -6,6 +6,8 @@
 osfclient
 *********
 
+|travisbadge|
+
 The ``osfclient`` is a python library and a command-line client for up-
 and downloading files to and from your `Open Science
 Framework <//osf.io>`__ projects. The *Open Science Framework* (OSF) is
@@ -20,6 +22,9 @@ interface. If you are completely new to the OSF you can `read their
 introductory materials <https://cos.io/our-products/open-science-framework/>`__
 
 This is a very new project, it has some rough edges.
+
+.. |travisbadge| image:: https://travis-ci.org/osfclient/osfclient.svg?branch=master
+   :target: https://travis-ci.org/osfclient/osfclient
 
 Installing
 ==========
@@ -106,5 +111,13 @@ To setup a development version:
     $ cd osfclient
     $ pip install -r devRequirements.txt
     $ pip install -e.
+
+There are a few secret keys relevant to this project, like passwords to
+pypi.org, test.pypi.org, and the osfclient email account. We store these in an
+encrypted git repo on `Keybase <//keybase.io>`__. If you need access to this
+repo, contact any of the following maintainters on Keybase:
+
+- Tim Head (@betatim)
+- Ben Lindsay (@benlindsay)
 
 For more details and instructions: `CONTRIBUTING.md <CONTRIBUTING.md>`__
