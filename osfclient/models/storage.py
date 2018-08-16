@@ -6,9 +6,10 @@ from requests.exceptions import ConnectionError
 from .core import OSFCore
 from .file import ContainerMixin
 from .file import File
-from ..utils import norm_remote_path
+from ..utils import checksum
 from ..utils import file_empty
 from ..utils import get_local_file_size
+from ..utils import norm_remote_path
 
 
 if six.PY2:
@@ -51,14 +52,15 @@ class Storage(OSFCore, ContainerMixin):
         return self._iter_children(self._files_url, 'file', File,
                                    self._files_key)
 
-    def create_file(self, path, fp, update=False):
+    def create_file(self, path, fp, force=False, update=False):
         """Store a new file at `path` in this storage.
 
         The contents of the file descriptor `fp` (opened in 'rb' mode)
         will be uploaded to `path` which is the full path at
         which to store the file.
 
-        To update an existing file set `update=True`.
+        To force overwrite of an existing file, set `force=True`.
+        To overwrite an existing file only if the files differ, set `update=True`
         """
         if 'b' not in fp.mode:
             raise ValueError("File has to be opened in binary mode.")
@@ -92,9 +94,9 @@ class Storage(OSFCore, ContainerMixin):
                 response = self._put(url, params={'name': fname}, data=fp)
             except ConnectionError:
                 connection_error = True
-                
+
         if connection_error or response.status_code == 409:
-            if not update:
+            if not force and not update:
                 # one-liner to get file size from file pointer from
                 # https://stackoverflow.com/a/283719/2680824
                 file_size_bytes = get_local_file_size(fp)
@@ -114,6 +116,11 @@ class Storage(OSFCore, ContainerMixin):
                 # find the upload URL for the file we are trying to update
                 for file_ in self.files:
                     if norm_remote_path(file_.path) == path:
+                        if not force:
+                            if checksum(path) == file_.hashes.get('md5'):
+                                # If the hashes are equal and force is False,
+                                # we're done here
+                                break
                         # in the process of attempting to upload the file we
                         # moved through it -> reset read position to beginning
                         # of the file
