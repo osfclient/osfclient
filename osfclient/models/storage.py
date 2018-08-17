@@ -155,7 +155,7 @@ class Storage(OSFCore, ContainerMixin):
 
                 if file_to_update is None:
                     raise RuntimeError("Could not create a new file at "
-                                        "({}) nor update it.".format(path))
+                                       "({}) nor update it.".format(path))
                 else:
                     # in the process of attempting to upload the file we
                     # moved through it -> reset read position to beginning
