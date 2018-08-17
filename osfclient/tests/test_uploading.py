@@ -49,8 +49,8 @@ def test_select_project(OSF_project):
     assert fake_project._storage_mock.mock_calls == expected
     # assert fake_project.mock_calls == expected
 
-    expected = [call.create_file('bar/bar/foo.txt',
-                                 fake_open.return_value, update=False)]
+    expected = [call.create_file('bar/bar/foo.txt', fake_open.return_value,
+                                 force=False, update=False, cache=False)]
     # we should call the create_file method on the return
     # value of _storage_mock
     assert fake_project._storage_mock.return_value.mock_calls == expected
@@ -115,10 +115,14 @@ def test_recursive_upload(OSF_project):
     assert len(fake_open.mock_calls) == 4 + 4*2
 
     fake_storage.assert_has_calls([
-        call.create_file('BAR/./bar.txt', mock.ANY, update=False),
-        call.create_file('BAR/./abc.txt', mock.ANY, update=False),
-        call.create_file('BAR/baz/bar.txt', mock.ANY, update=False),
-        call.create_file('BAR/baz/abc.txt', mock.ANY, update=False)
+        call.create_file('BAR/./bar.txt', mock.ANY, force=False, update=False,
+                         cache=False),
+        call.create_file('BAR/./abc.txt', mock.ANY, force=False, update=False,
+                         cache=False),
+        call.create_file('BAR/baz/bar.txt', mock.ANY, force=False, update=False,
+                         cache=False),
+        call.create_file('BAR/baz/abc.txt', mock.ANY, force=False, update=False,
+                         cache=False),
         ])
     # two directories with two files each -> four calls
     assert len(fake_storage.mock_calls) == 4
@@ -162,10 +166,14 @@ def test_recursive_upload_with_subdir(OSF_project):
     assert len(fake_open.mock_calls) == 4 + 4*2
 
     fake_storage.assert_has_calls([
-        call.create_file('BAR/foobar/./bar.txt', mock.ANY, update=False),
-        call.create_file('BAR/foobar/./abc.txt', mock.ANY, update=False),
-        call.create_file('BAR/foobar/baz/bar.txt', mock.ANY, update=False),
-        call.create_file('BAR/foobar/baz/abc.txt', mock.ANY, update=False)
+        call.create_file('BAR/foobar/./bar.txt', mock.ANY,
+                         update=False, force=False, cache=False),
+        call.create_file('BAR/foobar/./abc.txt', mock.ANY,
+                         update=False, force=False, cache=False),
+        call.create_file('BAR/foobar/baz/bar.txt', mock.ANY,
+                         update=False, force=False, cache=False),
+        call.create_file('BAR/foobar/baz/abc.txt', mock.ANY,
+                         update=False, force=False, cache=False),
         ])
     # two directories with two files each -> four calls
     assert len(fake_storage.mock_calls) == 4

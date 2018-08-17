@@ -37,6 +37,8 @@ class File(OSFCore):
                                                 'attributes', 'date_created')
         self.date_modified = self._get_attribute(file,
                                                  'attributes', 'date_modified')
+        self.hashes = self._get_attribute(file,
+                                          'attributes', 'extra', 'hashes')
 
     def __str__(self):
         return '<File [{0}, {1}]>'.format(self.id, self.path)

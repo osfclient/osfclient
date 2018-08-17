@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from .api import OSF
 from .exceptions import UnauthorizedException
-from .utils import norm_remote_path, split_storage, makedirs
+from .utils import norm_remote_path, split_storage, makedirs, checksum
 
 
 def config_from_file():
@@ -143,6 +143,9 @@ def clone(args):
     The output directory defaults to the current directory.
 
     If the project is private you need to specify a username.
+
+    If args.update is True, overwrite any existing local files only if local and
+    remote files differ.
     """
     osf = _setup_osf(args)
     project = osf.project(args.project)
@@ -160,6 +163,9 @@ def clone(args):
                     path = path[1:]
 
                 path = os.path.join(prefix, path)
+                if os.path.exists(path) and args.update:
+                    if checksum(path) == file_.hashes.get('md5'):
+                        continue
                 directory, _ = os.path.split(path)
                 makedirs(directory, exist_ok=True)
 
@@ -180,6 +186,10 @@ def fetch(args):
     The local path defaults to the name of the remote file.
 
     If the project is private you need to specify a username.
+
+    If args.force is True, write local file even if that file already exists.
+    If args.force is False but args.update is True, overwrite an existing local
+    file only if local and remote files differ.
     """
     storage, remote_path = split_storage(args.remote)
 
@@ -187,7 +197,8 @@ def fetch(args):
     if local_path is None:
         _, local_path = os.path.split(remote_path)
 
-    if os.path.exists(local_path) and not args.force:
+    local_path_exists = os.path.exists(local_path)
+    if local_path_exists and not args.force and not args.update:
         sys.exit("Local file %s already exists, not overwriting." % local_path)
 
     directory, _ = os.path.split(local_path)
@@ -200,6 +211,10 @@ def fetch(args):
     store = project.storage(storage)
     for file_ in store.files:
         if norm_remote_path(file_.path) == remote_path:
+            if local_path_exists and not args.force and args.update:
+                if file_.hashes.get('md5') == checksum(local_path):
+                    print("Local file %s already matches remote." % local_path)
+                    break
             with open(local_path, 'wb') as fp:
                 file_.write_to(fp)
 
@@ -278,13 +293,13 @@ def upload(args):
                     name = os.path.join(remote_path, dir_name, subdir_path,
                                         fname)
                     print(name)
-                    store.create_file(name, fp, update=args.force,
-                                      cache=args.cache)
+                    store.create_file(name, fp, force=args.force,
+                                      update=args.update, cache=args.cache)
 
     else:
         with open(args.source, 'rb') as fp:
-            store.create_file(remote_path, fp, update=args.force,
-                              cache=False)
+            store.create_file(remote_path, fp, force=args.force,
+                              update=args.update, cache=False)
 
 
 @might_need_auth

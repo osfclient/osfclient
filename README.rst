@@ -6,6 +6,8 @@
 osfclient
 *********
 
+|travisbadge|
+
 The ``osfclient`` is a python library and a command-line client for up-
 and downloading files to and from your `Open Science
 Framework <//osf.io>`__ projects. The *Open Science Framework* (OSF) is
@@ -20,6 +22,9 @@ interface. If you are completely new to the OSF you can `read their
 introductory materials <https://cos.io/our-products/open-science-framework/>`__
 
 This is a very new project, it has some rough edges.
+
+.. |travisbadge| image:: https://travis-ci.org/osfclient/osfclient.svg?branch=master
+   :target: https://travis-ci.org/osfclient/osfclient
 
 Installing
 ==========
@@ -47,7 +52,7 @@ out the command-line program.
 
 Read the full documentation: http://osfclient.readthedocs.io/en/latest/
 
-Below some examples on how to use it:
+Below are some examples on how to use it:
 
 ::
 
@@ -61,18 +66,21 @@ Below some examples on how to use it:
     # list all files for the project
     $ osf ls
 
-    # fetch all files for that project
+    # fetch all files for the project
     $ osf clone
 
     # add a new file
     $ osf upload local/file.txt remote/path.txt
+
+    # add a new directory
+    $ osf upload -r local/directory/ remote/directory
 
 If the project is private you will need to provide authentication
 details. The password will be retrieved from the ``OSF_PASSWORD``
 environment variable or you will be asked directly by the tool when you
 run it.
 
-You can set a default values by using a configuration file in the
+You can set default values by using a configuration file in the
 current directory. This is what ``osf init`` does for you. To set the
 username and project ID create ``.osfcli.config``:
 
@@ -98,10 +106,18 @@ To setup a development version:
 
 ::
 
-    $ git clone https://github.com/YOURNAMEHERE/osf-cli
-    $ git remote add upstream https://github.com/dib-lab/osf-cli
-    $ cd osf-cli
+    $ git clone https://github.com/YOURNAMEHERE/osfclient
+    $ git remote add upstream https://github.com/osfclient/osfclient
+    $ cd osfclient
     $ pip install -r devRequirements.txt
     $ pip install -e.
+
+There are a few secret keys relevant to this project, like passwords to
+pypi.org, test.pypi.org, and the osfclient email account. We store these in an
+encrypted git repo on `Keybase <//keybase.io>`__. If you need access to this
+repo, contact any of the following maintainters on Keybase:
+
+- Tim Head (@betatim)
+- Ben Lindsay (@benlindsay)
 
 For more details and instructions: `CONTRIBUTING.md <CONTRIBUTING.md>`__

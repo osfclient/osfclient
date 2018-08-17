@@ -30,27 +30,13 @@ after_success:
 
 deploy:
   - provider: pypi
-    user: betatim
+    user: osfclient
     # this line together with `setup.cfg` creates universal wheels as long as
     # osfclient is a python only module (no compiled code)
     distributions: sdist bdist_wheel
     on:
       tags: true
-      repo: dib-lab/osf-cli
+      repo: osfclient/osfclient
       condition: "$PYTHON_VERSION = 3.5"
     password:
-      secure: IdQhl1tj2+qwDw0PpwlXfWdbvdK3blZbftWzjaXClSO9lDFiRMno/EX2u/Z6KVM4LTO87SrmBeah7SQWc5KMoSWjJ7nksQllmmMuFguS6PueWlkIjL0m2Aeu55+MPKmQQjcfjHYF7eFurPkvq7CS1mwdZSuVssBlvZP6O6TiHoE6KKAemPsgKFlbTNMFKj2/jo6Hnmw7l8RvSKTE4y47EOrhDmAk3HJmRIrZATposfqKr5k6g1WXkQhqFUPl+lHMRzue/mq9Eaf3Wtqe9lvZkWiv/FGay/VeUCIU1JDxh8o7Co4v45CSgEudKvo40osdwS+Sy7FtuydFM/uO9zTgrRh3ZkxfzeZSxfwHtqpEhGmaEOlEMRmbWIJSvmAhyx2nQSXehUzxee0mjWsbXdCCBE/8o7iBwmvIaISxnzME4EBHJJVqgnPMvylJbC9YzdGsS3tG2UBBO4ssyHcBiuFUzR5a5YkCdXol6Usi40tI044oAdndptpgRET71z1xJoTy+43S2gMiXIb3OW0XOH4I5/0iYgNT+2XtjrbUwbkK+gqmOK/vNOOM+6JG1kVm6D2SqocYN/zFhJvfeNCojrAF2QO7lja+WvjPR+I62psruegO9Sw8g2hw29wV4xKR5NRPez5exmxLvqF7/NLUZ5IGXoYG46mQ6xm0aO0DnTLBEn0=
-
-  # test pypi
-  - provider: pypi
-    # this line together with `setup.cfg` creates universal wheels as long as
-    # osfclient is a python only module (no compiled code)
-    distributions: sdist bdist_wheel
-    server: https://testpypi.python.org/pypi
-    user: "jackrabbit"
-    password:
-      secure: U6hl13NL7WtH49npp3tmw3dLEKHrw3PZamTJ6oa1N79PPLugA38ZMG0Alu4JGQgyMFRad+XlVlxD0uq6Y6P3xktfUIw5fcKDCvrCjfOZnR3fT8wnbtxsyjXWfnhXCqTL9nzZ5AJrEHFD+g1lsTzTPko2fSU3k/n5un26dxnvhotLATBtwAnlc4vLVGQ5kTaiUi5m30E3hESudODMbipXm2S7FZ8RjvvnvjNJ5TxZVK6EQHlqdY+VAv22bf765Ti5TTatvIoaee6gbojDCXM28ve4G8h7RB1SiJWSaxfQqcVC3iJGe03nT1YwYbsVYUAsJmVwj0Pf08PwXC7g/1lh0cjnf2WXD9XbqPmFmpmot7Jr3iWzZhKBaBmmlQC57nOXIzf0EE+7ULZAjkH+Fu9vAIuzF8/CjCEdQHobPt5h3V4ZwhcTvoCE5I3yxgbs9dSiRAYzWQywRfVt7jxhOMN+cchdPELA4oxWRD9u0u+mPvJwnKx0ui1/Ki8AWM6Hq6LZCdkTZktVrvE5+ovjegxLMTWEvrzv+wrUpzYIuQ05wjBTCuZCSwBRxAk+0ck58B430EgCTSdD9w0PYc4T+0sli9H85vb4zZQkdv00K1bJZMhAao4orAKthCENBiFP8H0g7IdztSmXd7lVwpAHcqtpOEBRhcayD4KqlPO1TCcOxUE=
-    on:
-      branch: master
-      tags: false
-      condition: "$PYTHON_VERSION = 3.5"
+      secure: SeqLSRnqFqiJgNMvc3E9oJ7evptcnt9a0avlLr95GaPbdAAw/Hp3P00pGCg5e6veCoKPvQa/EK8sl4dphRhnSwIgfVsKRYgof5z8tiKzSuZn4rSSomfFBmmgdRml0osbQ6XOunFyceZP/TZw++Fch9iGwtC9ewNzb3Y1jQf/f/gb+QRa6OcE6mMDQtGZbwkmY1rzl2CgJIM9iBWh164YMSAZehmvENJwZUjcHXrdLfbKD4u85OTsHAuUycsC9PBjA8bTJt5DTEHwkHNToVc/0eT1ZYuiDSmfFC8i1fJvZqVD8zrglhHSRIQn8n7jB8pAXFUnBsrwhD2cVDqiu5RQ0AU5MJf+ffN0EhTALpVjs9U//UEfSBQ7vPGgCmjEwAmR3Cpqyr8PmsgT7L+I5jxGkrmZ3uWrH6qm8d91EoF1A6L7SmQtclaMSNHfmY4me7QWNamZiyXt4Wl4RrQJOJ+q65IaFDaZA8xD+CockpMNZDY97WZlQt/i20sQRREkeS6NFrZvzyhotjS0w6Jm6feJVqL6X6k+h9vG0hX/rVwHW/36DnIg/EL9W3U2SluSqU/Q76YTLGxb5Od5dw/JOLxREy2VzBNaN4Z0OlMM7UP8btW7MmqI2IyQm+GT+653SwaWwsEry6MdV3KfcCWeq+1U6CPtqw2QWT7D2ZFtBt0Hjb0=
