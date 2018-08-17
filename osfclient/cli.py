@@ -262,6 +262,10 @@ def upload(args):
     $ osf upload -r foo bar
     To place contents of local directory `foo` in remote directory `bar`:
     $ osf upload -r foo/ bar
+
+    If you are doing a recursive upload to a project that already has multiple
+    files, adding the `--cache` or `-c` flag may help speed up the upload by
+    caching upload urls to reduce the number of API calls necessary.
     """
     osf = _setup_osf(args)
     if osf.username is None or osf.password is None:

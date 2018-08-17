@@ -76,7 +76,11 @@ class Storage(OSFCore, ContainerMixin):
         which to store the file.
 
         To force overwrite of an existing file, set `force=True`.
-        To overwrite an existing file only if the files differ, set `update=True`
+        To overwrite an existing file only if the files differ, set
+        `update=True`
+        
+        Set `cache=True` to check the cache of known files for the upload URL,
+        and to add the paths of any new directories created to the cache.
         """
         if 'b' not in fp.mode:
             raise ValueError("File has to be opened in binary mode.")
