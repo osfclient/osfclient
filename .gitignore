@@ -6,6 +6,7 @@ __pycache__/
 .coverage
 coverage.xml
 .osfcli.config
+.vscode/
 
 # docs build output
 docs/_build
