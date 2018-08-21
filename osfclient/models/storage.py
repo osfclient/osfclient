@@ -64,8 +64,11 @@ class Storage(OSFCore, ContainerMixin):
         No `/` at the beginning or end of all keys in _known_paths
         """
         for file_ in self.files:
-            self._known_paths[file_.path.strip('/')] = file_
-            self._known_paths[os.path.dirname(file_.path).strip('/')] = None
+            stripped_file_path = file_.path.strip('/')
+            stripped_dir_path = os.path.dirname(file_.path).strip('/')
+            self._known_paths[stripped_file_path] = file_
+            if stripped_dir_path:
+                self._known_paths[stripped_dir_path] = None
 
 
     def create_file(self, path, fp, force=False, update=False, cache=False):
