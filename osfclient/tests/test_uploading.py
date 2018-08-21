@@ -177,3 +177,55 @@ def test_recursive_upload_with_subdir(OSF_project):
         ])
     # two directories with two files each -> four calls
     assert len(fake_storage.mock_calls) == 4
+
+
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+def test_recursive_upload_with_cache(OSF_project):
+    # test that we check if source is a directory when using recursive mode
+    args = MockArgs(username='joe@example.com',
+                    project='1234',
+                    source='foobar/',
+                    recursive=True,
+                    cache=True,
+                    destination='BAR/')
+
+    def simple_getenv(key):
+        if key == 'OSF_PASSWORD':
+            return 'secret'
+
+    fake_open = mock_open()
+    fake_storage = OSF_project.return_value.storage.return_value
+
+    # it is important we use foobar/ and not foobar to match with args.source
+    # to mimick the behaviour of os.walk()
+    dir_contents = [('foobar/', None, ['bar.txt', 'abc.txt']),
+                    ('foobar/baz', None, ['bar.txt', 'abc.txt'])
+                    ]
+
+    with patch('osfclient.cli.open', fake_open):
+        with patch('os.walk', return_value=iter(dir_contents)):
+            with patch('osfclient.cli.os.getenv', side_effect=simple_getenv):
+                with patch('osfclient.cli.os.path.isdir', return_value=True):
+                    upload(args)
+
+    assert call('foobar/bar.txt', 'rb') in fake_open.mock_calls
+    assert call('foobar/abc.txt', 'rb') in fake_open.mock_calls
+    assert call('foobar/baz/bar.txt', 'rb') in fake_open.mock_calls
+    assert call('foobar/baz/abc.txt', 'rb') in fake_open.mock_calls
+    # two directories with two files each -> four calls plus all the
+    # context manager __enter__ and __exit__ calls
+    assert len(fake_open.mock_calls) == 4 + 4*2
+
+    fake_storage.assert_has_calls([
+        call.update_cache(),
+        call.create_file('BAR/./bar.txt', mock.ANY, force=False, update=False,
+                         cache=True),
+        call.create_file('BAR/./abc.txt', mock.ANY, force=False, update=False,
+                         cache=True),
+        call.create_file('BAR/baz/bar.txt', mock.ANY, force=False, update=False,
+                         cache=True),
+        call.create_file('BAR/baz/abc.txt', mock.ANY, force=False, update=False,
+                         cache=True),
+        ])
+    # one update_cache call + two directories with two files each -> five calls
+    assert len(fake_storage.mock_calls) == 5
