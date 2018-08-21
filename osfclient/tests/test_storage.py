@@ -573,3 +573,49 @@ def test_create_file_with_cache_caches_new_directories():
     expected_paths = ['a', 'a/b', 'a/b/c']
     for path in expected_paths:
         assert path in store._known_paths
+
+
+def test_force_existing_file_with_cache():
+    # test that adding `force=True` lets you overwrite existing remote files
+    new_file_url = ('https://files.osf.io/v1/resources/9zpcy/providers/' +
+                    'osfstorage/foo123/')
+    store = Storage({})
+    store._new_file_url = new_file_url
+
+    def simple_OSFCore_put(url, params=None, data=None):
+        if url == new_file_url:
+            return FakeResponse(409, None)
+        elif url.endswith("osfstorage/foo.txt"):
+            return FakeResponse(200, None)
+
+    store._files_url = 'https://api.osf.io/v2//nodes/f3szh/files/osfstorage'
+    json = fake_responses.files_node('f3szh', 'osfstorage',
+                                     file_names=['hello.txt', 'foo.txt'])
+    top_level_response = FakeResponse(200, json)
+
+    def simple_OSFCore_get(url):
+        if url == store._files_url:
+            return top_level_response
+
+    fake_fp = MagicMock()
+    fake_fp.mode = 'rb'
+    with patch.object(OSFCore, '_put',
+                      side_effect=simple_OSFCore_put) as fake_put:
+        with patch.object(OSFCore, '_get',
+                          side_effect=simple_OSFCore_get) as fake_get:
+            store._known_paths = dict()
+            store.update_cache()
+            store.create_file('foo.txt', fake_fp, force=True, cache=True)
+
+    assert fake_fp.call_count == 0
+    assert call.peek(1) in fake_fp.mock_calls
+    # should have made two PUT requests, first attempt at uploading then
+    # to update the file
+    assert fake_put.call_count == 2
+    # should have made one GET request to list files
+    assert fake_get.call_count == 1
+
+    assert len(store._known_paths) == 2
+    expected_paths = ['hello.txt', 'foo.txt']
+    for path in expected_paths:
+        assert path in store._known_paths
