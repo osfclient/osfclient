@@ -96,12 +96,14 @@ class Storage(OSFCore, ContainerMixin):
         # navigate to the right parent object for our file
         parent = self
         if not cache or os.path.dirname(path) not in self._known_paths:
+            joined_directories = ''
             for directory in directories:
+                joined_directories = os.path.join(joined_directories, directory)
                 # skip empty directory names
                 if directory:
                     parent = parent.create_folder(directory, exist_ok=True)
                     if cache:
-                        self._known_paths[parent.path.strip('/')] = None
+                        self._known_paths[joined_directories.strip('/')] = None
 
         url = parent._new_file_url
 
