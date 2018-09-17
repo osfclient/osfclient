@@ -14,6 +14,12 @@ def test_basic_auth():
     assert 'Authorization' not in session.headers
 
 
+def test_token_auth():
+    session = OSFSession()
+    session.token_auth('asdfg')
+    assert 'Authorization' in session.headers
+
+
 def test_basic_build_url():
     session = OSFSession()
     url = session.build_url("some", "path")
