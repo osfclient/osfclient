@@ -52,6 +52,9 @@ class OSFSession(requests.Session):
         if 'Authorization' in self.headers:
             self.headers.pop('Authorization')
 
+    def token_auth(self, token):
+        self.headers['Authorization'] = "Bearer %s" % token
+
     def build_url(self, *args):
         parts = [self.base_url]
         parts.extend(args)
