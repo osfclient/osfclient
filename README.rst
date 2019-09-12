@@ -52,7 +52,7 @@ out the command-line program.
 
 Read the full documentation: http://osfclient.readthedocs.io/en/latest/
 
-Below are some examples on how to use it:
+Below are some CLI examples on how to use it:
 
 ::
 
@@ -92,6 +92,18 @@ username and project ID create ``.osfcli.config``:
 
 after which you can simply run ``osf ls`` to list the contents of the
 project.
+
+
+Although not fully supported, in order to use the library directly from within Python, you can call it like this:
+
+::
+
+    import osfclient
+    import osfclient.cli
+    osf_login = osfclient.OSF(username=[username], password=[password])
+    osf_login.project=[project]
+    osfclient.cli.list_(osf_login)
+
 
 Contributing
 ============

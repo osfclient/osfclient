@@ -70,7 +70,10 @@ def _setup_osf(args):
 
     password = None
     if username is not None:
-        password = os.getenv("OSF_PASSWORD")
+        if args.password is None:
+            password = os.getenv("OSF_PASSWORD")
+        else:
+            password = args.password
 
         # Prompt user when password is not set
         if password is None:
