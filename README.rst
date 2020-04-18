@@ -68,7 +68,10 @@ Below are some examples on how to use it:
 
     # fetch all files for the project
     $ osf clone
-
+    
+    # fetch an individual file from a project
+    $ osf fetch remote/path.txt local/file.txt
+    
     # add a new file
     $ osf upload local/file.txt remote/path.txt
 
