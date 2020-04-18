@@ -262,6 +262,10 @@ def upload(args):
     $ osf upload -r foo bar
     To place contents of local directory `foo` in remote directory `bar`:
     $ osf upload -r foo/ bar
+
+    If you are doing a recursive upload to a project that already has multiple
+    files, adding the `--cache` or `-c` flag may help speed up the upload by
+    caching upload urls to reduce the number of API calls necessary.
     """
     osf = _setup_osf(args)
     if osf.username is None or osf.password is None:
@@ -277,6 +281,10 @@ def upload(args):
             raise RuntimeError("Expected source ({}) to be a directory when "
                                "using recursive mode.".format(args.source))
 
+        if args.cache:
+            # cache known paths in remote storage
+            store.update_cache()
+
         # local name of the directory that is being uploaded
         _, dir_name = os.path.split(args.source)
 
@@ -288,13 +296,14 @@ def upload(args):
                     # build the remote path + fname
                     name = os.path.join(remote_path, dir_name, subdir_path,
                                         fname)
+                    print(name)
                     store.create_file(name, fp, force=args.force,
-                                      update=args.update)
+                                      update=args.update, cache=args.cache)
 
     else:
         with open(args.source, 'rb') as fp:
             store.create_file(remote_path, fp, force=args.force,
-                              update=args.update)
+                              update=args.update, cache=False)
 
 
 @might_need_auth

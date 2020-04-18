@@ -91,6 +91,9 @@ def main():
     upload_parser.add_argument('-r', '--recursive',
                                help='Recursively upload entire directories',
                                action='store_true')
+    upload_parser.add_argument('-c', '--cache',
+                               help='Cache remote file metadata before upload',
+                               action='store_true')
     upload_parser.add_argument('source', help='Local file')
     upload_parser.add_argument('destination', help='Remote file path')
 

@@ -39,6 +39,7 @@ class Storage(OSFCore, ContainerMixin):
         self._new_folder_url = self._get_attribute(storage,
                                                    'links', 'new_folder')
         self._new_file_url = self._get_attribute(storage, 'links', 'upload')
+        self._known_paths = dict()
 
     def __str__(self):
         return '<Storage [{0}]>'.format(self.id)
@@ -51,8 +52,26 @@ class Storage(OSFCore, ContainerMixin):
         """
         return self._iter_children(self._files_url, 'file', File,
                                    self._files_key)
+    
+    def update_cache(self):
+        """Store all files and folders in dictionary.
 
-    def create_file(self, path, fp, force=False, update=False):
+        The files are stored like `_known_paths['path/to/file'] = file_object`.
+        The folders are stored like `_known_paths['path/to/folder'] = None`
+        since we just need to know if a folder is there and don't need to access
+        a folder object.
+
+        No `/` at the beginning or end of all keys in _known_paths
+        """
+        for file_ in self.files:
+            stripped_file_path = file_.path.strip('/')
+            stripped_dir_path = os.path.dirname(file_.path).strip('/')
+            self._known_paths[stripped_file_path] = file_
+            if stripped_dir_path:
+                self._known_paths[stripped_dir_path] = None
+
+
+    def create_file(self, path, fp, force=False, update=False, cache=False):
         """Store a new file at `path` in this storage.
 
         The contents of the file descriptor `fp` (opened in 'rb' mode)
@@ -60,7 +79,11 @@ class Storage(OSFCore, ContainerMixin):
         which to store the file.
 
         To force overwrite of an existing file, set `force=True`.
-        To overwrite an existing file only if the files differ, set `update=True`
+        To overwrite an existing file only if the files differ, set
+        `update=True`
+        
+        Set `cache=True` to check the cache of known files for the upload URL,
+        and to add the paths of any new directories created to the cache.
         """
         if 'b' not in fp.mode:
             raise ValueError("File has to be opened in binary mode.")
@@ -72,10 +95,15 @@ class Storage(OSFCore, ContainerMixin):
         directories = directory.split(os.path.sep)
         # navigate to the right parent object for our file
         parent = self
-        for directory in directories:
-            # skip empty directory names
-            if directory:
-                parent = parent.create_folder(directory, exist_ok=True)
+        if not cache or os.path.dirname(path) not in self._known_paths:
+            joined_directories = ''
+            for directory in directories:
+                joined_directories = os.path.join(joined_directories, directory)
+                # skip empty directory names
+                if directory:
+                    parent = parent.create_folder(directory, exist_ok=True)
+                    if cache:
+                        self._known_paths[joined_directories.strip('/')] = None
 
         url = parent._new_file_url
 
@@ -114,19 +142,28 @@ class Storage(OSFCore, ContainerMixin):
 
             else:
                 # find the upload URL for the file we are trying to update
-                for file_ in self.files:
-                    if norm_remote_path(file_.path) == path:
-                        if not force:
-                            if checksum(path) == file_.hashes.get('md5'):
-                                # If the hashes are equal and force is False,
-                                # we're done here
-                                break
-                        # in the process of attempting to upload the file we
-                        # moved through it -> reset read position to beginning
-                        # of the file
-                        fp.seek(0)
-                        file_.update(fp)
-                        break
+                file_to_update = None
+                if cache and path in self._known_paths:
+                    file_to_update = self._known_paths[path]
                 else:
+                    for file_ in self.files:
+                        if norm_remote_path(file_.path) == path:
+                            if force:
+                                file_to_update = file_
+                            else:
+                                if checksum(path) == file_.hashes.get('md5'):
+                                    # If the hashes are equal and force is
+                                    # False, we're done here
+                                    return
+                                file_to_update = file_
+                            break
+
+                if file_to_update is None:
                     raise RuntimeError("Could not create a new file at "
                                        "({}) nor update it.".format(path))
+                else:
+                    # in the process of attempting to upload the file we
+                    # moved through it -> reset read position to beginning
+                    # of the file
+                    fp.seek(0)
+                    file_to_update.update(fp)
