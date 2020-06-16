@@ -26,8 +26,8 @@ class File(OSFCore):
         self.id = self._get_attribute(file, 'id')
 
         self._endpoint = self._get_attribute(file, 'links', 'self')
-        self._download_url = self._get_attribute(file, 'links', 'download')
         self._upload_url = self._get_attribute(file, 'links', 'upload')
+        self._download_url = self._upload_url
         self._delete_url = self._get_attribute(file, 'links', 'delete')
         self.osf_path = self._get_attribute(file, 'attributes', 'path')
         self.path = self._get_attribute(file,
