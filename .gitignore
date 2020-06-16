@@ -6,6 +6,12 @@ __pycache__/
 .coverage
 coverage.xml
 .osfcli.config
+.idea
 
+#tests
+.pytest_cache/
 # docs build output
 docs/_build
+
+#venv
+venv/
