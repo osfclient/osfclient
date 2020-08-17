@@ -74,3 +74,9 @@ class OSFSession(requests.Session):
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
+
+    def patch(self, url, *args, **kwargs):
+        response = super(OSFSession, self).patch(url, *args, **kwargs)
+        if response.status_code == 401:
+            raise UnauthorizedException()
+        return response
