@@ -19,7 +19,7 @@ scientific projects, that can be freely downloaded. The *osfclient*
 allows people to store and retrieve large datasets associated to their
 scientific projects and papers on the OSF via the command line
 interface. If you are completely new to the OSF you can `read their
-introductory materials <https://cos.io/our-products/open-science-framework/>`__
+introductory materials <https://cos.io/our-products/osf>`__
 
 This is a very new project, it has some rough edges.
 
@@ -37,7 +37,7 @@ To use ``osfclient`` install it via pip:
 
 For details on participating in the development of ``osfclient`` check
 out the `Contributing
-section <https://github.com/dib-lab/osf-cli#contributing>`__.
+section <https://github.com/osfclient/osfclient#contributing>`__.
 
 Usage
 =====
@@ -50,7 +50,7 @@ The python library forms the basis for the command-line program. If you
 want programmatic access to your files use the library, otherwise try
 out the command-line program.
 
-Read the full documentation: http://osfclient.readthedocs.io/en/latest/
+Read the full documentation: https://osfclient.readthedocs.io/en/latest/
 
 Below are some examples on how to use it:
 
@@ -122,5 +122,7 @@ repo, contact any of the following maintainters on Keybase:
 
 - Tim Head (@betatim)
 - Ben Lindsay (@benlindsay)
+- Fitz Elliott (@felliott)
+- Longze Chen (@cslzchen)
 
 For more details and instructions: `CONTRIBUTING.md <CONTRIBUTING.md>`__
