@@ -1,6 +1,7 @@
 import requests
 
 from ..exceptions import UnauthorizedException
+from ..__version__ import __version__
 
 
 class OSFSession(requests.Session):
@@ -18,7 +19,7 @@ class OSFSession(requests.Session):
             # Always send JSON
             'Content-Type': "application/json",
             # Custom User-Agent string
-            'User-Agent': 'osfclient v0.0.1',
+            'User-Agent': 'osfclient v' + __version__,
             })
         self.base_url = 'https://api.osf.io/v2/'
 
