@@ -1,0 +1,51 @@
+*********
+ChangeLog
+*********
+
+0.0.4 (2020-08-??)
+===================
+- Feature: Add rate-limiting to update / fetch requests to avoid overloading OSF resources [#105]
+  (@betatim)
+- Fix: Prefer files url for download to avoid redirects [#178] (@mih)
+- Docs: Document `fetch` feature of `osfclient` [#171] (@mmore500)
+- Feature: Add `-U` (`--update`) cli arg to only update if local and remote differ [#146]
+  (@benlindsay)
+- Meta: Switch pypi user to osfclient [#162] (@benlindsay)
+- Docs: Repo secrets are available from maintainers on Keybase [#161] (@benlindsay)
+- Meta: Remove test pypi integration [#160] (@benlindsay)
+- Docs: Document how to get access to test pypi secrets [#158] (@benlindsay)
+- Meta: Use encrypted secret for test pypi upload [#157] (@betatim)
+- Meta: Update pypi test url and document purpose [#154] (@betatim)
+- Meta: Fix deploy repo in Travis config [#153] (@benlindsay)
+- Meta: Add TravisCI badge to README [#151][#152] (@betatim)
+- Feature: Proceed w/ update if server breaks connection and `--force` specified [#147] (@cmungall,
+  @benlindsay)
+- Feature: Add hashes attribute to files model [#142] (@glemaitre)
+- Docs: Add upload example to README [#145] (@benlindsay)
+- Docs: update GitHub url [#143] (@benlindsay)
+- Feature: Add ability to clone registrations [#134] (@mfraezz)
+- Docs: Clarify when user can use `ls` & `rm` [#121] (@erinspace)
+- Meta: Indicate support for py3.6, get long_description from README [#120] (@sloria)
+- Meta: Single-source version and requirements [#117] (@untzag)
+- Docs: Add "work in a fork" to CONTRIBUTORS [#115] (@untzag)
+- Fix: Fix uploading subdirectories from Windows [#113] (@untzag)
+- Meta: Add LICENSE file to distribution [#112] (@djsutherland)
+- Feature: add Google Drive as a storage provider [#102] (@gedankenstuecke)
+- Feature: add Figshare as a storage provider [#100] (@ethanwhite)
+- Docs: fix broken formatting in Sphinx docs [#91] (@gedankenstuecke)
+
+0.0.3 (2017-07-14)
+==================
+- Feature: add ability to recursively upload files a la rsync [#78] (@betatim)
+- Docs: Add readthedocs support and start filling out docs [#73][#80][#81][#86] (@betatim,
+  @gedankenstuecke)
+- Code: Better support for Unauthorized errors [#88] (@betatim)
+- Code: Support empty files on Python 2 [#76] (@betatim)
+
+0.0.2 (2017-06-23)
+==================
+- PyPI & travis fixes
+
+0.0.1 (2017-06-23)
+==================
+- Initial release!
