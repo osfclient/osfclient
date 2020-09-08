@@ -6,6 +6,11 @@ __pycache__/
 .coverage
 coverage.xml
 .osfcli.config
+.eggs/
 
 # docs build output
 docs/_build
+
+# local build output
+build/
+dist/
