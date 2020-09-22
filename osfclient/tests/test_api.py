@@ -17,13 +17,28 @@ def test_basic_auth(session_basic_auth):
     session_basic_auth.assert_called_with('joe@example.com', 'secret_password')
 
 
+@patch.object(OSFSession, 'token_auth')
+def test_token_auth(session_token_auth):
+    OSF(token='asdfg')
+    session_token_auth.assert_called_with('asdfg')
+
+
 @patch.object(OSFSession, 'basic_auth')
-def test_login(session_basic_auth):
+def test_login_username_password(session_basic_auth):
     osf = OSF()
     assert not session_basic_auth.called
 
     osf.login('joe@example.com', 'secret_password')
     session_basic_auth.assert_called_with('joe@example.com', 'secret_password')
+
+
+@patch.object(OSFSession, 'token_auth')
+def test_login_token(session_token_auth):
+    osf = OSF()
+    assert not session_token_auth.called
+
+    osf.login(token="asdfg")
+    session_token_auth.assert_called_with("asdfg")
 
 
 @patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))

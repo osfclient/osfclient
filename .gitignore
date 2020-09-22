@@ -7,10 +7,15 @@ __pycache__/
 coverage.xml
 .osfcli.config
 .eggs/
+.idea
 
+#tests
+.pytest_cache/
 # docs build output
 docs/_build
 
 # local build output
 build/
 dist/
+#venv
+venv/
