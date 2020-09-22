@@ -10,8 +10,8 @@ class OSF(OSFCore):
     OSF. Use the methods of this class to find projects, login
     to the OSF, etc.
     """
-    def __init__(self, username=None, password=None, token=None):
-        super(OSF, self).__init__({})
+    def __init__(self, username=None, password=None, token=None, *args, **kwargs):
+        super(OSF, self).__init__({}, *args, **kwargs)
         try:
             self.login(username, password, token)
         except OSFException:

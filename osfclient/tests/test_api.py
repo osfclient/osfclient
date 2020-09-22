@@ -17,6 +17,12 @@ def test_basic_auth(session_basic_auth):
     session_basic_auth.assert_called_with('joe@example.com', 'secret_password')
 
 
+def test_address_parameter():
+    address = "https://api.test.osf.io/v2/"
+    assert OSF(address=address).session.base_url == address
+    assert OSF(address=address).session.base_url != "https://api.osf.io/v2/"
+
+
 @patch.object(OSFSession, 'token_auth')
 def test_token_auth(session_token_auth):
     OSF(token='asdfg')

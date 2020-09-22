@@ -5,12 +5,9 @@ from .session import OSFSession
 
 # Base class for all models and the user facing API object
 class OSFCore(object):
-    def __init__(self, json, session=None):
-        if session is None:
-            self.session = OSFSession()
-        else:
-            self.session = session
-
+    def __init__(self, json, session=None, address=None):
+        self.session = session or OSFSession(address=address)
+        
         self._update_attributes(json)
 
     def _update_attributes(self, json):

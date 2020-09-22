@@ -13,6 +13,11 @@ def test_basic_auth():
     assert session.auth == ('joe@example.com', 'secret_password')
     assert 'Authorization' not in session.headers
 
+def test_address():
+    address = "https://api.test.osf.io/v2/"
+    session = OSFSession(address=address)
+    assert session.base_url == address
+    assert session.base_url != "https://api.osf.io/v2/"
 
 def test_token_auth():
     session = OSFSession()
