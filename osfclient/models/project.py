@@ -20,6 +20,8 @@ class Project(OSFCore):
         self.date_created = self._get_attribute(attrs, 'date_created')
         self.date_modified = self._get_attribute(attrs, 'date_modified')
         self.description = self._get_attribute(attrs, 'description')
+        self.category = self._get_attribute(attrs, "category")
+        self.tags = self._get_attribute(attrs, "tags")
 
         storages = ['relationships', 'files', 'links', 'related', 'href']
         self._storages_url = self._get_attribute(project, *storages)
