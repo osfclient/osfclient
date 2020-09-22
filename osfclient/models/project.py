@@ -35,7 +35,13 @@ class Project(OSFCore):
         url = self._build_url(type_, self.id)
 
         data = dumps({"data": {"type": type_, "id": self.id, "attributes": self.__dict__}})
-        self._put(url, data=data)
+        return self._put(url, data=data) < 300
+
+    def delete(self):
+        type_ = self.guid(self.id)
+        url = self._build_url(type_, self.id)
+
+        return self._delete(url) < 300
 
     def storage(self, provider='osfstorage'):
         """Return storage `provider`."""
