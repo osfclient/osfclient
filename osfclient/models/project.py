@@ -1,6 +1,6 @@
 from .core import OSFCore
 from .storage import Storage
-
+from json import dumps
 
 class Project(OSFCore):
     _types = [
@@ -22,12 +22,20 @@ class Project(OSFCore):
         self.description = self._get_attribute(attrs, 'description')
         self.category = self._get_attribute(attrs, "category")
         self.tags = self._get_attribute(attrs, "tags")
+        self.public = self._get_attribute(attrs, "public")
 
         storages = ['relationships', 'files', 'links', 'related', 'href']
         self._storages_url = self._get_attribute(project, *storages)
 
     def __str__(self):
         return '<Project [{0}]>'.format(self.id)
+    
+    def update(self):
+        type_ = self.guid(self.id)
+        url = self._build_url(type_, self.id)
+
+        data = dumps({"data": {"type": type_, "id": self.id, "attributes": self.__dict__}})
+        self._put(url, data=data)
 
     def storage(self, provider='osfstorage'):
         """Return storage `provider`."""

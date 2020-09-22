@@ -13,6 +13,10 @@ class OSFCore(object):
     def _update_attributes(self, json):
         pass
 
+    def guid(self, guid):
+        """Determines JSONAPI type for provided GUID"""
+        return self._json(self._get(self._build_url('guids', guid)), 200)['data']['type']
+
     def _build_url(self, *args):
         return self.session.build_url(*args)
 
@@ -21,6 +25,9 @@ class OSFCore(object):
 
     def _put(self, url, *args, **kwargs):
         return self.session.put(url, *args, **kwargs)
+
+    def _post(self, url, *args, **kwargs):
+        return self.session.post(url, *args, **kwargs)
 
     def _delete(self, url, *args, **kwargs):
         return self.session.delete(url, *args, **kwargs)

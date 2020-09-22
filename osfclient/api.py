@@ -1,7 +1,7 @@
 from .exceptions import OSFException
 from .models import OSFCore
 from .models import Project
-
+from json import dumps
 
 class OSF(OSFCore):
     """Interact with the Open Science Framework.
@@ -34,9 +34,22 @@ class OSF(OSFCore):
             return Project(self._json(self._get(url), 200), self.session)
         raise OSFException('{} is unrecognized type {}. Clone supports projects and registrations'.format(project_id, type_))
 
-    def guid(self, guid):
-        """Determines JSONAPI type for provided GUID"""
-        return self._json(self._get(self._build_url('guids', guid)), 200)['data']['type']
+    def create_project(self, title, category, description="", tags=None):
+        """Create new project with title, category, description (optional), tags (optional)."""
+
+        if tags is None:
+            tags = []
+
+        type_ = "nodes"
+        url = self._build_url(type_)
+        data = dumps({"data": {"type": type_, "attributes": {
+            "title": title,
+            "category": category,
+            "description": description,
+            "tags": tags
+        }}})
+        
+        return Project(self._json(self._post(url, data=data), 200), self.session)
 
     @property
     def username(self):
