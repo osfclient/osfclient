@@ -18,9 +18,9 @@ def test_basic_auth(session_basic_auth):
 
 
 def test_address_parameter():
-    address = "https://api.test.osf.io/v2/"
+    address = "https://api.test.osf.io/v2"
     assert OSF(address=address).session.base_url == address
-    assert OSF(address=address).session.base_url != "https://api.osf.io/v2/"
+    assert OSF(address=address).session.base_url != "https://api.osf.io/v2"
 
 
 @patch.object(OSFSession, 'token_auth')
@@ -46,13 +46,38 @@ def test_login_token(session_token_auth):
     osf.login(token="asdfg")
     session_token_auth.assert_called_with("asdfg")
 
+@patch.object(OSFSession, 'basic_auth')
+@patch('osfclient.models.OSFCore._get')
+def test_get_projects(OSFCore_get, session_basic_auth):
+    user_me_url = 'https://api.osf.io/v2/users/me/'
+    user_nodes_url = "https://api.test.osf.io/v2/users/f3szu/nodes/"
+
+    def response(url, *args, **kwargs):
+        data = {'data': {'relationships': {'nodes': {'links': {'related': {'href': user_nodes_url}}}}}}
+        print(url)
+        if url == user_me_url:
+            return FakeResponse(200, data)
+        else:
+            return FakeResponse(200, {"data": [project_node]})
+
+    OSFCore_get.side_effect = response
+
+    osf = OSF()
+    osf.login('joe@example.com', 'secret_password')
+    projects = osf.projects()
+
+    calls = [call(user_me_url), call(user_nodes_url)]
+    OSFCore_get.assert_has_calls(calls)
+    assert isinstance(projects, list)
+    assert len(projects) == 1
+    assert isinstance(projects[0], Project)
 
 @patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
 def test_get_project(OSFCore_get):
     osf = OSF()
     project = osf.project('f3szh')
 
-    calls = [call('https://api.osf.io/v2//guids/f3szh/'), call('https://api.osf.io/v2//nodes/f3szh/')]
+    calls = [call('https://api.osf.io/v2/guids/f3szh/'), call('https://api.osf.io/v2/nodes/f3szh/')]
     OSFCore_get.assert_has_calls(calls)
     assert isinstance(project, Project)
 
@@ -62,7 +87,7 @@ def test_get_registration(OSFCore_get):
     osf = OSF()
     project = osf.project('f3szh')
 
-    calls = [call('https://api.osf.io/v2//guids/f3szh/'), call('https://api.osf.io/v2//registrations/f3szh/')]
+    calls = [call('https://api.osf.io/v2/guids/f3szh/'), call('https://api.osf.io/v2/registrations/f3szh/')]
     OSFCore_get.assert_has_calls(calls)
     assert isinstance(project, Project)
 
@@ -75,7 +100,7 @@ def test_get_fake(OSFCore_get):
 
     assert exc.value.args[0] == 'f3szh is unrecognized type fakes. Clone supports projects and registrations'
     OSFCore_get.assert_called_once_with(
-        'https://api.osf.io/v2//guids/f3szh/'
+        'https://api.osf.io/v2/guids/f3szh/'
         )
 
 
@@ -86,5 +111,5 @@ def test_failed_get_project(OSFCore_get):
         osf.project('f3szh')
 
     OSFCore_get.assert_called_once_with(
-        'https://api.osf.io/v2//guids/f3szh/'
+        'https://api.osf.io/v2/guids/f3szh/'
         )

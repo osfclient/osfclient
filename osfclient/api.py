@@ -2,6 +2,9 @@ from .exceptions import OSFException
 from .models import OSFCore
 from .models import Project
 from json import dumps
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 class OSF(OSFCore):
     """Interact with the Open Science Framework.
@@ -31,9 +34,12 @@ class OSF(OSFCore):
 
         url = self._build_url("users", "me")
         user = self._json(self._get(url), 200)
-        nodes_url = user['data']['relationships']['nodes']['links']['related']['href']
+        LOGGER.debug("got user informations: {}" % user)
 
+        nodes_url = user['data']['relationships']['nodes']['links']['related']['href']
         data = self._json(self._get(nodes_url), 200)['data']
+        LOGGER.debug("got nodes informations: {}" % data)
+        
         for proj in data:
             projects.append(Project(proj, self.session))
 
