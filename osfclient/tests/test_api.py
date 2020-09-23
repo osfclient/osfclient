@@ -73,7 +73,9 @@ def test_get_projects(OSFCore_get, session_basic_auth):
         assert len(projects) == length
 
         if length > 0:
-            assert isinstance(projects[0], Project)
+            for index, proj in enumerate(projects):
+                assert isinstance(proj, Project)
+                assert proj.id == project_list[index]["data"]["id"]
 
     test_project([], 0)
     test_project([project_node], 1)
