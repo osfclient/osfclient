@@ -52,25 +52,31 @@ def test_get_projects(OSFCore_get, session_basic_auth):
     user_me_url = 'https://api.osf.io/v2/users/me/'
     user_nodes_url = "https://api.test.osf.io/v2/users/f3szu/nodes/"
 
-    def response(url, *args, **kwargs):
-        data = {'data': {'relationships': {'nodes': {'links': {'related': {'href': user_nodes_url}}}}}}
-        print(url)
-        if url == user_me_url:
-            return FakeResponse(200, data)
-        else:
-            return FakeResponse(200, {"data": [project_node]})
+    def test_project(project_list, length):
+        def response(url, *args, **kwargs):
+            data = {'data': {'relationships': {'nodes': {'links': {'related': {'href': user_nodes_url}}}}}}
+            print(url)
+            if url == user_me_url:
+                return FakeResponse(200, data)
+            else:
+                return FakeResponse(200, {"data": project_list})
 
-    OSFCore_get.side_effect = response
+        OSFCore_get.side_effect = response
 
-    osf = OSF()
-    osf.login('joe@example.com', 'secret_password')
-    projects = osf.projects()
+        osf = OSF()
+        osf.login('joe@example.com', 'secret_password')
+        projects = osf.projects()
 
-    calls = [call(user_me_url), call(user_nodes_url)]
-    OSFCore_get.assert_has_calls(calls)
-    assert isinstance(projects, list)
-    assert len(projects) == 1
-    assert isinstance(projects[0], Project)
+        calls = [call(user_me_url), call(user_nodes_url)]
+        OSFCore_get.assert_has_calls(calls)
+        assert isinstance(projects, list)
+        assert len(projects) == length
+
+        if length > 0:
+            assert isinstance(projects[0], Project)
+
+    test_project([], 0)
+    test_project([project_node], 1)
 
 @patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
 def test_get_project(OSFCore_get):
