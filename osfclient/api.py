@@ -26,6 +26,20 @@ class OSF(OSFCore):
         else:
             raise OSFException("No login details provided.")
 
+    def projects(self):
+        projects = []
+
+        url = self._build_url("users", "me")
+        user = self._json(self._get(url), 200)
+        nodes_url = user['data']['relationships']['nodes']['links']['related']['href']
+
+        data = self._json(self._get(nodes_url), 200)['data']
+        for proj in data:
+            projects.append(Project(proj, self.session))
+
+        return projects
+
+
     def project(self, project_id):
         """Fetch project `project_id`."""
         type_ = self.guid(project_id)
@@ -48,7 +62,7 @@ class OSF(OSFCore):
             "description": description,
             "tags": tags
         }}})
-        
+
         return Project(self._json(self._post(url, data=data), 200), self.session)
 
     @property
