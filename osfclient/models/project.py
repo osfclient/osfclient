@@ -45,17 +45,22 @@ class Project(OSFCore):
         return data
     
     def update(self):
+        """Updates the mutable attributes on OSF.
+
+        Returns:
+            [boolean]: True, when updates success. Otherwise False.
+        """
         type_ = self._guid(self.id)
         url = self._build_url(type_, self.id)
 
         data = dumps({"data": {"type": type_, "id": self.id, "attributes": self.metadata(only_mutable=True)}})
-        return self._put(url, data=data) < 300
+        return self._put(url, data=data).status_code < 300
 
     def delete(self):
         type_ = self._guid(self.id)
         url = self._build_url(type_, self.id)
 
-        return self._delete(url) < 300
+        return self._delete(url).status_code < 300
 
     def storage(self, provider='osfstorage'):
         """Return storage `provider`."""

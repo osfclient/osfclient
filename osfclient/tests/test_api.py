@@ -80,15 +80,51 @@ def test_get_projects(OSFCore_get, session_basic_auth):
     test_project([project_node], 1)
 
 @patch.object(OSFCore, '_post', return_value=FakeResponse(200, project_node))
-def test_create_project(OSFCore_get):
+def test_create_project(OSFCore_post):
     osf = OSF()
 
     attr = project_node["data"]["attributes"]
     project = osf.create_project(attr["title"], attr["category"], description=attr["description"])
 
     calls = [call('https://api.osf.io/v2/nodes/', data='{"data": {"type": "nodes", "attributes": {"title": "Preprint Citations Test", "category": "project", "description": "this is a test for preprint citations", "tags": []}}}')]
-    OSFCore_get.assert_has_calls(calls)
+    OSFCore_post.assert_has_calls(calls)
     assert isinstance(project, Project)
+
+@patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
+@patch.object(OSFCore, '_delete', return_value=FakeResponse(204, ""))
+def test_delete_project(OSFCore_delete, OSFCore_get):
+    osf = OSF()
+
+    project = osf.project('f3szh')
+
+    calls = [call('https://api.osf.io/v2/nodes/f3szh/')]
+    OSFCore_get.assert_has_calls(calls)
+    
+    project.delete()
+    calls = [call('https://api.osf.io/v2/nodes/f3szh/')]
+    OSFCore_delete.assert_has_calls(calls)
+    
+
+@patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
+@patch.object(OSFCore, '_put', return_value=FakeResponse(200, project_node))
+def test_update_project(OSFCore_put, OSFCore_get):
+    osf = OSF()
+
+    attr = project_node["data"]["attributes"]
+
+    attr["title"] = "Long long title"
+    project = osf.project('f3szh')
+
+    calls = [call('https://api.osf.io/v2/nodes/f3szh/')]
+    OSFCore_get.assert_has_calls(calls)
+
+    project.title = attr["title"]
+    project.update()
+
+    calls = [call('https://api.osf.io/v2/nodes/f3szh/', data='{"data": {"type": "nodes", "id": "f3szh", "attributes": {"title": "Long long title", "description": "this is a test for preprint citations", "category": "project", "tags": ["qatest"], "public": true}}}')]
+    OSFCore_put.assert_has_calls(calls)
+    assert isinstance(project, Project)
+    
 
 @patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
 def test_get_project(OSFCore_get):
