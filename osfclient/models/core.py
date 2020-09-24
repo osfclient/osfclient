@@ -13,7 +13,7 @@ class OSFCore(object):
     def _update_attributes(self, json):
         pass
 
-    def guid(self, guid):
+    def _guid(self, guid):
         """Determines JSONAPI type for provided GUID"""
         return self._json(self._get(self._build_url('guids', guid)), 200)['data']['type']
 

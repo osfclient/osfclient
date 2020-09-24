@@ -45,14 +45,14 @@ class Project(OSFCore):
         return data
     
     def update(self):
-        type_ = self.guid(self.id)
+        type_ = self._guid(self.id)
         url = self._build_url(type_, self.id)
 
         data = dumps({"data": {"type": type_, "id": self.id, "attributes": self.metadata(only_mutable=True)}})
         return self._put(url, data=data) < 300
 
     def delete(self):
-        type_ = self.guid(self.id)
+        type_ = self._guid(self.id)
         url = self._build_url(type_, self.id)
 
         return self._delete(url) < 300
