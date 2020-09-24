@@ -79,6 +79,17 @@ def test_get_projects(OSFCore_get, session_basic_auth):
     test_project([], 0)
     test_project([project_node], 1)
 
+@patch.object(OSFCore, '_post', return_value=FakeResponse(200, project_node))
+def test_create_project(OSFCore_get):
+    osf = OSF()
+
+    attr = project_node["data"]["attributes"]
+    project = osf.create_project(attr["title"], attr["category"], description=attr["description"])
+
+    calls = [call('https://api.osf.io/v2/nodes/', data='{"data": {"type": "nodes", "attributes": {"title": "Preprint Citations Test", "category": "project", "description": "this is a test for preprint citations", "tags": []}}}')]
+    OSFCore_get.assert_has_calls(calls)
+    assert isinstance(project, Project)
+
 @patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
 def test_get_project(OSFCore_get):
     osf = OSF()
