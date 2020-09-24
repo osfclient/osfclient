@@ -29,12 +29,26 @@ class Project(OSFCore):
 
     def __str__(self):
         return '<Project [{0}]>'.format(self.id)
+
+    def metadata(self, only_mutable=False):
+        """Returns all metadata for this project.
+
+        Args:
+            only_mutable (bool, optional): If True, returns only the mutables. Otherwise all metadata. Defaults to False.
+        """
+        data = self.__dict__
+
+        if only_mutable:
+            mutables = ["title", "description", "category", "tags", "public"]            
+            return {key: value for key, value in data.items() if key in mutables}
+
+        return data
     
     def update(self):
         type_ = self.guid(self.id)
         url = self._build_url(type_, self.id)
 
-        data = dumps({"data": {"type": type_, "id": self.id, "attributes": self.__dict__}})
+        data = dumps({"data": {"type": type_, "id": self.id, "attributes": self.metadata(only_mutable=True)}})
         return self._put(url, data=data) < 300
 
     def delete(self):

@@ -88,6 +88,41 @@ def test_get_project(OSFCore_get):
     OSFCore_get.assert_has_calls(calls)
     assert isinstance(project, Project)
 
+@patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
+def test_project_metadata(OSFCore_get):
+    osf = OSF()
+    project = osf.project('f3szh')
+
+    md = project.metadata()
+    data = project_node["data"]["attributes"]
+
+    assert data["title"] == md["title"]
+    assert data["date_created"] == md["date_created"]
+    assert data["date_modified"] == md["date_modified"]
+    assert data["description"] == md["description"]
+    assert data["category"] == md["category"]
+    assert data["tags"] == md["tags"]
+    assert data["public"] == md["public"]
+
+
+@patch.object(OSFCore, '_get', return_value=FakeResponse(200, project_node))
+def test_project_metadata_only_mutable(OSFCore_get):
+    osf = OSF()
+    project = osf.project('f3szh')
+
+    md = project.metadata(only_mutable=True)
+    data = project_node["data"]["attributes"]
+
+    assert data["title"] == md["title"]
+    assert data["description"] == md["description"]
+    assert data["category"] == md["category"]
+    assert data["tags"] == md["tags"]
+    assert data["public"] == md["public"]
+
+    with pytest.raises(KeyError):
+        md["date_created"]
+        md["date_modified"]
+
 
 @patch.object(OSFCore, '_get', return_value=FakeResponse(200, registration_node))
 def test_get_registration(OSFCore_get):
