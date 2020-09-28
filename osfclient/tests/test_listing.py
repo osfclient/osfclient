@@ -1,5 +1,8 @@
 """Test `osf ls` command"""
 
+import sys
+from io import StringIO
+
 from mock import call
 from mock import patch
 
@@ -56,3 +59,25 @@ def test_get_project(OSF_project):
         assert store._name_mock.called
         for f in store.files:
             assert f._path_mock.called
+
+
+@patch.object(OSF, 'project', return_value=MockProject('1234'))
+def test_show_guids(OSF_project):
+    args = MockArgs(project='1234', long=True)
+
+    with patch('sys.stdout', new=StringIO()) as fake_out:
+        list_(args)
+        std_output = fake_out.getvalue()
+        assert 'osfstorage/a/a/a,None,www.mock/guid-download.com' in std_output
+        assert 'osfstorage/b/b/b,None,' in std_output
+        assert 'osfstorage/c/c/c,a1b2c,' in std_output
+        assert 'gh/a/a/a,None,www.mock/guid-download.com' in std_output
+        assert 'gh/b/b/b,None,' in std_output
+        assert 'gh/c/c/c,a1b2c,' in std_output
+
+    OSF_project.assert_called_once_with('1234')
+    # check that the project and the files have been printed
+    for store in OSF_project.return_value.storages:
+        assert store._name_mock.called
+        for f in store.files:
+            assert f._guid_mock.called
