@@ -11,6 +11,8 @@ osf_to_jsonld = {
     "date_created": "https://schema.org/dateCreated",
     "date_modified": "https://schema.org/dateModified",
     "id": "https://schema.org/identifier",
+    "self": "https://schema.org/url",
+    "storages_url": "https://schema.org/downloadUrl",
 }
 
 
@@ -19,14 +21,27 @@ class Project(OSFCore):
 
     def __init__(self, json, session=None, address=None):
         data = json
-
-        try:
+        if json and not "data" in json:
             inverse_transform = {value: key for key, value in osf_to_jsonld.items()}
-            data["data"].update(
-                {inverse_transform[key]: value for key, value in json.items()}
-            )
-        except:
-            pass
+
+            data = {
+                "data": {
+                    "attributes": {
+                        inverse_transform[key]: value
+                        for key, value in json.items()
+                        if key in inverse_transform
+                    },
+                    "links": {"self": json[osf_to_jsonld["self"]]},
+                    "id": json[osf_to_jsonld["id"]],
+                    "relationships": {
+                        "files": {
+                            "links": {
+                                "related": {"href": json[osf_to_jsonld["storages_url"]]}
+                            }
+                        }
+                    },
+                }
+            }
 
         super().__init__(data, session=session, address=address)
 
@@ -69,9 +84,12 @@ class Project(OSFCore):
         if jsonld:
             data = {
                 osf_to_jsonld[key]: value
-                for key, value in data.items()
+                for key, value in self.__dict__.items()
                 if key in osf_to_jsonld
             }
+
+            data[osf_to_jsonld["self"]] = self._endpoint
+            data[osf_to_jsonld["storages_url"]] = self._storages_url
 
         return data
 

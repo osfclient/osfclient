@@ -73,6 +73,11 @@ def test_pass_down_session_to_storage(OSFCore_get):
 
     assert store.session == project.session
 
+def test_jsonld_init_project():
+    project = Project(fake_responses.jsonld_attributes)
+
+    assert project.metadata(jsonld=True) == fake_responses.jsonld_attributes
+
 
 @patch.object(OSFCore, '_get')
 def test_pass_down_session_to_storages(OSFCore_get):
