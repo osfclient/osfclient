@@ -2,6 +2,17 @@ from .core import OSFCore
 from .storage import Storage
 from json import dumps
 
+osf_to_jsonld = {
+    "title": "https://schema.org/title",
+    "description": "https://schema.org/description",
+    "category": "https://schema.org/category",
+    "tags": "https://schema.org/keywords",
+    "public": "https://schema.org/publicAccess",
+    "date_created": "https://schema.org/dateCreated",
+    "date_modified": "https://schema.org/dateModified",
+    "id": "https://schema.org/identifier",
+}
+
 
 class Project(OSFCore):
     _types = ["nodes", "registrations"]
@@ -38,27 +49,22 @@ class Project(OSFCore):
         data = self.__dict__
 
         if only_mutable:
-            mutables = ["title", "description", "category", "tags", "public"]
-            data = {key: value for key, value in data.items() if key in mutables}
+            data = {
+                key: value for key, value in data.items() if key in osf_to_jsonld.keys()
+            }
 
         if jsonld:
-            transform_mutables = {
-                "title": "https://schema.org/title",
-                "description": "https://schema.org/description",
-                "category": "https://schema.org/category",
-                "tags": "https://schema.org/keywords",
-                "public": "https://schema.org/publicAccess",
-            }
             data = {
-                transform_mutables[key]: value
+                osf_to_jsonld[key]: value
                 for key, value in data.items()
-                if key in transform_mutables
+                if key in osf_to_jsonld
             }
 
         return data
 
     def update(self):
         """Updates the mutable attributes on OSF.
+
 
         Returns:
             [boolean]: True, when updates success. Otherwise False.
@@ -75,7 +81,13 @@ class Project(OSFCore):
                 }
             }
         )
-        return self._put(url, data=data).status_code < 300
+
+        try:
+            data = self._json(self._put(url, data=data), 200)
+            self._update_attributes(data)
+            return True
+        except RuntimeError:
+            return False
 
     def delete(self):
         type_ = self._guid(self.id)
