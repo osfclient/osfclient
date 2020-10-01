@@ -24,32 +24,40 @@ class Project(OSFCore):
 
         # jsonld importer
         if json and not "data" in json:
-            inverse_transform = {value: key for key, value in osf_to_jsonld.items()}
-
-            data = {
-                "data": {
-                    "attributes": {
-                        inverse_transform[key]: value
-                        for key, value in json.items()
-                        if key in inverse_transform
-                    },
-                    "links": {"self": json[osf_to_jsonld["self"]]},
-                    "id": json[osf_to_jsonld["id"]],
-                    "relationships": {
-                        "files": {
-                            "links": {
-                                "related": {"href": json[osf_to_jsonld["storages_url"]]}
-                            }
-                        }
-                    },
-                }
-            }
+            data = self.__transform_from_jsonld(json)
 
         super().__init__(data, session=session, address=address)
+
+    def __transform_from_jsonld(self, json):
+        inverse_transform = {value: key for key, value in osf_to_jsonld.items()}
+        data = {
+            "data": {
+                "attributes": {
+                    inverse_transform[key]: value
+                    for key, value in json.items()
+                    if key in inverse_transform
+                },
+                "links": {"self": json[osf_to_jsonld["self"]]},
+                "id": json[osf_to_jsonld["id"]],
+                "relationships": {
+                    "files": {
+                        "links": {
+                            "related": {"href": json[osf_to_jsonld["storages_url"]]}
+                        }
+                    }
+                },
+            }
+        }
+        return data
 
     def _update_attributes(self, project):
         if not project:
             return
+
+        try:
+            project = self.__transform_from_jsonld(project)
+        except KeyError:
+            pass
 
         project = project["data"]
         self._endpoint = self._get_attribute(project, "links", "self")
@@ -98,13 +106,20 @@ class Project(OSFCore):
 
         return data
 
-    def update(self):
+    def update(self, json=None):
         """Updates the mutable attributes on OSF.
 
+
+        Args:
+            json (dict, optional): Set this parameter, if you want to update attributes on local and OSF servers in one step.
 
         Returns:
             [boolean]: True, when updates success. Otherwise False.
         """
+
+        if json is not None:
+            self._update_attributes(json)
+
         type_ = self._guid(self.id)
         url = self._build_url(type_, self.id)
 
