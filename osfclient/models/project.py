@@ -17,6 +17,19 @@ osf_to_jsonld = {
 class Project(OSFCore):
     _types = ["nodes", "registrations"]
 
+    def __init__(self, json, session=None, address=None):
+        data = json
+
+        try:
+            inverse_transform = {value: key for key, value in osf_to_jsonld.items()}
+            data["data"].update(
+                {inverse_transform[key]: value for key, value in json.items()}
+            )
+        except:
+            pass
+
+        super().__init__(data, session=session, address=address)
+
     def _update_attributes(self, project):
         if not project:
             return
