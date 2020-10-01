@@ -194,17 +194,23 @@ node_json = """
 
 
 def _make_jsonld():
-    node = _build_node("nodes")["data"]
-    node.update(node["attributes"])
-    del node["attributes"]
+    node = _build_node("nodes")
 
     data = {
-        osf_to_jsonld[key]: value for key, value in node.items() if key in osf_to_jsonld
+        osf_to_jsonld[key]: value
+        for key, value in node["data"]["attributes"].items()
+        if key in osf_to_jsonld.keys()
     }
-    data["https://schema.org/url"] = node["links"]["self"]
-    data["https://schema.org/downloadUrl"] = node["relationships"]["files"]["links"][
-        "related"
-    ]["href"]
+
+    data.update(
+        {
+            osf_to_jsonld["id"]: node["data"]["id"],
+            osf_to_jsonld["self"]: node["data"]["links"]["self"],
+            osf_to_jsonld["storages_url"]: node["data"]["relationships"]["files"][
+                "links"
+            ]["related"]["href"],
+        }
+    )
 
     return data
 
