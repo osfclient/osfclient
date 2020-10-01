@@ -21,6 +21,8 @@ class Project(OSFCore):
 
     def __init__(self, json, session=None, address=None):
         data = json
+
+        # jsonld importer
         if json and not "data" in json:
             inverse_transform = {value: key for key, value in osf_to_jsonld.items()}
 
@@ -74,13 +76,16 @@ class Project(OSFCore):
             only_mutable (bool, optional): If True, returns only the mutables. Otherwise all metadata. Defaults to False.
             jsonld (bool, optional): If true, returns a jsonld object. Otherwise OSF specific key names.
         """
-        data = self.__dict__
 
+        data = self.__dict__
         if only_mutable:
-            data = {
-                key: value for key, value in data.items() if key in osf_to_jsonld.keys()
+            return {
+                key: value
+                for key, value in self.__dict__.items()
+                if key in osf_to_jsonld.keys()
             }
 
+        # jsonld exporter
         if jsonld:
             data = {
                 osf_to_jsonld[key]: value
