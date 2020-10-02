@@ -83,26 +83,15 @@ class OSF(OSFCore):
 
         return Project(self._json(self._post(url, data=data), 200), self.session)
 
-    def create_project_jsonld(self, json):
+    def create_project_jsonld(self, jsonld):
         """Create new project with jsonld."""
 
-        type_ = "nodes"
-        url = self._build_url(type_)
-        data = dumps(
-            {
-                "data": {
-                    "type": type_,
-                    "attributes": {
-                        "title": json[osf_to_jsonld["title"]],
-                        "category": json[osf_to_jsonld["category"]],
-                        "description": json[osf_to_jsonld["description"]],
-                        "tags": json[osf_to_jsonld["tags"]],
-                    },
-                }
-            }
+        return self.create_project(
+            jsonld.get(osf_to_jsonld["title"], None),
+            jsonld.get(osf_to_jsonld["category"], None),
+            description=jsonld.get(osf_to_jsonld["description"], None),
+            tags=jsonld.get(osf_to_jsonld["tags"], None),
         )
-
-        return Project(self._json(self._post(url, data=data), 200), self.session)
 
     @property
     def username(self):
