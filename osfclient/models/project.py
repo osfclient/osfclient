@@ -23,8 +23,11 @@ class Project(OSFCore):
         data = json
 
         # jsonld importer
-        if json and not "data" in json:
-            data = self.__transform_from_jsonld(json)
+        if json:
+            try:
+                data = self.__transform_from_jsonld(json)
+            except:
+                pass
 
         super().__init__(data, session=session, address=address)
 
@@ -59,7 +62,11 @@ class Project(OSFCore):
         except KeyError:
             pass
 
-        project = project["data"]
+        try:
+            project = project["data"]
+        except:
+            pass
+            
         self._endpoint = self._get_attribute(project, "links", "self")
         self.id = self._get_attribute(project, "id")
         attrs = self._get_attribute(project, "attributes")
