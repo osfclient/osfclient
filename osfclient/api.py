@@ -67,21 +67,19 @@ class OSF(OSFCore):
 
         type_ = "nodes"
         url = self._build_url(type_)
-        data = dumps(
-            {
-                "data": {
-                    "type": type_,
-                    "attributes": {
-                        "title": title,
-                        "category": category,
-                        "description": description,
-                        "tags": tags,
-                    },
-                }
+        data = {
+            "data": {
+                "type": type_,
+                "attributes": {
+                    "title": title,
+                    "category": category,
+                    "description": description,
+                    "tags": tags,
+                },
             }
-        )
+        }
 
-        return Project(self._json(self._post(url, data=data), 200), self.session)
+        return Project(self._json(self._post(url, json=data), 200), self.session)
 
     def create_project_jsonld(self, jsonld):
         """

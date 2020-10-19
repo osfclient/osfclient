@@ -99,7 +99,17 @@ def test_create_project(OSFCore_post):
     calls = [
         call(
             "https://api.osf.io/v2/nodes/",
-            data='{"data": {"type": "nodes", "attributes": {"title": "Preprint Citations Test", "category": "project", "description": "this is a test for preprint citations", "tags": []}}}',
+            json={
+                "data": {
+                    "type": "nodes",
+                    "attributes": {
+                        "title": "Preprint Citations Test",
+                        "category": "project",
+                        "description": "this is a test for preprint citations",
+                        "tags": [],
+                    },
+                }
+            },
         )
     ]
     OSFCore_post.assert_has_calls(calls)
@@ -209,10 +219,11 @@ def test_project_metadata_jsonld(OSFCore_get):
     assert data["public"] == md[osf_to_jsonld["public"]]
     assert data["date_created"] == md[osf_to_jsonld["date_created"]]
     assert data["date_modified"] == md[osf_to_jsonld["date_modified"]]
-    
+
     with pytest.raises(KeyError):
         md["title"]
         md["description"]
+
 
 @patch.object(OSFCore, "_get", return_value=FakeResponse(200, registration_node))
 def test_get_registration(OSFCore_get):
