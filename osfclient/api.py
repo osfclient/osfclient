@@ -59,7 +59,7 @@ class OSF(OSFCore):
             )
         )
 
-    def create_project(self, title, category, description="", tags=None):
+    def create_project(self, title, category="project", description="", tags=None):
         """Create new project with title, category, description (optional), tags (optional)."""
 
         if tags is None:
@@ -99,7 +99,7 @@ class OSF(OSFCore):
 
         except KeyError:
             raise ValueError(
-                "jsonld not hold the needed values (title, category, description or tags."
+                "jsonld not hold the needed values (title, category, description or tags missing)."
             )
 
     @property
