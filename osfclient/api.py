@@ -79,7 +79,11 @@ class OSF(OSFCore):
             }
         }
 
-        return Project(self._json(self._post(url, json=data), 200), self.session)
+        headers = {"Content-Type": "application/json"}
+
+        return Project(
+            self._json(self._post(url, json=data, headers=headers), 200), self.session
+        )
 
     def create_project_jsonld(self, jsonld):
         """

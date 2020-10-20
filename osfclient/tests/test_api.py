@@ -110,6 +110,7 @@ def test_create_project(OSFCore_post):
                     },
                 }
             },
+            headers={"Content-Type": "application/json"},
         )
     ]
     OSFCore_post.assert_has_calls(calls)
