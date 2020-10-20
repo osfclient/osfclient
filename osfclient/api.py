@@ -59,11 +59,17 @@ class OSF(OSFCore):
             )
         )
 
-    def create_project(self, title, category="project", description="", tags=None):
+    def create_project(self, title, category=None, description=None, tags=None):
         """Create new project with title, category, description (optional), tags (optional)."""
 
         if tags is None:
             tags = []
+
+        if category is None:
+            category = "project"
+
+        if description is None:
+            description = ""
 
         type_ = "nodes"
         url = self._build_url(type_)
