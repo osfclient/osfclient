@@ -81,8 +81,10 @@ class OSF(OSFCore):
 
         headers = {"Content-Type": "application/json"}
 
+        LOGGER.debug("send data in create_project: {}".format(data))
+
         return Project(
-            self._json(self._post(url, json=data, headers=headers), 200), self.session
+            self._json(self._post(url, json=data, headers=headers), 201), self.session
         )
 
     def create_project_jsonld(self, jsonld):

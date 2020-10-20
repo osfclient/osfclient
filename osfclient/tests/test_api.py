@@ -87,7 +87,7 @@ def test_get_projects(OSFCore_get, session_basic_auth):
     test_project([project_node], 1)
 
 
-@patch.object(OSFCore, "_post", return_value=FakeResponse(200, project_node))
+@patch.object(OSFCore, "_post", return_value=FakeResponse(201, project_node))
 def test_create_project(OSFCore_post):
     osf = OSF()
 
