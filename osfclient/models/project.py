@@ -2,6 +2,10 @@ from .core import OSFCore
 from .storage import Storage
 from json import dumps
 
+import logging
+
+logger = logging.getLogger()
+
 osf_to_jsonld = {
     "title": "https://schema.org/title",
     "description": "https://schema.org/description",
@@ -60,22 +64,34 @@ class Project(OSFCore):
 
         try:
             project = project["data"]
-        except:
-            pass
-            
-        self._endpoint = self._get_attribute(project, "links", "self")
-        self.id = self._get_attribute(project, "id")
-        attrs = self._get_attribute(project, "attributes")
-        self.title = self._get_attribute(attrs, "title")
-        self.date_created = self._get_attribute(attrs, "date_created")
-        self.date_modified = self._get_attribute(attrs, "date_modified")
-        self.description = self._get_attribute(attrs, "description")
-        self.category = self._get_attribute(attrs, "category")
-        self.tags = self._get_attribute(attrs, "tags")
-        self.public = self._get_attribute(attrs, "public")
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
-        storages = ["relationships", "files", "links", "related", "href"]
-        self._storages_url = self._get_attribute(project, *storages)
+        try:
+            for key, value in project["attributes"].items():
+                setattr(self, key, value)
+                logger.debug("set {}: {}".format(key, value))
+        except Exception as e:
+            logger.error(e, exc_info=True)
+
+        try:
+            self._endpoint = self._get_attribute(project, "links", "self")
+            self.id = self._get_attribute(project, "id")
+
+            attrs = self._get_attribute(project, "attributes")
+            self.title = self._get_attribute(attrs, "title")
+            self.date_created = self._get_attribute(attrs, "date_created")
+            self.date_modified = self._get_attribute(attrs, "date_modified")
+            self.description = self._get_attribute(attrs, "description")
+            self.category = self._get_attribute(attrs, "category")
+            self.tags = self._get_attribute(attrs, "tags")
+            self.public = self._get_attribute(attrs, "public")
+
+            storages = ["relationships", "files", "links", "related", "href"]
+            self._storages_url = self._get_attribute(project, *storages)
+
+        except Exception as e:
+            logger.error(e, exc_info=True)
 
     def __str__(self):
         return "<Project [{0}]>".format(self.id)
@@ -93,7 +109,7 @@ class Project(OSFCore):
             return {
                 key: value
                 for key, value in self.__dict__.items()
-                if key in osf_to_jsonld.keys()
+                if key in osf_to_jsonld.keys() and key not in "id" and "date_" not in key and value
             }
 
         # jsonld exporter
@@ -136,11 +152,14 @@ class Project(OSFCore):
             }
         )
 
+        logger.warning("send {}".format(data))
+
         try:
             data = self._json(self._put(url, data=data), 200)
             self._update_attributes(data)
             return True
         except RuntimeError:
+            raise
             return False
 
     def delete(self):

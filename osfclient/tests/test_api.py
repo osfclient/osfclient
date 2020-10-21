@@ -151,7 +151,7 @@ def test_update_project(OSFCore_put, OSFCore_get):
     calls = [
         call(
             "https://api.osf.io/v2/nodes/f3szh/",
-            data='{"data": {"type": "nodes", "id": "f3szh", "attributes": {"id": "f3szh", "title": "Long long title", "date_created": "2017-03-17T16:09:14.864000", "date_modified": "2017-03-17T16:11:35.721000", "description": "this is a test for preprint citations", "category": "project", "tags": ["qatest"], "public": true}}}',
+            data='{"data": {"type": "nodes", "id": "f3szh", "attributes": {"category": "project", "description": "this is a test for preprint citations", "title": "Long long title", "public": true, "tags": ["qatest"]}}}',
         )
     ]
     OSFCore_put.assert_has_calls(calls)
@@ -201,8 +201,6 @@ def test_project_metadata_only_mutable(OSFCore_get):
     assert data["category"] == md["category"]
     assert data["tags"] == md["tags"]
     assert data["public"] == md["public"]
-    assert data["date_created"] == md["date_created"]
-    assert data["date_modified"] == md["date_modified"]
 
 
 @patch.object(OSFCore, "_get", return_value=FakeResponse(200, project_node))
