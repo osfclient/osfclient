@@ -50,7 +50,7 @@ class File(OSFCore):
         Pass in a filepointer `fp` that has been opened for writing in
         binary mode.
         """
-        if 'b' not in fp.mode and not isinstance(fp, BytesIO):
+        if 'b' not in getattr(fp, "mode", "") and not isinstance(fp, BytesIO):
             raise ValueError("File has to be opened in binary mode.")
 
         response = self._get(self._download_url, stream=True)
@@ -75,7 +75,7 @@ class File(OSFCore):
         Pass in a filepointer `fp` that has been opened for writing in
         binary mode.
         """
-        if 'b' not in fp.mode and not isinstance(fp, BytesIO):
+        if 'b' not in getattr(fp, "mode", "") and not isinstance(fp, BytesIO):
             raise ValueError("File has to be opened in binary mode.")
 
         url = self._upload_url
