@@ -20,14 +20,10 @@ class Project(OSFCore):
     _types = ["nodes", "registrations"]
 
     def __init__(self, json, session=None, address=None):
-        data = json
-
-        # jsonld importer
-        if json:
-            try:
-                data = self.__transform_from_jsonld(json)
-            except:
-                pass
+        try:
+            data = self.__transform_from_jsonld(json)
+        except Exception as e:
+            data = json
 
         super().__init__(data, session=session, address=address)
 
