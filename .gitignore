@@ -5,12 +5,21 @@ __pycache__/
 .cache/
 .coverage
 coverage.xml
-.osfcli.config
-.eggs/
 
-# docs build output
-docs/_build
+# ide config
+.idea
 
-# local build output
+# virtualenv support
+venv/
+
+# tests
+.pytest_cache/
+
+# build output
 build/
 dist/
+.eggs/
+docs/_build
+
+# app config
+.osfcli.config
