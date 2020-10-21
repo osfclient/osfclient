@@ -42,6 +42,10 @@ def config_from_env(config):
     if project is not None:
         config['project'] = project
 
+    token = os.getenv("OSF_TOKEN")
+    if token is not None:
+        config['token'] = token
+
     return config
 
 
@@ -68,15 +72,17 @@ def _setup_osf(args):
         sys.exit('You have to specify a project ID via the command line,'
                  ' configuration file or environment variable.')
 
+    token = config.get('token', None)
+
     password = None
-    if username is not None:
+    if username is not None and token is None:
         password = os.getenv("OSF_PASSWORD")
 
         # Prompt user when password is not set
         if password is None:
             password = getpass.getpass('Please input your password: ')
 
-    return OSF(username=username, password=password)
+    return OSF(username=username, password=password, token=token)
 
 
 def might_need_auth(f):
