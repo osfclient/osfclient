@@ -2,6 +2,7 @@ from tqdm import tqdm
 
 from .core import OSFCore
 from ..exceptions import FolderExistsException
+from io import BytesIO
 
 
 def copyfileobj(fsrc, fdst, total, length=16*1024):
@@ -49,7 +50,7 @@ class File(OSFCore):
         Pass in a filepointer `fp` that has been opened for writing in
         binary mode.
         """
-        if 'b' not in fp.mode:
+        if 'b' not in fp.mode and not isinstance(fp, BytesIO):
             raise ValueError("File has to be opened in binary mode.")
 
         response = self._get(self._download_url, stream=True)
@@ -74,7 +75,7 @@ class File(OSFCore):
         Pass in a filepointer `fp` that has been opened for writing in
         binary mode.
         """
-        if 'b' not in fp.mode:
+        if 'b' not in fp.mode and not isinstance(fp, BytesIO):
             raise ValueError("File has to be opened in binary mode.")
 
         url = self._upload_url
