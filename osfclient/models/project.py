@@ -54,6 +54,8 @@ class Project(OSFCore):
         return data
 
     def _update_attributes(self, project):
+        logger.debug("got project to update: {}".format(project))
+        
         if not project:
             return
 
@@ -109,7 +111,10 @@ class Project(OSFCore):
             return {
                 key: value
                 for key, value in self.__dict__.items()
-                if key in osf_to_jsonld.keys() and key not in "id" and "date_" not in key and value
+                if key in osf_to_jsonld.keys()
+                and key not in "id"
+                and "date_" not in key
+                and value
             }
 
         # jsonld exporter
@@ -152,7 +157,7 @@ class Project(OSFCore):
             }
         )
 
-        logger.warning("send {}".format(data))
+        logger.debug("send {}".format(data))
 
         try:
             data = self._json(self._put(url, data=data), 200)
