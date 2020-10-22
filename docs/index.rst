@@ -32,5 +32,5 @@ the ``osfclient`` in the `GitHub repository`_.
 
 
 .. _Open Science Framework: https://osf.io
-.. _OSF introductory materials: https://cos.io/our-products/open-science-framework/
-.. _GitHub repository: https://github.com/dib-lab/osf-cli
+.. _OSF introductory materials: https://www.cos.io/our-products/osf
+.. _GitHub repository: https://github.com/osfclient/osfclient

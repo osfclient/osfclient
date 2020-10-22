@@ -38,15 +38,6 @@ def test_login_username_password(session_basic_auth):
     session_basic_auth.assert_called_with("joe@example.com", "secret_password")
 
 
-@patch.object(OSFSession, "token_auth")
-def test_login_token(session_token_auth):
-    osf = OSF()
-    assert not session_token_auth.called
-
-    osf.login(token="asdfg")
-    session_token_auth.assert_called_with("asdfg")
-
-
 @patch.object(OSFSession, "basic_auth")
 @patch("osfclient.models.OSFCore._get")
 def test_get_projects(OSFCore_get, session_basic_auth):
@@ -156,6 +147,15 @@ def test_update_project(OSFCore_put, OSFCore_get):
     ]
     OSFCore_put.assert_has_calls(calls)
     assert isinstance(project, Project)
+
+
+@patch.object(OSFSession, "token_auth")
+def test_login_token(session_token_auth):
+    osf = OSF()
+    assert not session_token_auth.called
+
+    osf.login(token="asdfg")
+    session_token_auth.assert_called_with("asdfg")
 
 
 @patch.object(OSFCore, "_get", return_value=FakeResponse(200, project_node))
