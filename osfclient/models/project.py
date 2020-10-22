@@ -55,7 +55,7 @@ class Project(OSFCore):
 
     def _update_attributes(self, project):
         logger.debug("got project to update: {}".format(project))
-        
+
         if not project:
             return
 
@@ -67,7 +67,7 @@ class Project(OSFCore):
         try:
             project = project["data"]
         except Exception as e:
-            logger.error(e, exc_info=True)
+            pass
 
         try:
             for key, value in project["attributes"].items():
@@ -106,24 +106,20 @@ class Project(OSFCore):
             jsonld (bool, optional): If true, returns a jsonld object. Otherwise OSF specific key names.
         """
 
-        data = self.__dict__
+        data = {
+            key: value for key, value in self.__dict__.items() if key in osf_to_jsonld
+        }
+
         if only_mutable:
             return {
                 key: value
-                for key, value in self.__dict__.items()
-                if key in osf_to_jsonld.keys()
-                and key not in "id"
-                and "date_" not in key
-                and value
+                for key, value in data.items()
+                if key not in "id" and "date_" not in key and value
             }
 
         # jsonld exporter
         if jsonld:
-            data = {
-                osf_to_jsonld[key]: value
-                for key, value in self.__dict__.items()
-                if key in osf_to_jsonld
-            }
+            data = {osf_to_jsonld[key]: value for key, value in data.items()}
 
             data[osf_to_jsonld["self"]] = self._endpoint
             data[osf_to_jsonld["storages_url"]] = self._storages_url
