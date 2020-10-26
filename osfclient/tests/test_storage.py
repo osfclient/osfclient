@@ -151,7 +151,7 @@ def test_force_existing_file():
             store.create_file('foo.txt', fake_fp, force=True)
 
     assert fake_fp.call_count == 0
-    assert call.peek(1) in fake_fp.mock_calls
+    assert call.read(1) in fake_fp.mock_calls
     # should have made two PUT requests, first attempt at uploading then
     # to update the file
     assert fake_put.call_count == 2
@@ -198,7 +198,7 @@ def test_update_existing_file_files_differ():
                 store.create_file('foo.txt', fake_fp, update=True)
 
     assert fake_fp.call_count == 0
-    assert call.peek(1) in fake_fp.mock_calls
+    assert call.read(1) in fake_fp.mock_calls
     # should have made two PUT requests, first attempt at uploading then
     # to update the file
     assert fake_put.call_count == 2
@@ -292,7 +292,7 @@ def test_update_existing_file_files_match_force_overrides_update():
                 store.create_file('foo.txt', fake_fp, force=True, update=True)
 
     assert fake_fp.call_count == 0
-    assert call.peek(1) in fake_fp.mock_calls
+    assert call.read(1) in fake_fp.mock_calls
     # should have made two PUT requests, first attempt at uploading then
     # to update the file, even though they match, since force=True overrides
     # update=True
@@ -403,10 +403,7 @@ def test_create_new_zero_length_file():
 
     fake_fp = MagicMock()
     fake_fp.mode = 'rb'
-    if six.PY3:
-        fake_fp.peek = lambda: ''
-    if six.PY2:
-        fake_fp.read = lambda: ''
+    fake_fp.read = lambda: ''
 
     store.create_file('foo.txt', fake_fp)
 
@@ -513,7 +510,7 @@ def test_update_existing_file_overrides_connection_error():
                 store.create_file('foo.txt', fake_fp, update=True)
 
     assert fake_fp.call_count == 0
-    assert call.peek(1) in fake_fp.mock_calls
+    assert call.read(1) in fake_fp.mock_calls
     # should have made two PUT requests, first attempt at uploading then
     # to update the file
     assert fake_put.call_count == 2

@@ -187,3 +187,29 @@ class Project(OSFCore):
         stores = stores["data"]
         for store in stores:
             yield Storage(store, self.session)
+
+    def list_doi(self):
+        """List all unique identifier."""
+        type_ = "nodes"
+        url = self._build_url(type_, self.id, "identifiers")
+
+        data = self._json(self._get(url), 200)
+        data = data["data"][0]
+        identifier = self._get_attribute(data, "id")
+
+        return identifier
+
+    def create_doi(self, category="doi"):
+        """Create a unique identifier."""
+        type_ = "nodes"
+        url = self._build_url(type_, self.id, "identifiers")
+
+        data = dumps(
+            {"data": {"type": "identifiers", "attributes": {"category": category}}}
+        )
+
+        data = self._json(self._post(url, data=data), 201)
+        data = data["data"][0]
+        identifier = self._get_attribute(data, "id")
+
+        return identifier
