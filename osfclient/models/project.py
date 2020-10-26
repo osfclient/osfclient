@@ -188,14 +188,14 @@ class Project(OSFCore):
         for store in stores:
             yield Storage(store, self.session)
 
-    def list_doi(self):
+    def list_doi(self, category="doi"):
         """List all unique identifier."""
         type_ = "nodes"
         url = self._build_url(type_, self.id, "identifiers")
 
         data = self._json(self._get(url), 200)
         data = data["data"][0]
-        identifier = self._get_attribute(data, "id")
+        identifier = self._get_attribute(data, "attributes", "value")
 
         return identifier
 
@@ -210,6 +210,6 @@ class Project(OSFCore):
 
         data = self._json(self._post(url, data=data), 201)
         data = data["data"][0]
-        identifier = self._get_attribute(data, "id")
+        identifier = self._get_attribute(data, "attributes", "value")
 
         return identifier
