@@ -82,7 +82,7 @@ class File(OSFCore):
         # peek at the file to check if it is an ampty file which needs special
         # handling in requests. If we pass a file like object to data that
         # turns out to be of length zero then no file is created on the OSF
-        if fp.peek(1):
+        if fp.read(1):
             response = self._put(url, data=fp)
         else:
             response = self._put(url, data=b'')
