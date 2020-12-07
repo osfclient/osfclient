@@ -68,10 +68,13 @@ Below are some examples on how to use it:
 
     # fetch all files for the project
     $ osf clone
-    
+
     # fetch an individual file from a project
     $ osf fetch remote/path.txt local/file.txt
-    
+
+    # get web view url for an individual file from a project
+    $ osf geturl remote/path.txt
+
     # add a new file
     $ osf upload local/file.txt remote/path.txt
 

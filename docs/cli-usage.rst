@@ -34,6 +34,9 @@ Below some examples on how to use the command-line program:
     # download a single file from an OSF project
     $ osf -p <projectid> fetch remote/path.txt local/file.txt
 
+    # get the web view url for a single file from an OSF project
+    $ osf -p <projectid> geturl remote/path.txt local/file.txt
+
     # upload a single file to an OSF project
     $ osf -p <projectid> upload local/path.txt remote/file.txt
 
