@@ -4,7 +4,7 @@ import six
 import argparse
 from textwrap import dedent
 
-from .cli import clone, fetch, list_, remove, upload, init
+from .cli import clone, fetch, geturl, list_, remove, upload, init
 from . import __version__
 
 
@@ -18,6 +18,7 @@ def main():
         init      Set up a .osfcli.config file
         clone     Copy all files from all storages of a project
         fetch     Fetch an individual file from a project
+        geturl    Get download url for an individual file from a project
         list      List all files from all storages for a project
         upload    Upload a new file to an existing project
         remove    Remove a file from a project's storage
@@ -74,6 +75,12 @@ def main():
                               default=None)
     fetch_parser.add_argument('local', help='Local path',
                               default=None, nargs='?')
+
+    # List all files in a project
+    geturl_parser = _add_subparser('geturl', geturl.__doc__)
+    geturl_parser.set_defaults(func=geturl)
+    geturl_parser.add_argument('remote', help='Remote path',
+                               default=None)
 
     # List all files in a project
     list_parser = _add_subparser('list', list.__doc__, aliases=['ls'])

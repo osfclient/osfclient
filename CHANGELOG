@@ -2,6 +2,8 @@
 ChangeLog
 *********
 
+- Feature: Add download url getter (@mmore500) [#187]
+
 0.0.4 (2020-09-08)
 ==================
 - Feature: Add rate-limiting to update / fetch requests to avoid overloading OSF resources [#105]

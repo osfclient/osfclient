@@ -339,7 +339,8 @@ def files_node(project_id, storage, file_names=['hello.txt'],
         "move": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s",
         "upload": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s",
         "download": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s",
-        "delete": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s"
+        "delete": "https://files.osf.io/v1/resources/%(project_id)s/providers/%(storage)s/%(fname)s",
+        "html": "https://osf.io/%(project_id)s/files/%(storage)s/58becc229ad5a101f98293a3"
     },
     "attributes": {
         "extra": {
