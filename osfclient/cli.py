@@ -293,9 +293,9 @@ def upload(args):
     $ osf upload -r foo/ bar
     """
     osf = _setup_osf(args)
-    if osf.username is None or osf.password is None:
-        sys.exit('To upload a file you need to provide a username and'
-                 ' password.')
+    if not osf.can_login:
+        sys.exit('To upload a file you need to provide either a username and'
+                 ' password or a token.')
 
     project = osf.project(args.project)
     storage, remote_path = split_storage(args.destination)
@@ -335,9 +335,9 @@ def remove(args):
     used.
     """
     osf = _setup_osf(args)
-    if osf.username is None or osf.password is None:
-        sys.exit('To remove a file you need to provide a username and'
-                 ' password.')
+    if not osf.can_login:
+        sys.exit('To remove a file you need to provide either a username and'
+                 ' password or a token.')
 
     project = osf.project(args.project)
 

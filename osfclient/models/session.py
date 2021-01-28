@@ -46,6 +46,7 @@ class OSFSession(requests.Session):
             })
         self.base_url = 'https://api.osf.io/v2/'
         self.last_request = None
+        self.token = None
 
     def basic_auth(self, username, password):
         self.auth = (username, password)
@@ -53,6 +54,7 @@ class OSFSession(requests.Session):
             self.headers.pop('Authorization')
 
     def token_auth(self, token):
+        self.token = token
         self.headers['Authorization'] = "Bearer %s" % token
 
     def build_url(self, *args):
