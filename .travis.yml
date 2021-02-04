@@ -9,8 +9,11 @@ cache:
 
 env:
   matrix:
-    - DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="true"
-    - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="false"
+    - DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="false"
+    - DISTRIB="conda" PYTHON_VERSION="3.6" COVERAGE="true"
+    - DISTRIB="conda" PYTHON_VERSION="3.7" COVERAGE="false"
+    - DISTRIB="conda" PYTHON_VERSION="3.8" COVERAGE="false"
+    - DISTRIB="conda" PYTHON_VERSION="3.9" COVERAGE="false"
     - DISTRIB="conda" PYTHON_VERSION="2.7" COVERAGE="false"
 
 install: source build_tools/travis_install.sh
@@ -37,6 +40,6 @@ deploy:
     on:
       tags: true
       repo: osfclient/osfclient
-      condition: "$PYTHON_VERSION = 3.5"
+      condition: "$PYTHON_VERSION = 3.6"
     password:
       secure: SeqLSRnqFqiJgNMvc3E9oJ7evptcnt9a0avlLr95GaPbdAAw/Hp3P00pGCg5e6veCoKPvQa/EK8sl4dphRhnSwIgfVsKRYgof5z8tiKzSuZn4rSSomfFBmmgdRml0osbQ6XOunFyceZP/TZw++Fch9iGwtC9ewNzb3Y1jQf/f/gb+QRa6OcE6mMDQtGZbwkmY1rzl2CgJIM9iBWh164YMSAZehmvENJwZUjcHXrdLfbKD4u85OTsHAuUycsC9PBjA8bTJt5DTEHwkHNToVc/0eT1ZYuiDSmfFC8i1fJvZqVD8zrglhHSRIQn8n7jB8pAXFUnBsrwhD2cVDqiu5RQ0AU5MJf+ffN0EhTALpVjs9U//UEfSBQ7vPGgCmjEwAmR3Cpqyr8PmsgT7L+I5jxGkrmZ3uWrH6qm8d91EoF1A6L7SmQtclaMSNHfmY4me7QWNamZiyXt4Wl4RrQJOJ+q65IaFDaZA8xD+CockpMNZDY97WZlQt/i20sQRREkeS6NFrZvzyhotjS0w6Jm6feJVqL6X6k+h9vG0hX/rVwHW/36DnIg/EL9W3U2SluSqU/Q76YTLGxb5Od5dw/JOLxREy2VzBNaN4Z0OlMM7UP8btW7MmqI2IyQm+GT+653SwaWwsEry6MdV3KfcCWeq+1U6CPtqw2QWT7D2ZFtBt0Hjb0=

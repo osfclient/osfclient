@@ -130,8 +130,8 @@ To setup a development version:
     $ git clone https://github.com/YOURNAMEHERE/osfclient
     $ git remote add upstream https://github.com/osfclient/osfclient
     $ cd osfclient
-    $ pip install -r devRequirements.txt
-    $ pip install -e.
+    $ pip install -r devRequirements.txt -c constraints.txt
+    $ pip install -e . -c constraints.txt
 
 There are a few secret keys relevant to this project, like passwords to
 pypi.org, test.pypi.org, and the osfclient email account. We store these in an
