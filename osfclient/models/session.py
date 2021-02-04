@@ -46,11 +46,16 @@ class OSFSession(requests.Session):
             })
         self.base_url = 'https://api.osf.io/v2/'
         self.last_request = None
+        self.token = None
 
     def basic_auth(self, username, password):
         self.auth = (username, password)
         if 'Authorization' in self.headers:
             self.headers.pop('Authorization')
+
+    def token_auth(self, token):
+        self.token = token
+        self.headers['Authorization'] = "Bearer %s" % token
 
     def build_url(self, *args):
         parts = [self.base_url]
@@ -68,6 +73,12 @@ class OSFSession(requests.Session):
     @_rate_limit
     def get(self, url, *args, **kwargs):
         response = super(OSFSession, self).get(url, *args, **kwargs)
+        if response.status_code == 401:
+            raise UnauthorizedException()
+        return response
+
+    def patch(self, url, *args, **kwargs):
+        response = super(OSFSession, self).patch(url, *args, **kwargs)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response

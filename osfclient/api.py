@@ -12,12 +12,21 @@ class OSF(OSFCore):
     """
     def __init__(self, username=None, password=None, token=None):
         super(OSF, self).__init__({})
-        if username is not None and password is not None:
-            self.login(username, password)
+        self.can_login = False
+        try:
+            self.login(username, password, token)
+            self.can_login = True
+        except OSFException:
+            pass
 
-    def login(self, username, password=None, token=None):
+    def login(self, username=None, password=None, token=None):
         """Login user for protected API calls."""
-        self.session.basic_auth(username, password)
+        if token is not None:
+            self.session.token_auth(token)
+        elif username is not None and password is not None:
+            self.session.basic_auth(username, password)
+        else:
+            raise OSFException("No login details provided.")
 
     def project(self, project_id):
         """Fetch project `project_id`."""
@@ -40,3 +49,8 @@ class OSF(OSFCore):
     def password(self):
         if self.session.auth is not None:
             return self.session.auth[1]
+
+    @property
+    def token(self):
+        if self.session.token is not None:
+            return self.session.token

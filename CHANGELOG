@@ -2,8 +2,25 @@
 ChangeLog
 *********
 
-0.0.4 (2020-08-??)
-===================
+0.0.5 (2021-02-04)
+==================
+- ANNOUNCEMENT! python2.7 support for osfclient is in jeopardy!  With python2.7 officially deprecated
+  and PyPI ceasing 2.7 support, the value of 2.7 support is questionable.  This is the last release
+  that has definite py2.7 compatibility.  Going forward, the maintainers will start treating
+  osfclient as a py3-only project.  This will include several refactorings to help modernize the
+  osfclient codebase (ex. linting, test refactoring, dependency updates).  We will not consider
+  2.7-compatibility a prereq for merging PRs or releasing.  We will however consider patches to add
+  / maintain 2.7 support, if submitted.  The submitter will be responsible for ongoing 2.7 support.
+- Feature: Add command to retrieve the web view url [#187] (@mmore500)
+- Feature: Enable `owncloud` provider support [#189][#191] (@stebo85)
+- Feature: Add the `size` attribute to file metadata objects [#185] (@aerubanov)
+- Feature: Add base support for PATCH methods [#181] (@adswa)
+- Feature: Add Personal Access Token (PAT) support to osfclient via envvars and the
+  `.osfcli.config` file [#163] (@chkgk)
+- Docs: Minor metadata cleanups to `docs/conf.py` and `setup.py`
+
+0.0.4 (2020-09-08)
+==================
 - Feature: Add rate-limiting to update / fetch requests to avoid overloading OSF resources [#105]
   (@betatim)
 - Fix: Prefer files url for download to avoid redirects [#178] (@mih)

@@ -28,6 +28,9 @@ class OSFCore(object):
     def _delete(self, url, *args, **kwargs):
         return self.session.delete(url, *args, **kwargs)
 
+    def _patch(self, url, *args, **kwargs):
+        return self.session.patch(url, *args, **kwargs)
+
     def _get_attribute(self, json, *keys, **kwargs):
         # pick value out of a (nested) dictionary/JSON
         # `keys` is a list of keys

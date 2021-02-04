@@ -34,10 +34,10 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/dib-lab/osf-cli',
+    url='https://github.com/osfclient/osfclient',
 
     # Author details
-    author='The OSF-cli authors',
+    author='The osfclient authors',
     # Choose your license
     license='BSD3',
 
@@ -56,6 +56,9 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: BSD License',
         'Topic :: Utilities'
     ],

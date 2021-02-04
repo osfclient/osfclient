@@ -24,7 +24,7 @@ def test_anonymous_doesnt_use_password(MockOSF):
     # if there is no username we should not try to obtain a password either
     assert call('OSF_USERNAME') in mock_getenv.mock_calls
     assert call('OSF_PASSWORD') not in mock_getenv.mock_calls
-    MockOSF.assert_called_once_with(username=None, password=None)
+    MockOSF.assert_called_once_with(username=None, password=None, token=None)
 
 
 @patch('osfclient.cli.OSF')
@@ -40,7 +40,7 @@ def test_username_password(MockOSF):
         list_(args)
 
     MockOSF.assert_called_once_with(username='joe@example.com',
-                                    password='secret')
+                                    password='secret', token=None)
     mock_getenv.assert_called_with('OSF_PASSWORD')
 
 

@@ -18,7 +18,7 @@ def test_anonymous_doesnt_work():
     with pytest.raises(SystemExit) as e:
         remove(args)
 
-    expected = 'remove a file you need to provide a username and password'
+    expected = 'To remove a file you need to provide either a username and password or a token.'
     assert expected in e.value.args[0]
 
 
