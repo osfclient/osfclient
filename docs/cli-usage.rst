@@ -8,7 +8,7 @@ The python library forms the basis for the command-line program. If you want
 programmatic access to your files use the library, otherwise try out the
 command-line program.
 
-Below some examples on how to use the command-line program:
+Below are some examples on how to use the command-line program:
 ::
 
     # getting help
@@ -22,7 +22,7 @@ Below some examples on how to use the command-line program:
     $ osf init
 
     # list all files for a private project
-    # set $OSF_PASSWORD to provide the password
+    # set $OSF_PASSWORD to provide the password or $OSF_TOKEN to use an access token
     $ osf -p <projectid> -u yourOSFacount@example.com list
 
     # fetch all files from a project and store them in `output_directory`
@@ -47,10 +47,11 @@ If you're using python 3+, you can also use the aliases `ls` in place of `list`,
 
 
 If the project is private you will need to provide authentication
-details. You can provide your OSF account name as command-line argument
+details. You can provide your OSF account name as a command-line argument
 (see the ``osf upload`` example) or set the ``OSF_USERNAME`` environment
 variable. The password will be retrieved from the ``OSF_PASSWORD``
-environment variable or asked directly by the tool.
+environment variable or asked directly by the tool.  Alternatively, you may provide a Personal
+Access Token by setting the ``OSF_TOKEN`` environment variable.
 
 You can set a default values by using a configuration file in the
 current directory. To set the username and project ID create
@@ -63,7 +64,13 @@ current directory. To set the username and project ID create
     project = 9zpcy
 
 
-after which you can simply run `osf list` to list the contents of the project.
+You can also define a default token by adding the ``token`` key to your ``.osfcli.config`` like so:
+
+::
+
+    token = kej2R9IU6Gr2uThsswSNdP1cd0cu9eaCerVXjVf7zNwfXHyT0QzMZtX0PGTYmp9Fzaixwq
+
+After this you can simply run ``osf list`` to list the contents of the project.
 
 
 .. _OSF: https://osf.io
