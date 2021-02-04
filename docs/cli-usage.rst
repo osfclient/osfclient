@@ -18,6 +18,9 @@ Below are some examples on how to use the command-line program:
     # list all files for a public project
     $ osf -p <projectid> list
 
+    # list all files for a public project, including guids & download urls
+    $ osf -p <projectid> list --long
+
     # setup a local folder for an existing project
     $ osf init
 
