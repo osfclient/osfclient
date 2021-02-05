@@ -110,9 +110,19 @@ class ContainerMixin:
             if kind_ == kind:
                 yield klass(child, self.session)
             elif recurse is not None:
-                # recurse into a child and add entries to `children`
-                url = self._get_attribute(child, *recurse)
-                children.extend(self._follow_next(url))
+                embedded = self._get_attribute(child,
+                                               "embeds", "files", "data",
+                                               default=-1)
+                if embedded != -1:
+                    children.extend(embedded)
+                    next_url = self._get_attribute(child, 'embeds', 'files',
+                                                   'links', 'next')
+                    if next_url is not None:
+                        children.extend(self._follow_next(next_url))
+                else:
+                    # recurse into a child and add entries to `children`
+                    url = self._get_attribute(child, *recurse)
+                    children.extend(self._follow_next(url + '?embed=files'))
 
     @property
     def files(self):
