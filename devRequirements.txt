@@ -5,3 +5,4 @@ pep8
 sphinx
 sphinx-autobuild==0.7.1
 sphinx_rtd_theme
+twine==3.3.0
