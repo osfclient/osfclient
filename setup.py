@@ -7,10 +7,8 @@ from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-
 with open(os.path.join(here, 'VERSION')) as f:
     __version__ = f.read().strip()
-
 
 with open(os.path.join(here, 'requirements.txt')) as f:
     required = f.read().splitlines()
@@ -66,7 +64,7 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(),
-    incude_package_data=True,
+    include_package_data=True,
     package_data={'': extra_files},
 
     # List run-time dependencies here.  These will be installed by pip when
