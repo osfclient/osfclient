@@ -85,6 +85,9 @@ def main():
     # List all files in a project
     list_parser = _add_subparser('list', list.__doc__, aliases=['ls'])
     list_parser.set_defaults(func=list_)
+    list_parser.add_argument('-l', '--long',
+                             help='List in long format',
+                             action='store_true')
 
     # Upload a single file or a directory tree
     upload_parser = _add_subparser('upload', upload.__doc__)

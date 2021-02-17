@@ -64,6 +64,7 @@ Below are some examples on how to use it:
     $ osf init
 
     # list all files for the project
+    # (add --long to get file guids and download urls, too)
     $ osf ls
 
     # fetch all files for the project

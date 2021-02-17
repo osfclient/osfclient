@@ -4,12 +4,23 @@ from mock import MagicMock, PropertyMock
 # When using a PropertyMock store it as an attribute
 # of the mock it belongs to so that later on a caller
 # can assert whether or not it has been accessed
-def MockFile(name):
+def MockFile(name, guid=None, download_url=None):
     mock = MagicMock(name='File-%s' % name, path=name)
     path = PropertyMock(return_value=name)
     type(mock).path = path
     mock._path_mock = path
     mock._html_url = 'https://example.com'
+
+    # mock guid
+    guid = PropertyMock(return_value=guid)
+    type(mock).guid = guid
+    mock._guid_mock = guid
+
+    # mock download url
+    download = PropertyMock(return_value=download_url)
+    type(mock).download = download
+    mock._download_mock = download
+
     hashes_dict = dict(md5='0' * 32, sha256='0' * 64)
     hashes = PropertyMock(return_value=hashes_dict)
     type(mock).hashes = hashes
@@ -30,7 +41,9 @@ def MockFolder(name):
 
 def MockStorage(name):
     mock = MagicMock(name='Storage-%s' % name,
-                     files=[MockFile('/a/a/a'), MockFile('b/b/b')])
+                     files=[MockFile('/a/a/a', guid=None, download_url='www.mock/guid-download.com'),
+                            MockFile('b/b/b', guid=None, download_url=''),
+                            MockFile('c/c/c', guid='a1b2c', download_url='')])
     name = PropertyMock(return_value=name)
     type(mock).name = name
     mock._name_mock = name
@@ -50,10 +63,11 @@ def MockProject(name):
 
 def MockArgs(username=None, password=None, output=None, project=None,
              source=None, destination=None, local=None, remote=None,
-             target=None, force=False, update=False, recursive=False):
+             target=None, force=False, update=False, recursive=False,
+             long=False):
     args = MagicMock(spec=['username', 'password', 'output', 'project',
                            'source', 'destination', 'target', 'force',
-                           'recursive'])
+                           'recursive', 'long'])
     args._username_mock = PropertyMock(return_value=username)
     type(args).username = args._username_mock
     args._password_mock = PropertyMock(return_value=password)
@@ -84,6 +98,9 @@ def MockArgs(username=None, password=None, output=None, project=None,
 
     args._recursive_mock = PropertyMock(return_value=recursive)
     type(args).recursive = args._recursive_mock
+
+    args._long_mock = PropertyMock(return_value=long)
+    type(args).long = args._long_mock
 
     return args
 
