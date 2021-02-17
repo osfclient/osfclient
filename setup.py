@@ -29,6 +29,7 @@ setup(
     version=__version__,
 
     description='An OSF command-line library',
+    long_description_content_type='text/x-rst',
     long_description=long_description,
 
     # The project's main homepage.
