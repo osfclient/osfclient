@@ -1,7 +1,7 @@
 from tqdm import tqdm
 
 from .core import OSFCore
-from ..exceptions import FolderExistsException
+from ..exceptions import FolderExistsException, raise_unexp_status
 
 
 def copyfileobj(fsrc, fdst, total, length=16*1024):
