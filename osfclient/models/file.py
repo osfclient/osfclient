@@ -61,14 +61,13 @@ class File(OSFCore):
                         int(response.headers['Content-Length']))
 
         else:
-            raise RuntimeError("Response has status "
-                               "code {}.".format(response.status_code))
+            raise raise_unexp_status(response.status_code)
 
     def remove(self):
         """Remove this file from the remote storage."""
         response = self._delete(self._delete_url)
         if response.status_code != 204:
-            raise RuntimeError('Could not delete {}.'.format(self.path))
+            raise raise_unexp_status(response.status_code, msg='Could not delete {}.'.format(self.path))
 
     def update(self, fp):
         """Update the remote file from a local file.
@@ -91,7 +90,7 @@ class File(OSFCore):
         if response.status_code != 200:
             msg = ('Could not update {} (status '
                    'code: {}).'.format(self.path, response.status_code))
-            raise RuntimeError(msg)
+            raise_unexp_status(response.status_code, msg=msg)
 
 
 class ContainerMixin:
@@ -144,7 +143,7 @@ class ContainerMixin:
             return _WaterButlerFolder(response.json()['data'], self.session)
 
         else:
-            raise RuntimeError("Response has status code {} while creating "
+            raise_unexp_status(response.status_code, msg="Response has status code {} while creating "
                                "folder {}.".format(response.status_code,
                                                    name))
 

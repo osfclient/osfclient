@@ -59,7 +59,7 @@ class OSFCore(object):
         if response.status_code in status_code:
             return response.json()
         else:
-            raise_unexp_status(response.status_code, status_code)
+            raise_unexp_status(response.status_code, expected_code=status_code)
 
     def _follow_next(self, url):
         """Follow the 'next' link on paginated results."""
