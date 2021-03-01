@@ -2,7 +2,7 @@ from mock import call, patch
 import pytest
 
 from osfclient import OSF
-from osfclient.exceptions import OSFException
+from osfclient.exceptions import OSFException, NotFound
 from osfclient.models import OSFSession
 from osfclient.models import OSFCore
 from osfclient.models import Project
@@ -76,7 +76,7 @@ def test_get_fake(OSFCore_get):
 @patch.object(OSFCore, '_get', return_value=FakeResponse(404, project_node))
 def test_failed_get_project(OSFCore_get):
     osf = OSF()
-    with pytest.raises(RuntimeError):
+    with pytest.raises(NotFound):
         osf.project('f3szh')
 
     OSFCore_get.assert_called_once_with(
