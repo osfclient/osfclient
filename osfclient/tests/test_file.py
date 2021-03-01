@@ -9,7 +9,7 @@ import pytest
 from osfclient.models import OSFCore
 from osfclient.models import File
 from osfclient.models import Folder
-from osfclient.exceptions import FolderExistsException
+from osfclient.exceptions import FolderExistsException, NotFound
 from osfclient.models.file import _WaterButlerFolder
 
 from osfclient.tests import fake_responses
@@ -184,7 +184,7 @@ def test_remove_file_failed():
     f._delete_url = 'http://delete.me/uri'
     f._delete = MagicMock(return_value=FakeResponse(404, {'data': {}}))
 
-    with pytest.raises(RuntimeError) as e:
+    with pytest.raises(NotFound) as e:
         f.remove()
 
     assert f._delete.called
