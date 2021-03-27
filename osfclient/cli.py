@@ -76,8 +76,8 @@ def _setup_osf(args):
 
     token = config.get('token', None)
 
-    password = None
-    if username is not None and token is None:
+    password = config.get('password', None)
+    if username is not None and token is None and password is None:
         password = os.getenv("OSF_PASSWORD")
 
         # Prompt user when password is not set
