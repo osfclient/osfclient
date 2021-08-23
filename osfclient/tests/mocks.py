@@ -9,6 +9,7 @@ def MockFile(name):
     path = PropertyMock(return_value=name)
     type(mock).path = path
     mock._path_mock = path
+    mock._html_url = 'https://example.com'
     hashes_dict = dict(md5='0' * 32, sha256='0' * 64)
     hashes = PropertyMock(return_value=hashes_dict)
     type(mock).hashes = hashes
