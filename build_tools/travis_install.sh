@@ -28,7 +28,7 @@ popd
 conda create -n testenv --yes python=$PYTHON_VERSION pip pytest pep8 pytest-cov
 source activate testenv
 
-pip install -r requirements.txt -r devRequirements.txt
+pip install -r requirements.txt -r devRequirements.txt -c constraints.txt
 
 if [[ "$COVERAGE" == "true" ]]; then
     pip install coverage coveralls

@@ -68,10 +68,13 @@ Below are some examples on how to use it:
 
     # fetch all files for the project
     $ osf clone
-    
+
     # fetch an individual file from a project
     $ osf fetch remote/path.txt local/file.txt
-    
+
+    # get web view url for an individual file from a project
+    $ osf geturl remote/path.txt
+
     # add a new file
     $ osf upload local/file.txt remote/path.txt
 
@@ -79,13 +82,17 @@ Below are some examples on how to use it:
     $ osf upload -r local/directory/ remote/directory
 
 If the project is private you will need to provide authentication
-details. The password will be retrieved from the ``OSF_PASSWORD``
-environment variable or you will be asked directly by the tool when you
-run it.
+details.  You can provide either username & password credentials or a
+Personal Access Token (PAT).  You can provide these by setting either
+the ``OSF_USERNAME`` and ``OSF_PASSWORD`` environment variables or by
+setting the ``OSF_TOKEN`` environment variable. The password will be
+retrieved from the ``OSF_PASSWORD`` environment variable or you will
+be asked directly by the tool when you run it.
 
-You can set default values by using a configuration file in the
-current directory. This is what ``osf init`` does for you. To set the
-username and project ID create ``.osfcli.config``:
+You can set default values for the username and project by using a
+configuration file in the current directory. This is what ``osf init``
+does for you. To set the username and project ID create
+``.osfcli.config``:
 
 ::
 
@@ -93,7 +100,18 @@ username and project ID create ``.osfcli.config``:
     username = yourOSFaccount@example.com
     project = 9zpcy
 
-after which you can simply run ``osf ls`` to list the contents of the
+To avoid having to provide credentials on each use, you can provide
+either your password or a PAT in your config with the following keys:
+
+::
+
+    # basic auth (username/password)
+    password = this-password-is-fake
+
+    # token auth
+    token = kej2R9IU6Gr2uThsswSNdP1cd0cu9eaCerVXjVf7zNwfXHyT0QzMZtX0PGTYmp9Fzaixwq
+
+After which you can simply run ``osf ls`` to list the contents of the
 project.
 
 JSON-LD Support
@@ -153,8 +171,8 @@ To setup a development version:
     $ git clone https://github.com/YOURNAMEHERE/osfclient
     $ git remote add upstream https://github.com/osfclient/osfclient
     $ cd osfclient
-    $ pip install -r devRequirements.txt
-    $ pip install -e.
+    $ pip install -r devRequirements.txt -c constraints.txt
+    $ pip install -e . -c constraints.txt
 
 There are a few secret keys relevant to this project, like passwords to
 pypi.org, test.pypi.org, and the osfclient email account. We store these in an

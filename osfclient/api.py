@@ -19,6 +19,7 @@ class OSF(OSFCore):
         super(OSF, self).__init__({}, *args, **kwargs)
         try:
             self.login(username, password, token)
+            self.can_login = True
         except OSFException:
             pass
 
@@ -121,3 +122,8 @@ class OSF(OSFCore):
     def password(self):
         if self.session.auth is not None:
             return self.session.auth[1]
+
+    @property
+    def token(self):
+        if self.session.token is not None:
+            return self.session.token

@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'osfclient'
-copyright = '2020, The osfclient contributors'
+copyright = '2021, The osfclient contributors'
 author = 'The osfclient contributors'
 
 # The version info for the project you're documenting, acts as replacement for

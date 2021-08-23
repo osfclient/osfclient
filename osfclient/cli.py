@@ -9,6 +9,7 @@ import getpass
 import os
 import sys
 
+from six import ensure_text
 from six.moves import configparser
 from six.moves import input
 
@@ -227,6 +228,28 @@ def fetch(args):
             # only fetching one file so we are done
             break
 
+@might_need_auth
+def geturl(args):
+    """Get the web view URL of an individual file from a project.
+
+    The first part of the remote path is interpreted as the name of the
+    storage provider. If there is no match the default (osfstorage) is
+    used.
+
+    If the project is private you need to specify a username.
+    """
+    storage, remote_path = split_storage(args.remote)
+
+    osf = _setup_osf(args)
+    project = osf.project(args.project)
+
+    store = project.storage(storage)
+    for file_ in store.files:
+        if norm_remote_path(file_.path) == remote_path:
+            print(ensure_text(file_._html_url))
+
+            # only getting one file url so we are done
+            break
 
 @might_need_auth
 def list_(args):
@@ -270,9 +293,9 @@ def upload(args):
     $ osf upload -r foo/ bar
     """
     osf = _setup_osf(args)
-    if osf.username is None or osf.password is None:
-        sys.exit('To upload a file you need to provide a username and'
-                 ' password.')
+    if not osf.can_login:
+        sys.exit('To upload a file you need to provide either a username and'
+                 ' password or a token.')
 
     project = osf.project(args.project)
     storage, remote_path = split_storage(args.destination)
@@ -312,9 +335,9 @@ def remove(args):
     used.
     """
     osf = _setup_osf(args)
-    if osf.username is None or osf.password is None:
-        sys.exit('To remove a file you need to provide a username and'
-                 ' password.')
+    if not osf.can_login:
+        sys.exit('To remove a file you need to provide either a username and'
+                 ' password or a token.')
 
     project = osf.project(args.project)
 
