@@ -19,7 +19,7 @@ def _rate_limit(func, per_second=1):
         if self.last_request is not None:
             now = time.time()
             delta = now - self.last_request
-            if delta < 1:
+            if delta < (1 / per_second):
                 time.sleep(1 - delta)
 
         self.last_request = time.time()
@@ -76,7 +76,7 @@ class OSFSession(requests.Session):
             raise UnauthorizedException()
         return response
 
-    @_rate_limit
+    @_rate_limit(7)
     def get(self, url, *args, **kwargs):
         response = super(OSFSession, self).get(url, *args, **kwargs)
         if response.status_code == 401:
