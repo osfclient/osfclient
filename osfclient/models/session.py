@@ -78,7 +78,7 @@ class OSFSession(requests.Session):
             raise UnauthorizedException()
         return response
 
-    @_rate_limit(7)
+    @_rate_limit(per_second=7)
     def get(self, url, *args, **kwargs):
         response = super(OSFSession, self).get(url, *args, **kwargs)
         if response.status_code == 401:
