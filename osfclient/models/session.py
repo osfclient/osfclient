@@ -15,7 +15,7 @@ def _rate_limit(func, per_second=1):
     made too recently.
     """
     @wraps(func)
-    def wrapper(self, url, *args, **kwargs):
+    def wrapper(self, *args, **kwargs):
         if self.last_request is not None:
             now = time.time()
             delta = now - self.last_request
@@ -23,7 +23,7 @@ def _rate_limit(func, per_second=1):
                 time.sleep(1 - delta)
 
         self.last_request = time.time()
-        return func(self, url, *args, **kwargs)
+        return func(self, *args, **kwargs)
 
     return wrapper
 
