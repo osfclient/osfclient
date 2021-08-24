@@ -1,3 +1,4 @@
+import os
 import time
 from functools import wraps
 
@@ -43,7 +44,12 @@ class OSFSession(requests.Session):
             'Content-Type': "application/json",
             # Custom User-Agent string
             'User-Agent': 'osfclient v' + __version__,
-            })
+        })
+
+        self.proxies.update({
+            'http': os.getenv("HTTP_PROXY") or os.getenv("http_proxy"),
+            'https': os.getenv("HTTPS_PROXY") or os.getenv("https_proxy")
+        })
         self.base_url = address or 'https://api.osf.io/v2'
         self.last_request = None
         self.token = None
