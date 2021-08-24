@@ -1,21 +1,23 @@
 import os
 import time
-from functools import wraps
-
+import functools
 import requests
 
 from ..exceptions import UnauthorizedException
 from ..__version__ import __version__
 
 
-def _rate_limit(func, per_second=1):
+def _rate_limit(func=None, per_second=1):
     """Limit number of requests made per second.
 
     Will sleep for 1/``per_second`` seconds if the last request was
     made too recently.
     """
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
+    if not func:
+        return functools.partial(_rate_limit, per_second=per_second)
+
+    @functools.wraps(func)
+    def wrapper(self, url, *args, **kwargs):
         if self.last_request is not None:
             now = time.time()
             delta = now - self.last_request
@@ -23,7 +25,7 @@ def _rate_limit(func, per_second=1):
                 time.sleep(1 - delta)
 
         self.last_request = time.time()
-        return func(self, *args, **kwargs)
+        return func(self, url, *args, **kwargs)
 
     return wrapper
 
