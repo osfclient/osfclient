@@ -90,11 +90,10 @@ class Storage(OSFCore, ContainerMixin):
         # turns out to be of length zero then no file is created on the OSF.
         # See: https://github.com/osfclient/osfclient/pull/135
         if file_empty(fp):
-            response = self._put(url, params={'name': fname}, data=b'', verify=False)
+            response = self._put(url, params={'name': fname}, data=b'')
         else:
             try:
-                response = self._put(
-                    url, params={'name': fname}, data=fp, verify=False)
+                response = self._put(url, params={'name': fname}, data=fp)
             except ConnectionError as e:
                 logging.getLogger().error(f"osf error: {e}",  exc_info=True)
                 connection_error = True

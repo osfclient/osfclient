@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 import functools
@@ -73,6 +74,9 @@ class OSFSession(requests.Session):
 
     @_rate_limit
     def put(self, url, *args, **kwargs):
+        logging.getLogger().debug(
+            f"osf call: url: {url}, args: {args}, kwargs: {kwargs}")
+
         response = super(OSFSession, self).put(url, *args, **kwargs)
         if response.status_code == 401:
             raise UnauthorizedException()
@@ -80,12 +84,16 @@ class OSFSession(requests.Session):
 
     @_rate_limit(per_second=7)
     def get(self, url, *args, **kwargs):
+        logging.getLogger().debug(
+            f"osf call: url: {url}, args: {args}, kwargs: {kwargs}")
         response = super(OSFSession, self).get(url, *args, **kwargs)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
 
     def patch(self, url, *args, **kwargs):
+        logging.getLogger().debug(
+            f"osf call: url: {url}, args: {args}, kwargs: {kwargs}")
         response = super(OSFSession, self).patch(url, *args, **kwargs)
         if response.status_code == 401:
             raise UnauthorizedException()
