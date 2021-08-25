@@ -133,3 +133,4 @@ class Storage(OSFCore, ContainerMixin):
                 else:
                     raise RuntimeError("Could not create a new file at "
                                        "({}) nor update it.".format(path))
+        return True

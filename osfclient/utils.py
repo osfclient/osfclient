@@ -61,7 +61,7 @@ def file_empty(fp):
         return not bool(contents)
 
     else:
-        return not fp.read()
+        return not bool(fp.read(1))
 
 
 def checksum(file_path, hash_type='md5', block_size=65536):
