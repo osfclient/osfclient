@@ -32,7 +32,8 @@ class Project(OSFCore):
         super().__init__(data, session=session, address=address)
 
     def __transform_from_jsonld(self, json):
-        inverse_transform = {value: key for key, value in osf_to_jsonld.items()}
+        inverse_transform = {value: key for key,
+                             value in osf_to_jsonld.items()}
         data = {
             "data": {
                 "attributes": {
@@ -178,7 +179,8 @@ class Project(OSFCore):
             if provides == provider:
                 return Storage(store, self.session)
 
-        raise RuntimeError("Project has no storage " "provider '{}'".format(provider))
+        raise RuntimeError(
+            "Project has no storage " "provider '{}'".format(provider))
 
     @property
     def storages(self):
@@ -209,7 +211,6 @@ class Project(OSFCore):
         )
 
         data = self._json(self._post(url, data=data), 201)
-        data = data["data"][0]
-        identifier = self._get_attribute(data, "attributes", "value")
+        identifier = self._get_attribute(data["data"], "attributes", "value")
 
         return identifier
