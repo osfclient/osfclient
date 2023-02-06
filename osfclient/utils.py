@@ -7,7 +7,7 @@ import hashlib
 import os
 import six
 
-KNOWN_PROVIDERS = ['osfstorage', 'github', 'figshare', 'googledrive', 'owncloud']
+KNOWN_PROVIDERS = ['osfstorage', 'github', 'figshare', 'googledrive', 'owncloud', 'onedrive']
 
 
 def norm_remote_path(path):
