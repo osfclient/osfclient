@@ -77,7 +77,7 @@ class OSFSession(requests.Session):
         logging.getLogger().error(
             f"osf call: url: {url}, args: {args}, kwargs: {kwargs}")
 
-        response = super(OSFSession, self).put(url, *args, **kwargs, timeout=1)
+        response = super(OSFSession, self).put(url, *args, **kwargs, timeout=6.10)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
@@ -86,7 +86,7 @@ class OSFSession(requests.Session):
     def get(self, url, *args, **kwargs):
         logging.getLogger().error(
             f"osf call: url: {url}, args: {args}, kwargs: {kwargs}")
-        response = super(OSFSession, self).get(url, *args, **kwargs, timeout=1)
+        response = super(OSFSession, self).get(url, *args, **kwargs, timeout=6.10)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
@@ -95,7 +95,7 @@ class OSFSession(requests.Session):
         logging.getLogger().error(
             f"osf call: url: {url}, args: {args}, kwargs: {kwargs}")
         response = super(OSFSession, self).patch(
-            url, *args, **kwargs, timeout=1)
+            url, *args, **kwargs, timeout=6.10)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
