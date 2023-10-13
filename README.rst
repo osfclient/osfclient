@@ -81,6 +81,12 @@ Below are some examples on how to use it:
     # add a new directory
     $ osf upload -r local/directory/ remote/directory
 
+    # list all wiki pages for an existing project(/component)
+    osf -p <project id> -u <username> list_wikis
+
+    # clone all wiki pages for an existing project(/component)
+    osf -p <project id> -u <username> clone_wikis <output directory>
+
 If the project is private you will need to provide authentication
 details.  You can provide either username & password credentials or a
 Personal Access Token (PAT).  You can provide these by setting either
