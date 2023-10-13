@@ -77,7 +77,7 @@ class OSFSession(requests.Session):
         logging.getLogger().error(
             f"osf call: url: {url}, args: {args}, kwargs: {kwargs}")
 
-        response = super(OSFSession, self).put(url, *args, **kwargs, timeout=6.10)
+        response = super(OSFSession, self).put(url, *args, **kwargs)
         if response.status_code == 401:
             raise UnauthorizedException()
         return response
