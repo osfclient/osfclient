@@ -270,6 +270,49 @@ def list_(args):
 
             print(os.path.join(prefix, path))
 
+@might_need_auth
+def list_wikis(args):
+    """List all wiki pages for project.
+
+    If the project is private you need to specify a username.
+    """
+    osf = _setup_osf(args)
+
+    project = osf.project(args.project)
+    
+    print(list(project.wikis))
+
+@might_need_auth
+def clone_wikis(args):
+    """Download all wiki pages for project(/component).
+
+    The output directory defaults to the current directory.
+    A subdirectory of the output directory will be created, named
+    the project ID. Wiki pages will be saved as markdown files, named
+    <cleaned wiki page name>_<id>.md
+    
+    If the project is private you need to specify a username.
+    """
+    from django.utils.text import slugify
+    osf = _setup_osf(args)
+    project = osf.project(args.project)
+    
+    output_dir = args.project
+    if args.output is not None:
+        output_dir = args.output
+
+    wikis = project.wikis
+
+    prefix = os.path.join(output_dir, args.project, 'wiki')
+
+    headers = {'Accept': '*/*'}
+    os.makedirs(prefix, exist_ok=True)
+    print('%s wiki pages found' % len(wikis))
+    for wiki in wikis:
+        # filename will be <cleaned wiki page name>_<id>.md
+        path = os.path.join(prefix, slugify(wiki[1]) + '_%s.md' % wiki[0])
+        with open(path, "wb") as f:
+            f.write(project.session.get(wiki[-1], headers=headers).content)
 
 @might_need_auth
 def upload(args):
