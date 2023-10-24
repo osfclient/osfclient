@@ -2,6 +2,7 @@ import os
 import six
 
 from requests.exceptions import ConnectionError
+import logging
 
 from .core import OSFCore
 from .file import ContainerMixin
@@ -10,6 +11,7 @@ from ..utils import checksum
 from ..utils import file_empty
 from ..utils import get_local_file_size
 from ..utils import norm_remote_path
+from io import BytesIO
 
 
 if six.PY2:
@@ -62,7 +64,7 @@ class Storage(OSFCore, ContainerMixin):
         To force overwrite of an existing file, set `force=True`.
         To overwrite an existing file only if the files differ, set `update=True`
         """
-        if 'b' not in fp.mode:
+        if 'b' not in getattr(fp, "mode", "") and not isinstance(fp, BytesIO):
             raise ValueError("File has to be opened in binary mode.")
 
         # all paths are assumed to be absolute
@@ -82,7 +84,7 @@ class Storage(OSFCore, ContainerMixin):
         # When uploading a large file (>a few MB) that already exists
         # we sometimes get a ConnectionError instead of a status == 409.
         connection_error = False
-        
+
         # peek at the file to check if it is an empty file which needs special
         # handling in requests. If we pass a file like object to data that
         # turns out to be of length zero then no file is created on the OSF.
@@ -92,7 +94,8 @@ class Storage(OSFCore, ContainerMixin):
         else:
             try:
                 response = self._put(url, params={'name': fname}, data=fp)
-            except ConnectionError:
+            except ConnectionError as e:
+                logging.getLogger().error(f"osf error: {e}",  exc_info=True)
                 connection_error = True
 
         if connection_error or response.status_code == 409:
@@ -100,7 +103,7 @@ class Storage(OSFCore, ContainerMixin):
                 # one-liner to get file size from file pointer from
                 # https://stackoverflow.com/a/283719/2680824
                 file_size_bytes = get_local_file_size(fp)
-                large_file_cutoff = 2**20 # 1 MB in bytes
+                large_file_cutoff = 2**20  # 1 MB in bytes
                 if connection_error and file_size_bytes < large_file_cutoff:
                     msg = (
                         "There was a connection error which might mean {} " +
@@ -130,3 +133,4 @@ class Storage(OSFCore, ContainerMixin):
                 else:
                     raise RuntimeError("Could not create a new file at "
                                        "({}) nor update it.".format(path))
+        return True
